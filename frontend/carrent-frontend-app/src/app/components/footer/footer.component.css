@@ -1,0 +1,31 @@
+footer{
+    background-color: #fffbf3;
+    border-top: #dcdcdd 1px solid;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    padding: 1% 0%;
+}
+.nav-bar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    list-style: none;
+    padding-left: 0;
+    gap: 20%;
+}
+
+.nav-bar li a {
+    text-decoration: none;
+    color: inherit;
+}
+.nav-bar li a:hover {
+    color: #d32f2f;
+}
+
+.social-side{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20%;
+}
