@@ -1,0 +1,66 @@
+[ 
+    {
+      "id": 1,
+      "name": "Hyatt Hyderabad Gachibowli",
+      "address": "Road No 2, HUDA Techno Enclave, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6899220130706!2d78.37268287499037!3d17.441600583006364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d4e55%3A0xb79e0f4bef9af9d3!2sHyatt%20Hyderabad%20Gachibowli!5e0!3m2!1sen!2sin!4v1684123456789!5m2!1sen!2sin",
+      "lat": 17.441600583006364,
+      "lng": 78.37268287499037
+    },
+    {
+      "id": 2,
+      "name": "Park Hyatt Hyderabad",
+      "address": "Road No 2, Banjara Hills, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.3674275681256!2d78.43253237498978!3d17.415587183020437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9738f2237039%3A0x81d1a94f3c3c07c0!2sPark%20Hyatt%20Hyderabad!5e0!3m2!1sen!2sin!4v1684123456790!5m2!1sen!2sin",
+      "lat": 17.415587183020437,
+      "lng": 78.43253237498978
+    },
+    {
+      "id": 3,
+      "name": "FlexiRide Jubilee Hills",
+      "address": "Road No 36, Jubilee Hills, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.9584920086344!2d78.40669537499014!3d17.427900083013294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9156d964f2e9%3A0x48389c9fad5b70ba!2sRoad%20Number%2036%2C%20Jubilee%20Hills%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456791!5m2!1sen!2sin",
+      "lat": 17.427900083013294,
+      "lng": 78.40669537499014
+    },
+    {
+      "id": 4,
+      "name": "FlexiRide HITEC City",
+      "address": "Whitefields, HITEC City, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.4207903115466!2d78.37668787499055!3d17.450100082994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93df6a689a85%3A0xb8c9b6c1c3d6c341!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456792!5m2!1sen!2sin",
+      "lat": 17.450100082994,
+      "lng": 78.37668787499055
+    },
+    {
+      "id": 5,
+      "name": "FlexiRide Madhapur",
+      "address": "Ayyappa Society, Madhapur, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6899220130706!2d78.38768787499037!3d17.440000083007364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d4e55%3A0xb79e0f4bef9af9d3!2sAyyappa%20Society%2C%20Madhapur%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456793!5m2!1sen!2sin",
+      "lat": 17.440000083007364,
+      "lng": 78.38768787499037
+    },
+    {
+      "id": 6,
+      "name": "FlexiRide Kukatpally",
+      "address": "KPHB Colony, Kukatpally, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.7424461087805!2d78.39339787499107!3d17.484900082970627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb91a60f5b16e9%3A0x2c07cc4c6a7c6b0e!2sKPHB%20Colony%2C%20Kukatpally%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456794!5m2!1sen!2sin",
+      "lat": 17.484900082970627,
+      "lng": 78.39339787499107
+    },
+    {
+      "id": 7,
+      "name": "FlexiRide Secunderabad",
+      "address": "SD Road, Secunderabad, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6899220130706!2d78.49609787499037!3d17.439900083007364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99c44533324f%3A0x8aa5e3a7a4499feb!2sSD%20Road%2C%20Secunderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456795!5m2!1sen!2sin",
+      "lat": 17.439900083007364,
+      "lng": 78.49609787499037
+    },
+    {
+      "id": 8,
+      "name": "FlexiRide Begumpet",
+      "address": "Begumpet Main Road, Hyderabad",
+      "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.6899220130706!2d78.46079787499037!3d17.440000083007364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb99e045555555%3A0x9f4fb56e5b58b5b5!2sBegumpet%20Main%20Road%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1684123456796!5m2!1sen!2sin",
+      "lat": 17.440000083007364,
+      "lng": 78.46079787499037
+    }
+]

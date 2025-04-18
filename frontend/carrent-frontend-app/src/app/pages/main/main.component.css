@@ -1,8 +1,24 @@
+*{
+  background-color: #fffbf3;
+}
+
 h1 {
   font-size: 2.5rem;
   font-weight: 700;
   color: #333;
+  background-color: #fffbf3;
+  margin-top: 0px;
   margin-bottom: 1rem;
+  padding-top: 1rem;
+  margin-left: 2rem;
+}
+
+h2{
+  font-size: 2rem;
+  font-weight: 300;
+  color: black;
+  margin-bottom: 1rem;
+  margin-left: 2rem;
 }
 
 .filter {
@@ -13,7 +29,7 @@ h1 {
   padding-left: 2rem;
   padding-right: 2rem;
   margin: 2% 1%;
-  background-color: #fff;
+  background-color: #fffbf3;
 }
 
 .filter-container {

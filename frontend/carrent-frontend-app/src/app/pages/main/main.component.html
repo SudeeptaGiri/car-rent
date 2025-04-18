@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <main>
-    <h1 class=" ">Choose a Car for Rental</h1>
+    <h1>Choose a Car for Rental</h1>
     <section class="filter">
         <div class="filter-container">
             <div class="filter-row">
@@ -84,7 +84,6 @@
                 </div>
             </div>
 
-
             <button class="clear-button">Clear all filters</button>
 
         </div>
@@ -92,11 +91,24 @@
 
 
 
-    <section class="popular-cars"></section>
-    <section class="about-us"></section>
-    <section class="our-location"></section>
-    <section class="recent-feedback"></section>
-    <section class="faq"></section>
+    <section class="popular-cars">
+        <h2>Popular Cars</h2>
+    </section>
+    <section class="about-us">
+        <h2>About Us</h2>
+        <app-about-us></app-about-us>
+    </section>
+
+    <section class="our-location">
+        <h2>Our Locations</h2>
+        <app-mapview></app-mapview>
+    </section>
+    <section class="recent-feedback">
+        <h2>Feedbacks</h2>
+    </section>
+    <section class="faq">
+        <h2>Frequently Asked Questions</h2>
+    </section>
 </main>
 
 <app-footer></app-footer>

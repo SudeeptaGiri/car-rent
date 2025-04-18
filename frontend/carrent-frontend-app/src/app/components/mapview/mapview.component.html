@@ -1,0 +1,32 @@
+<div class="mapview-container">    
+    <div class="mapview-content">
+      <div class="locations-list">
+        <div class="locations-scroll">
+          <div 
+            *ngFor="let location of locations" 
+            class="location-item" 
+            [class.selected]="isSelected(location)"
+            (click)="selectLocation(location)">
+            <h3>{{ location.name }}</h3>
+            <p>{{ location.address }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="map-container">
+        <iframe 
+          *ngIf="safeMapUrl && !loading" 
+          [src]="safeMapUrl" 
+          class="map-iframe" 
+          frameborder="0" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div *ngIf="loading" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Loading map...</p>
+        </div>
+      </div>
+    </div>
+  </div>
