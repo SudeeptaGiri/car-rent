@@ -56,14 +56,15 @@
     top: 0px;
     left: 0px;
     padding: 5px 10px;
-    border-radius: 7px;
+    border-radius: 6px;
     font-size: 12px;
     font-weight: 500;
     color: white;
   }
   
   .car-status.available {
-    background-color: #4caf50;
+    background-color: #ffffff;
+    color: black;
   }
   
   .car-status.reserved {

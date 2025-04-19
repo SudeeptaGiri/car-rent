@@ -13,6 +13,7 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { FaqComponent } from './components/faq/faq.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CardsComponent } from './components/cards/cards.component';
+import { FilterComponent } from './components/filter/filter.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { CardsComponent } from './components/cards/cards.component';
     MapviewComponent,
     AboutUsComponent,
     FaqComponent,
-    CardsComponent
+    CardsComponent,
+    FilterComponent
   ],
   imports: [
     BrowserModule,
