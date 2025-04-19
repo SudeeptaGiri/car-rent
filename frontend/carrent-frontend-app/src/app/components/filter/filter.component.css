@@ -1,117 +1,210 @@
+/* Filter container */
+h1{
+  margin-top: 0px;
+  padding-top: 2rem;
+  padding-left: 2rem;
+}
+.filter {
+  background-color: #fff;
+  border: 1px black solid;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  overflow: hidden;
+}
+
+.filter-container {
+  padding: 20px;
+  position: relative;
+  background-color: #fffbf3;
+  border-radius: 7px;
   
-  .filter {
-    border: #e0e0e0 solid 1px;
-    border-radius: 10px;
-    padding-top: 4rem;
-    padding-bottom: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    margin: 2% 1%;
-    background-color: #fffbf3;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Filter groups */
+.filter-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Select styling */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 10px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #777;
+}
+
+select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  appearance: none;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #d32f2f;
+}
+
+/* Price range slider */
+.price-group {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.price-display {
+  font-size: 14px;
+  color: #333;
+  font-weight: 400;
+}
+
+.price-range {
+  position: relative;
+  padding-top: 10px;
+}
+
+.range-slider {
+  position: relative;
+  height: 4px;
+  background-color: #e5e5e5;
+  border-radius: 2px;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #e5e5e5 0%, #e5e5e5 0%, #d32f2f 0%, #d32f2f 20%, #e5e5e5 20%, #e5e5e5 100%);
+  border-radius: 2px;
+}
+
+.min-handle, .max-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #d32f2f;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.min-handle {
+  left: 0;
+}
+
+.max-handle {
+  left: 20%;
+}
+
+/* Button styling */
+.button-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+.find-car-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.find-car-btn:hover {
+  background-color: #b71c1c;
+}
+
+.clear-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #d32f2f;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .filter-group {
+      min-width: calc(50% - 10px);
   }
-  
-  .filter-container {
-    position: relative;
+}
+
+@media (max-width: 768px) {
+  .filter-group {
+      min-width: 100%;
   }
   
   .filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
-  
-  .filter-group {
-    flex: 1;
-    min-width: 200px;
-  }
-  
-  label {
-    display: block;
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 8px;
-  }
-  
-  .select-wrapper {
-    position: relative;
-  }
-  
-  .select-wrapper::after {
-    content: "▼";
-    font-size: 0.7em;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    pointer-events: none;
-  }
-  
-  select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    appearance: none;
-    background-color: white;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
-  .price-range {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  input[type="range"] {
-    width: 100%;
-    margin-bottom: 10px;
-    accent-color: #d32f2f;
-  }
-  
-  .price-display {
-    font-weight: 500;
-  }
-  
-  .find-car-btn {
-    background-color: #d32f2f;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 15px 30px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    height: 50px;
-    margin-top: 25px;
-  }
-  
-  .button-group {
-    display: flex;
-    align-items: flex-end;
+      flex-direction: column;
+      gap: 15px;
   }
   
   .clear-button {
-    color: #d32f2f;
-    text-decoration: none;
-    font-size: 0.9rem;
-    border: none;
-    position: absolute;
-    top: -20px;
-    right: -15px;
-    background-color: transparent;
-    font-weight: 500;
-  }
-  
-  @media (max-width: 768px) {
-    .filter-group {
-      flex: 100%;
-    }
-  
-    .button-group {
+      position: static;
       margin-top: 15px;
-    }
+      width: 100%;
+      text-align: center;
   }
   
+  .price-header {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .price-display {
+      margin-top: 5px;
+  }
+}
