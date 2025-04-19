@@ -16,11 +16,14 @@
   
   /* Car card styling */
   .car-card {
-    background-color: #fff;
+    background-color: #f5f5f5; /* Changed to light gray background */
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure full height */
   }
   
   .car-card:hover {
@@ -33,6 +36,7 @@
     position: relative;
     height: 180px;
     overflow: hidden;
+    width: 100%;
   }
   
   .car-image {
@@ -73,6 +77,10 @@
   /* Car details section */
   .car-details {
     padding: 15px;
+    flex-grow: 1; /* Allow this section to grow and fill available space */
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5; /* Match the card background */
   }
   
   .car-header {
@@ -121,6 +129,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 10px;
+    margin-top: auto; /* Push to bottom of flex container */
   }
   
   .book-button:hover {
@@ -136,21 +145,20 @@
     color: #333;
     text-decoration: underline;
     cursor: pointer;
-    margin-top: 5px;
   }
   
   .see-more:hover {
     color: #000;
   }
   
-  /* View all button container */
-  .view-all-container {
+  /* View toggle button container */
+  .view-toggle-container {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
   }
   
-  .view-all-button {
+  .view-toggle-button {
     background: none;
     border: none;
     font-size: 14px;
@@ -161,8 +169,54 @@
     padding: 5px;
   }
   
-  .view-all-button:hover {
+  .view-toggle-button:hover {
     color: #000;
+  }
+  
+  /* Pagination container */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+  
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .page-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .page-button:hover:not([disabled]):not(.active) {
+    background-color: #eee;
+  }
+  
+  .page-button.active {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .page-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .arrow {
+    font-size: 16px;
   }
   
   /* Loading state */
@@ -256,6 +310,16 @@
     }
     
     .see-more {
+      font-size: 12px;
+    }
+    
+    .pagination {
+      gap: 2px;
+    }
+    
+    .page-button {
+      width: 28px;
+      height: 28px;
       font-size: 12px;
     }
   }

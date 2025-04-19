@@ -1,6 +1,4 @@
-
 <div class="cards-container">
-
     <!-- Loading state -->
     <div class="loading-container" *ngIf="loading">
       <div class="loading-spinner"></div>
@@ -15,7 +13,7 @@
   
     <!-- Cars grid -->
     <div class="cars-grid" *ngIf="!loading && cars.length">
-      <div class="car-card" *ngFor="let car of viewAllMode ? cars : popularCars">
+      <div class="car-card" *ngFor="let car of displayedCars">
         <div class="car-image-container">
           <img [src]="car.imageUrl" alt="{{car.name}}" class="car-image" 
                onerror="this.src='https://via.placeholder.com/300x200?text=Car+Image'">
@@ -44,8 +42,31 @@
       </div>
     </div>
   
-    <!-- View all button -->
-    <div class="view-all-container" *ngIf="!viewAllMode && !loading && cars.length > 4">
-      <button class="view-all-button" (click)="viewAllCars()">View all cars</button>
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="viewAllMode && totalPages > 1">
+      <div class="pagination">
+        <button class="page-button" [disabled]="currentPage === 1" (click)="prevPage()">
+          <span class="arrow">←</span>
+        </button>
+        
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index" 
+          class="page-button" 
+          [class.active]="currentPage === i + 1"
+          (click)="goToPage(i + 1)">
+          {{ i + 1 }}
+        </button>
+        
+        <button class="page-button" [disabled]="currentPage === totalPages" (click)="nextPage()">
+          <span class="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  
+    <!-- View toggle button -->
+    <div class="view-toggle-container" *ngIf="!loading && cars.length">
+      <button class="view-toggle-button" (click)="toggleViewMode()">
+        {{ viewAllMode ? 'View fewer cars' : 'View all cars' }}
+      </button>
     </div>
   </div>

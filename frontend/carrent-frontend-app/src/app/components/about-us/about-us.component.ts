@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Car } from '../cards/cards.component';
 
 interface Location {
   id: number;
@@ -19,8 +20,8 @@ export class AboutUsComponent implements OnInit {
   
   yearsInBusiness: number = 0;
   locationCount: number = 0;
-  carBrands: number = 25; // Static for now, but could be made dynamic
-  carCount: number = 100; // Static for now, but could be made dynamic
+  carBrands: number = 0; // Will be calculated dynamically
+  carCount: number = 0;  // Will be calculated dynamically
   
   constructor(private http: HttpClient) {}
   
@@ -36,7 +37,30 @@ export class AboutUsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading locations:', error);
-        this.locationCount = 6;// Default value if loading fails
+        this.locationCount = 6; // Default value if loading fails
+      }
+    });
+
+    // Load cars data to get brands and count
+    this.http.get<Car[]>('assets/data/cars.json').subscribe({
+      next: (cars) => {
+        // Set car count
+        this.carCount = cars.length;
+        
+        // Extract unique car brands (first word of car name)
+        const brandSet = new Set<string>();
+        cars.forEach(car => {
+          const brand = car.name.split(' ')[0];
+          brandSet.add(brand);
+        });
+        
+        this.carBrands = brandSet.size;
+      },
+      error: (error) => {
+        console.error('Error loading cars:', error);
+        // Fallback values
+        this.carBrands = 10;
+        this.carCount = 25;
       }
     });
   }

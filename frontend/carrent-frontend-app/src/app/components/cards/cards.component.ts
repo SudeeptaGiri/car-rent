@@ -43,6 +43,12 @@ export class CardsComponent implements OnInit {
   loading = true;
   error: string | null = null;
   viewAllMode = false;
+  
+  // Pagination properties
+  currentPage = 1;
+  itemsPerPage = 16; // Show 16 cars per page
+  totalPages = 1;
+  displayedCars: Car[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -58,6 +64,13 @@ export class CardsComponent implements OnInit {
         this.popularCars = [...this.cars]
           .sort((a, b) => b.rating - a.rating)
           .slice(0, 4);
+        
+        // Calculate total pages
+        this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
+        
+        // Set initial displayed cars - show popular cars by default
+        this.displayedCars = this.popularCars;
+        
         this.loading = false;
       },
       error: (err) => {
@@ -106,6 +119,7 @@ export class CardsComponent implements OnInit {
       }
     ];
     this.popularCars = [...this.cars];
+    this.displayedCars = this.popularCars;
     this.error = null;
   }
 
@@ -119,8 +133,49 @@ export class CardsComponent implements OnInit {
     console.log('See more details clicked:', car);
   }
 
-  viewAllCars(): void {
-    this.viewAllMode = true;
+  toggleViewMode(): void {
+    this.viewAllMode = !this.viewAllMode;
+    
+    if (this.viewAllMode) {
+      // Switching to "View All" mode
+      this.currentPage = 1;
+      this.updateDisplayedCars();
+    } else {
+      // Switching back to "Popular Cars" mode
+      this.displayedCars = this.popularCars;
+    }
+  }
+
+  updateDisplayedCars(): void {
+    if (!this.viewAllMode) {
+      this.displayedCars = this.popularCars;
+      return;
+    }
+    
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = Math.min(startIndex + this.itemsPerPage, this.cars.length);
+    this.displayedCars = this.cars.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updateDisplayedCars();
+      // Scroll to top of the component
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
   }
 
   formatPrice(price: number): string {
