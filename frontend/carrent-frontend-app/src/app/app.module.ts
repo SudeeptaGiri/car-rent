@@ -11,6 +11,8 @@ import { MapviewComponent } from './components/mapview/mapview.component';
 import { LocationService } from './services/locations.service';
 import { AboutUsComponent } from './components/about-us/about-us.component';
 import { FaqComponent } from './components/faq/faq.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CardsComponent } from './components/cards/cards.component';
 
 
 @NgModule({
@@ -21,12 +23,14 @@ import { FaqComponent } from './components/faq/faq.component';
     FooterComponent,
     MapviewComponent,
     AboutUsComponent,
-    FaqComponent
+    FaqComponent,
+    CardsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     CommonModule,
+    BrowserAnimationsModule,
     HttpClientModule
   ],
   providers: [],

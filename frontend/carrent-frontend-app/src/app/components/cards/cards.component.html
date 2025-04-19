@@ -1,0 +1,51 @@
+
+<div class="cards-container">
+
+    <!-- Loading state -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading cars...</p>
+    </div>
+  
+    <!-- Error state -->
+    <div class="error-container" *ngIf="error && !cars.length">
+      <p class="error-message">{{ error }}</p>
+      <button class="retry-button" (click)="fetchCars()">Try Again</button>
+    </div>
+  
+    <!-- Cars grid -->
+    <div class="cars-grid" *ngIf="!loading && cars.length">
+      <div class="car-card" *ngFor="let car of viewAllMode ? cars : popularCars">
+        <div class="car-image-container">
+          <img [src]="car.imageUrl" alt="{{car.name}}" class="car-image" 
+               onerror="this.src='https://via.placeholder.com/300x200?text=Car+Image'">
+          <div class="car-status" [ngClass]="car.status.toLowerCase()">
+            {{car.status}}
+          </div>
+        </div>
+        
+        <div class="car-details">
+          <div class="car-header">
+            <h3 class="car-name">{{car.name}} {{car.modelYear}}</h3>
+            <div class="car-rating">
+              {{car.rating}}
+              <span class="star">★</span>
+            </div>
+          </div>
+          
+          <p class="car-location">{{car.location}}</p>
+          
+          <button class="book-button" (click)="bookCar(car)">
+            Book the car - {{formatPrice(car.pricePerDay)}}/day
+          </button>
+          
+          <a class="see-more" (click)="seeMore(car)">See more details</a>
+        </div>
+      </div>
+    </div>
+  
+    <!-- View all button -->
+    <div class="view-all-container" *ngIf="!viewAllMode && !loading && cars.length > 4">
+      <button class="view-all-button" (click)="viewAllCars()">View all cars</button>
+    </div>
+  </div>
