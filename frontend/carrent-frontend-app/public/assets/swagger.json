@@ -1,0 +1,2152 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "description": "local development",
+            "url": "http://localhost:8080/api/v1"
+        },
+        {
+            "description": "custom server",
+            "url": "{protocol}://{host}:{port}/{basePath}",
+            "variables": {
+                "basePath": {
+                    "default": "api/v1",
+                    "description": "Api version"
+                },
+                "host": {
+                    "default": "api.example.com",
+                    "description": "The host name or IP address"
+                },
+                "port": {
+                    "default": "443",
+                    "description": "The port number",
+                    "enum": [
+                        "80",
+                        "443",
+                        "8080",
+                        "8443"
+                    ]
+                },
+                "protocol": {
+                    "default": "https",
+                    "description": "The protocol to use",
+                    "enum": [
+                        "http",
+                        "https"
+                    ]
+                }
+            }
+        }
+    ],
+    "tags": [
+        {
+            "description": "",
+            "name": "Auth"
+        },
+        {
+            "description": "",
+            "name": "Homepage"
+        },
+        {
+            "description": "",
+            "name": "Car"
+        },
+        {
+            "description": "",
+            "name": "Booking"
+        },
+        {
+            "description": "",
+            "name": "Feedback"
+        },
+        {
+            "description": "",
+            "name": "Report"
+        },
+        {
+            "description": "",
+            "name": "User"
+        }
+    ],
+    "paths": {
+        "/auth/sign-in": {
+            "post": {
+                "operationId": "loginUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequestBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid username/password supplied"
+                    }
+                },
+                "summary": "US-2: Logs user into the system",
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/auth/sign-up": {
+            "post": {
+                "operationId": "createUser_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignUpRequestBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignUpResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid username/password supplied"
+                    }
+                },
+                "summary": "US-1: User profile registration; US-3: Automatic Role Assignment",
+                "tags": [
+                    "Auth"
+                ]
+            }
+        },
+        "/bookings": {
+            "get": {
+                "operationId": "getBookedCar_1",
+                "parameters": [
+                    {
+                        "description": "Date from",
+                        "example": "2024-06-08 10:00",
+                        "in": "query",
+                        "name": "dateFrom",
+                        "required": false,
+                        "schema": {
+                            "description": "Date from",
+                            "example": "2024-06-08 10:00",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Date to",
+                        "example": "2024-06-10 10:00",
+                        "in": "query",
+                        "name": "dateTo",
+                        "required": false,
+                        "schema": {
+                            "description": "Date to",
+                            "example": "2024-06-10 10:00",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Client ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "in": "query",
+                        "name": "clientId",
+                        "required": false,
+                        "schema": {
+                            "description": "Client ID",
+                            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupportAgentBookingsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-7: Support Agent bookings management (returns all bookings)",
+                "tags": [
+                    "Booking"
+                ]
+            },
+            "post": {
+                "operationId": "bookCar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BookCarRequestBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookCarResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-6: Car booking (book a car)",
+                "tags": [
+                    "Booking"
+                ]
+            }
+        },
+        "/bookings/{userId}": {
+            "get": {
+                "operationId": "getBookedCar",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookingsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-6: Car booking (returns client's bookings)",
+                "tags": [
+                    "Booking"
+                ]
+            }
+        },
+        "/cars": {
+            "get": {
+                "operationId": "getCars",
+                "parameters": [
+                    {
+                        "description": "Pickup location ID",
+                        "example": "8bda2022-792c-4b67-b6b3-d1cfddc8f40a",
+                        "in": "query",
+                        "name": "pickupLocationId",
+                        "required": false,
+                        "schema": {
+                            "description": "Pickup location ID",
+                            "example": "8bda2022-792c-4b67-b6b3-d1cfddc8f40a",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Drop-off location ID",
+                        "example": "8bda2022-792c-4b67-b6b3-d1cfddc8f40a",
+                        "in": "query",
+                        "name": "dropOffLocationId",
+                        "required": false,
+                        "schema": {
+                            "description": "Drop-off location ID",
+                            "example": "8bda2022-792c-4b67-b6b3-d1cfddc8f40a",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Pickup date and time",
+                        "example": "2024-10-29T10:30:00",
+                        "in": "query",
+                        "name": "pickupDateTime",
+                        "required": false,
+                        "schema": {
+                            "description": "Pickup date and time",
+                            "example": "2024-10-29T10:30:00",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Drop-off date and time",
+                        "example": "2024-10-30T10:30:00",
+                        "in": "query",
+                        "name": "dropOffDateTime",
+                        "required": false,
+                        "schema": {
+                            "description": "Drop-off date and time",
+                            "example": "2024-10-30T10:30:00",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car category",
+                        "example": "CROSSOVER",
+                        "in": "query",
+                        "name": "category",
+                        "required": false,
+                        "schema": {
+                            "description": "Car category",
+                            "example": "CROSSOVER",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car brand",
+                        "example": "AUTOMATIC",
+                        "in": "query",
+                        "name": "gearBoxType",
+                        "required": false,
+                        "schema": {
+                            "description": "Car brand",
+                            "example": "AUTOMATIC",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car fuel type",
+                        "example": "PETROL",
+                        "in": "query",
+                        "name": "fuelType",
+                        "required": false,
+                        "schema": {
+                            "description": "Car fuel type",
+                            "example": "PETROL",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Minimum price",
+                        "example": 52,
+                        "in": "query",
+                        "name": "minPrice",
+                        "required": false,
+                        "schema": {
+                            "description": "Minimum price",
+                            "example": 52,
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Maximum price",
+                        "example": 400,
+                        "in": "query",
+                        "name": "maxPrice",
+                        "required": false,
+                        "schema": {
+                            "description": "Maximum price",
+                            "example": 400,
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Page number",
+                        "example": 1,
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "schema": {
+                            "description": "Page number",
+                            "example": 1,
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Page size",
+                        "example": 8,
+                        "in": "query",
+                        "name": "size",
+                        "required": false,
+                        "schema": {
+                            "description": "Page size",
+                            "example": 8,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FilterCarsPageableResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-5: Car selection (returns cars list)",
+                "tags": [
+                    "Car"
+                ]
+            }
+        },
+        "/cars/{carId}": {
+            "get": {
+                "operationId": "getCar",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "carId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CarDetailsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-5: Car selection (returns car by id)",
+                "tags": [
+                    "Car"
+                ]
+            }
+        },
+        "/cars/{carId}/booked-days": {
+            "get": {
+                "operationId": "getCarBookedDates",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "carId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CarBookedDatesResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-5: Car selection (returns car booked dates)",
+                "tags": [
+                    "Car"
+                ]
+            }
+        },
+        "/cars/{carId}/client-review": {
+            "get": {
+                "operationId": "getFeedbacks_1",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "carId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "schema": {
+                            "format": "int32",
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "required": false,
+                        "schema": {
+                            "format": "int32",
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Sort type",
+                        "example": "DATE",
+                        "in": "query",
+                        "name": "sort",
+                        "required": false,
+                        "schema": {
+                            "description": "Sort type",
+                            "example": "DATE",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Sort direction",
+                        "example": "DESC",
+                        "in": "query",
+                        "name": "direction",
+                        "required": false,
+                        "schema": {
+                            "description": "Sort direction",
+                            "example": "DESC",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientReviewSortedPageableResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "summary": "US-5: Car selection (returns sorted pageable client reviews)",
+                "tags": [
+                    "Car"
+                ]
+            }
+        },
+        "/cars/popular": {
+            "get": {
+                "operationId": "getPopularCars",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "category",
+                        "required": false,
+                        "schema": {
+                            "enum": [
+                                "ECONOMY",
+                                "COMFORT",
+                                "BUSINESS",
+                                "PREMIUM",
+                                "CROSSOVER",
+                                "MINIVAN",
+                                "ELECTRIC"
+                            ],
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PopularCarsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-4: Main page view (returns most popular cars)",
+                "tags": [
+                    "Car"
+                ]
+            }
+        },
+        "/feedbacks": {
+            "post": {
+                "operationId": "createUser",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFeedbackRequestBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateFeedbackResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-8: Client's feedback (provides feedback on the car rental experience)",
+                "tags": [
+                    "Feedback"
+                ]
+            }
+        },
+        "/feedbacks/recent": {
+            "get": {
+                "operationId": "getFeedbacks",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FeedbacksResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-4: Main page view (returns recent feedbacks from users)",
+                "tags": [
+                    "Feedback"
+                ]
+            }
+        },
+        "/home/about-us": {
+            "get": {
+                "operationId": "getAboutUs",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AboutUsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-4: Main page view (returns 'About Us' stories)",
+                "tags": [
+                    "Homepage"
+                ]
+            }
+        },
+        "/home/faq": {
+            "get": {
+                "operationId": "getFAQ",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FAQResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-4: Main page view (returns F&Q stories)",
+                "tags": [
+                    "Homepage"
+                ]
+            }
+        },
+        "/home/locations": {
+            "get": {
+                "operationId": "getLocations",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LocationsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "summary": "US-4: Main page view (returns locations)",
+                "tags": [
+                    "Homepage"
+                ]
+            }
+        },
+        "/reports": {
+            "get": {
+                "operationId": "getReports",
+                "parameters": [
+                    {
+                        "description": "Start date",
+                        "example": "2021-01-01",
+                        "in": "query",
+                        "name": "dateFrom",
+                        "required": false,
+                        "schema": {
+                            "description": "Start date",
+                            "example": "2021-01-01",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "End date",
+                        "example": "2021-12-31",
+                        "in": "query",
+                        "name": "dateTo",
+                        "required": false,
+                        "schema": {
+                            "description": "End date",
+                            "example": "2021-12-31",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Location Id",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "in": "query",
+                        "name": "locationId",
+                        "required": false,
+                        "schema": {
+                            "description": "Location Id",
+                            "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car Id",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "in": "query",
+                        "name": "carId",
+                        "required": false,
+                        "schema": {
+                            "description": "Car Id",
+                            "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Support agent ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                        "in": "query",
+                        "name": "supportAgentId",
+                        "required": false,
+                        "schema": {
+                            "description": "Support agent ID",
+                            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetReportsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-10: Reporting Interface (returns list of reports basing on filtered parameters)",
+                "tags": [
+                    "Report"
+                ]
+            }
+        },
+        "/reports/{extension}": {
+            "post": {
+                "operationId": "createAggregationReport",
+                "parameters": [
+                    {
+                        "description": "Report extension",
+                        "example": "pdf",
+                        "in": "path",
+                        "name": "extension",
+                        "required": true,
+                        "schema": {
+                            "description": "Report extension",
+                            "example": "pdf",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Start date",
+                        "example": "2021-01-01",
+                        "in": "query",
+                        "name": "dateFrom",
+                        "required": false,
+                        "schema": {
+                            "description": "Start date",
+                            "example": "2021-01-01",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "End date",
+                        "example": "2021-12-31",
+                        "in": "query",
+                        "name": "dateTo",
+                        "required": false,
+                        "schema": {
+                            "description": "End date",
+                            "example": "2021-12-31",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Location Id",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "in": "query",
+                        "name": "locationId",
+                        "required": false,
+                        "schema": {
+                            "description": "Location Id",
+                            "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car Id",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "in": "query",
+                        "name": "carId",
+                        "required": false,
+                        "schema": {
+                            "description": "Car Id",
+                            "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Support agent ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                        "in": "query",
+                        "name": "supportAgentId",
+                        "required": false,
+                        "schema": {
+                            "description": "Support agent ID",
+                            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExportReportResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-10: Reporting Interface (returns url to download the exported report)",
+                "tags": [
+                    "Report"
+                ]
+            }
+        },
+        "/users/{id}/change-password": {
+            "put": {
+                "operationId": "changePassword",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePasswordRequestBody"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChangePasswordResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-11: Update Profile information (change password for user)",
+                "tags": [
+                    "User"
+                ]
+            }
+        },
+        "/users/{id}/personal-info": {
+            "get": {
+                "operationId": "getPersonalInfo",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonalInfoResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-11: Update Profile information (get user personal info)",
+                "tags": [
+                    "User"
+                ]
+            },
+            "put": {
+                "operationId": "updatePersonalInfo",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonalInfoFormData"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PersonalInfoResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-11: Update Profile information (change user personal info)",
+                "tags": [
+                    "User"
+                ]
+            }
+        },
+        "/users/agents": {
+            "get": {
+                "operationId": "getAgents",
+                "parameters": [
+                    {
+                        "description": "Start date",
+                        "example": "2021-01-01",
+                        "in": "query",
+                        "name": "dateFrom",
+                        "required": false,
+                        "schema": {
+                            "description": "Start date",
+                            "example": "2021-01-01",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "End date",
+                        "example": "2021-12-31",
+                        "in": "query",
+                        "name": "dateTo",
+                        "required": false,
+                        "schema": {
+                            "description": "End date",
+                            "example": "2021-12-31",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Location Id",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "in": "query",
+                        "name": "locationId",
+                        "required": false,
+                        "schema": {
+                            "description": "Location Id",
+                            "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Car Id",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "in": "query",
+                        "name": "carId",
+                        "required": false,
+                        "schema": {
+                            "description": "Car Id",
+                            "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Support agent ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                        "in": "query",
+                        "name": "supportAgentId",
+                        "required": false,
+                        "schema": {
+                            "description": "Support agent ID",
+                            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetAgentsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "Successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-10: Reporting Interface (returns a list of Support Agents)",
+                "tags": [
+                    "User"
+                ]
+            }
+        },
+        "/users/clients": {
+            "get": {
+                "operationId": "getClients",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetClientsResponseBody"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": [
+                        ]
+                    }
+                ],
+                "summary": "US-7: Support Agent bookings management (returns all Clients)",
+                "tags": [
+                    "User"
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AboutUsResponseBody": {
+                "description": "Response body for about us block",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/AboutUsStoryInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "AboutUsStoryInfo": {
+                "description": "About us story info",
+                "properties": {
+                    "description": {
+                        "description": "About us story description",
+                        "example": "in car rentals highlights a steadfast commitment to excellence, marked by a track record of trust and satisfaction among thousands of clients worldwide",
+                        "type": "string"
+                    },
+                    "numericValue": {
+                        "description": "About us story numeric numericValue",
+                        "example": "15",
+                        "type": "string"
+                    },
+                    "title": {
+                        "description": "About us story title",
+                        "example": "years",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "BookCarRequestBody": {
+                "description": "Request to book a car",
+                "properties": {
+                    "carId": {
+                        "description": "Car ID",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "type": "string"
+                    },
+                    "clientId": {
+                        "description": "User ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "dropOffDateTime": {
+                        "description": "Drop off date and time",
+                        "example": "2024-06-10 10:00",
+                        "type": "string"
+                    },
+                    "dropOffLocationId": {
+                        "description": "Drop off location ID",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "type": "string"
+                    },
+                    "pickupDateTime": {
+                        "description": "Pick up date and time",
+                        "example": "2024-06-08 10:00",
+                        "type": "string"
+                    },
+                    "pickupLocationId": {
+                        "description": "Pick up location ID",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "BookCarResponseBody": {
+                "description": "Response object for booking a car",
+                "properties": {
+                    "message": {
+                        "description": "Success message",
+                        "example": "New booking was successfully created. \nAudi A6 Quattro 2023 is booked for Nov 11 - Nov 16 \nYou can change booking details until 10:30 PM 10 Nov.\nYour order: #2437 (08.06.24) ",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "BookingInfo": {
+                "description": "Booking information",
+                "properties": {
+                    "bookingId": {
+                        "description": "Booking ID",
+                        "example": "ce3d9306-ec01-48a9-9d1a-f9818063c734",
+                        "type": "string"
+                    },
+                    "bookingStatus": {
+                        "description": "Booking status",
+                        "enum": [
+                            "RESERVED",
+                            "RESERVED_BY_SUPPORT_AGENT",
+                            "SERVICE_STARTED",
+                            "SERVICE_PROVIDED",
+                            "BOOKING_FINISHED",
+                            "CANCELLED"
+                        ],
+                        "example": "RESERVED",
+                        "type": "string"
+                    },
+                    "carImageUrl": {
+                        "description": "Car image URL",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/cars/audi-A6-quattro-2023.jpg",
+                        "type": "string"
+                    },
+                    "carModel": {
+                        "description": "Car model",
+                        "example": "Audi A6 Quattro 2023",
+                        "type": "string"
+                    },
+                    "orderDetails": {
+                        "description": "Order details",
+                        "example": "#2437 (05.10.2024)",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "BookingsResponseBody": {
+                "description": "Payload for get bookings request",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/BookingInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "CarBookedDatesResponseBody": {
+                "description": "Payload for booked date response",
+                "properties": {
+                    "content": {
+                        "description": "List of booked dates",
+                        "example": [
+                            "2024-06-08",
+                            "2024-06-09"
+                        ],
+                        "items": {
+                            "description": "List of booked dates",
+                            "example": "[\"2024-06-08\",\"2024-06-09\"]",
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "CarBriefInfo": {
+                "description": "Car brief information",
+                "properties": {
+                    "carId": {
+                        "description": "Car ID",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "type": "string"
+                    },
+                    "carRating": {
+                        "description": "Car rating",
+                        "example": "4.5",
+                        "type": "string"
+                    },
+                    "imageUrl": {
+                        "description": "Car image URL",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/cars/audi-A6-quattro-2023.jpg",
+                        "type": "string"
+                    },
+                    "location": {
+                        "description": "Car location",
+                        "example": "Ukraine, Kyiv",
+                        "type": "string"
+                    },
+                    "model": {
+                        "description": "Car brand, model, year",
+                        "example": "Audi A6 Quattro 2023",
+                        "type": "string"
+                    },
+                    "pricePerDay": {
+                        "description": "Car price per day",
+                        "example": "180",
+                        "type": "string"
+                    },
+                    "serviceRating": {
+                        "description": "Service rating",
+                        "example": "4.8",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Car status",
+                        "enum": [
+                            "AVAILABLE",
+                            "BOOKED",
+                            "UNAVAILABLE"
+                        ],
+                        "example": "AVAILABLE",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CarDetailsResponseBody": {
+                "description": "Car details response body",
+                "properties": {
+                    "carId": {
+                        "description": "Car ID",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "type": "string"
+                    },
+                    "carRating": {
+                        "description": "Car rating",
+                        "example": "4.5",
+                        "type": "string"
+                    },
+                    "climateControlOption": {
+                        "description": "Car climate control option",
+                        "enum": [
+                            "NONE",
+                            "AIR_CONDITIONER",
+                            "CLIMATE_CONTROL",
+                            "TWO_ZONE_CLIMATE_CONTROL"
+                        ],
+                        "example": "CLIMATE_CONTROL",
+                        "type": "string"
+                    },
+                    "engineCapacity": {
+                        "description": "Car engine capacity",
+                        "example": "3.0 turbo",
+                        "type": "string"
+                    },
+                    "fuelConsumption": {
+                        "description": "Car fuel consumption",
+                        "example": "10.0 Liter/100km",
+                        "type": "string"
+                    },
+                    "fuelType": {
+                        "description": "Car fuel type",
+                        "enum": [
+                            "PETROL",
+                            "DIESEL",
+                            "ELECTRIC",
+                            "HYBRID"
+                        ],
+                        "example": "PETROL",
+                        "type": "string"
+                    },
+                    "gearBoxType": {
+                        "description": "Car gear box type",
+                        "enum": [
+                            "MANUAL",
+                            "AUTOMATIC"
+                        ],
+                        "example": "AUTOMATIC",
+                        "type": "string"
+                    },
+                    "images": {
+                        "description": "List of images",
+                        "example": [
+                            "https://carrent.s3.eu-central-1.amazonaws.com/img/cars/ff7863bf-63eb-4f2e-8041-75a81507acff.jpg"
+                        ],
+                        "items": {
+                            "description": "List of images",
+                            "example": "[\"https://carrent.s3.eu-central-1.amazonaws.com/img/cars/ff7863bf-63eb-4f2e-8041-75a81507acff.jpg\"]",
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "location": {
+                        "description": "Car location",
+                        "example": "Ukraine, Kyiv",
+                        "type": "string"
+                    },
+                    "model": {
+                        "description": "Car brand, model, year",
+                        "example": "Audi A6 Quattro 2023",
+                        "type": "string"
+                    },
+                    "passengerCapacity": {
+                        "description": "Car passenger capacity",
+                        "example": "3.0 turbo",
+                        "type": "string"
+                    },
+                    "pricePerDay": {
+                        "description": "Car price per day",
+                        "example": "180",
+                        "type": "string"
+                    },
+                    "serviceRating": {
+                        "description": "Service rating",
+                        "example": "4.8",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Car status",
+                        "enum": [
+                            "AVAILABLE",
+                            "BOOKED",
+                            "UNAVAILABLE"
+                        ],
+                        "example": "AVAILABLE",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangePasswordRequestBody": {
+                "properties": {
+                    "newPassword": {
+                        "type": "string"
+                    },
+                    "oldPassword": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangePasswordResponseBody": {
+                "description": "Change password response payload",
+                "properties": {
+                    "idToken": {
+                        "description": "User id token (jwt)",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNDdhYzEwYi01OGNjLTQzNzItYTU2Ny0wZTAyYjJjM2Q0NzkiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMn0.uDZewMhPPSmImx1e6g4Vf0zsJXyOJlAT8AKcerZitiw",
+                        "type": "string"
+                    },
+                    "role": {
+                        "description": "User role",
+                        "example": "Client",
+                        "type": "string"
+                    },
+                    "userId": {
+                        "description": "User id",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "userImageUrl": {
+                        "description": "User image url",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/users/f47ac10b-58cc-4372-a567-0e02b2c3d479.png",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "User name",
+                        "example": "John Smith",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientReview": {
+                "description": "Client review",
+                "properties": {
+                    "author": {
+                        "description": "Author name",
+                        "example": "Sarah L.",
+                        "type": "string"
+                    },
+                    "authorImageUrl": {
+                        "description": "Author image URL",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/users/f47ac10b-58cc-4372-a567-0e02b2c3d479.png",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Date of review",
+                        "example": "01.11.2024",
+                        "type": "string"
+                    },
+                    "rentalExperience": {
+                        "description": "Car model",
+                        "example": "4.5",
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "Review text",
+                        "example": "I rented a car for a week. The car was in good condition, the service was excellent. I am very satisfied with the service!",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientReviewSortedPageableResponseBody": {
+                "description": "Payload for response with sorted pageable list of client reviews",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/ClientReview"
+                        },
+                        "type": "array"
+                    },
+                    "currentPage": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "totalElements": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "totalPages": {
+                        "format": "int32",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateFeedbackRequestBody": {
+                "description": "The request body for the create Feedback operation",
+                "properties": {
+                    "bookingId": {
+                        "description": "The booking ID",
+                        "example": "ce3d9306-ec01-48a9-9d1a-f9818063c734",
+                        "type": "string"
+                    },
+                    "carId": {
+                        "description": "The car ID",
+                        "example": "92c87432-3383-4328-85f8-7d20ba8715ec",
+                        "type": "string"
+                    },
+                    "clientId": {
+                        "description": "The client ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "feedbackText": {
+                        "description": "Text about car rental experience",
+                        "example": "I rented a car for a week. The car was in good condition, the service was excellent. I am very satisfied with the service!",
+                        "type": "string"
+                    },
+                    "rating": {
+                        "description": "The rating",
+                        "example": "4.8",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CreateFeedbackResponseBody": {
+                "description": "The response body for the createFeedback operation",
+                "properties": {
+                    "feedbackId": {
+                        "description": "The feedback ID",
+                        "example": "71ddc0d2-320b-41e0-9c57-8b6290de7a27",
+                        "type": "string"
+                    },
+                    "systemMessage": {
+                        "description": "The system message about feedback creation",
+                        "example": "Feedback has been successfully created",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ExportReportResponseBody": {
+                "description": "The response body for the export report operation",
+                "properties": {
+                    "url": {
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/reports/aggregated_report_1735497701003.csv",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQResponseBody": {
+                "description": "Payload for FAQ response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/FAQStory"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQStory": {
+                "description": "FAQ story",
+                "properties": {
+                    "answer": {
+                        "description": "F&Q story answer",
+                        "example": "To rent a car, you will need a valid driver's license, a credit card in your name, and a government-issued photo ID (such as a passport or national ID). International renters may also need to present an International Driving Permit (IDP) in addition to their home country driver’s license.",
+                        "type": "string"
+                    },
+                    "question": {
+                        "description": "F&Q story question",
+                        "example": "What documents do I need to rent a car?",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "FeedbackInfo": {
+                "description": "Feedback information",
+                "properties": {
+                    "author": {
+                        "description": "Feedback author",
+                        "example": "John S., New York, USA",
+                        "type": "string"
+                    },
+                    "carImageUrl": {
+                        "description": "Car image URL",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/cars/audi-A6-quattro-2023.jpg",
+                        "type": "string"
+                    },
+                    "carModel": {
+                        "description": "Car model",
+                        "example": "Audi A6 Quattro 2023",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Feedback date",
+                        "example": "05.10.2024",
+                        "type": "string"
+                    },
+                    "feedbackId": {
+                        "description": "Feedback ID",
+                        "example": "71ddc0d2-320b-41e0-9c57-8b6290de7a27",
+                        "type": "string"
+                    },
+                    "feedbackText": {
+                        "description": "Feedback text",
+                        "example": "I am very satisfied with the service!",
+                        "type": "string"
+                    },
+                    "orderHistory": {
+                        "description": "Order history",
+                        "example": "#2437 (05.10.2024)",
+                        "type": "string"
+                    },
+                    "rating": {
+                        "description": "rating",
+                        "example": "4.8",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "FeedbacksResponseBody": {
+                "description": "Payload for feedbacks response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/FeedbackInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "FilterCarsPageableResponseBody": {
+                "description": "Payload for car filter pageable response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/CarBriefInfo"
+                        },
+                        "type": "array"
+                    },
+                    "currentPage": {
+                        "description": "Current page",
+                        "example": 1,
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "totalElements": {
+                        "description": "Total elements",
+                        "example": 16,
+                        "format": "int64",
+                        "type": "integer"
+                    },
+                    "totalPages": {
+                        "description": "Total pages",
+                        "example": 2,
+                        "format": "int32",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "GetAgentsResponseBody": {
+                "description": "Payload for get agents response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/UserBriefInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "GetClientsResponseBody": {
+                "description": "Payload for get clients response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/UserBriefInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "GetReportsResponseBody": {
+                "description": "The response body for the get reports operation",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/ReportInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "LocationInfo": {
+                "description": "Location information",
+                "properties": {
+                    "locationAddress": {
+                        "description": "Location address",
+                        "example": "Alla Tarasova Street 5, Kyiv 01001",
+                        "type": "string"
+                    },
+                    "locationId": {
+                        "description": "Location ID",
+                        "example": "9b903ebf-2b18-4946-bc58-045d86a2632e",
+                        "type": "string"
+                    },
+                    "locationImageUrl": {
+                        "description": "Location image URL",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/locations/9b903ebf-2b18-4946-bc58-045d86a2632e.jpg",
+                        "type": "string"
+                    },
+                    "locationName": {
+                        "description": "Location name",
+                        "example": "Kyiv Hayatt Hotel",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "LocationsResponseBody": {
+                "description": "Payload for locations response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/LocationInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginRequestBody": {
+                "description": "Payload for user login request",
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "example": "john_smith@example.com",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "User password",
+                        "example": "&Q5m#9bX^d8!FwZ2",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginResponseBody": {
+                "description": "Login response payload",
+                "properties": {
+                    "idToken": {
+                        "description": "User id token (jwt)",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNDdhYzEwYi01OGNjLTQzNzItYTU2Ny0wZTAyYjJjM2Q0NzkiLCJuYW1lIjoiSm9obiBTbWl0aCIsImlhdCI6MTUxNjIzOTAyMn0.uDZewMhPPSmImx1e6g4Vf0zsJXyOJlAT8AKcerZitiw",
+                        "type": "string"
+                    },
+                    "role": {
+                        "description": "User role",
+                        "example": "Client",
+                        "type": "string"
+                    },
+                    "userId": {
+                        "description": "User id",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "userImageUrl": {
+                        "description": "User image url",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/users/f47ac10b-58cc-4372-a567-0e02b2c3d479.png",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "User name",
+                        "example": "John Smith",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalInfoFormData": {
+                "properties": {
+                    "avatar": {
+                        "format": "binary",
+                        "type": "string"
+                    },
+                    "city": {
+                        "description": "User's city",
+                        "example": "Kyiv",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "User's country",
+                        "example": "Ukraine",
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "description": "User's first name",
+                        "example": "John",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "User's last name",
+                        "example": "Smith",
+                        "type": "string"
+                    },
+                    "phoneNumber": {
+                        "description": "User's email",
+                        "example": "john_smith@example.com",
+                        "type": "string"
+                    },
+                    "postalCode": {
+                        "description": "User's postal code",
+                        "example": "04210",
+                        "type": "string"
+                    },
+                    "street": {
+                        "description": "User's street",
+                        "example": "Velika Vasylkivska",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PersonalInfoResponseBody": {
+                "description": "Payload for personal info response",
+                "properties": {
+                    "city": {
+                        "description": "Client city",
+                        "example": "Kyiv",
+                        "type": "string"
+                    },
+                    "clientId": {
+                        "description": "Client ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "Client country",
+                        "example": "Ukraine",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Client username",
+                        "example": "john_smith@example.com",
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "description": "Client first name",
+                        "example": "John",
+                        "type": "string"
+                    },
+                    "imageUrl": {
+                        "description": "Client image url",
+                        "example": "https://application.s3.eu-central-1.amazonaws.com/img/users/f47ac10b-58cc-4372-a567-0e02b2c3d479.png",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "Client last name",
+                        "example": "Smith",
+                        "type": "string"
+                    },
+                    "phoneNumber": {
+                        "description": "Client birth date",
+                        "example": "+1 123 456 7890",
+                        "type": "string"
+                    },
+                    "postalCode": {
+                        "description": "Client postal code",
+                        "example": "04210",
+                        "type": "string"
+                    },
+                    "street": {
+                        "description": "Client street",
+                        "example": "Velika Vasylkivska",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PopularCarsResponseBody": {
+                "description": "Payload for popular cars response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/CarBriefInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "ReportInfo": {
+                "description": "The report information",
+                "properties": {
+                    "bookingPeriod": {
+                        "description": "The booking period",
+                        "example": "Oct 28 - Nov 1",
+                        "type": "string"
+                    },
+                    "carMillageEnd": {
+                        "description": "The car millage end",
+                        "example": 31225,
+                        "format": "double",
+                        "type": "number"
+                    },
+                    "carMillageStart": {
+                        "description": "The car millage start",
+                        "example": 28977,
+                        "format": "double",
+                        "type": "number"
+                    },
+                    "carModel": {
+                        "description": "The car model",
+                        "example": "Toyota Camry",
+                        "type": "string"
+                    },
+                    "carNumber": {
+                        "description": "The car number",
+                        "example": "AA 1234 AA",
+                        "type": "string"
+                    },
+                    "carServiceRating": {
+                        "description": "Rating",
+                        "example": "5",
+                        "type": "string"
+                    },
+                    "madeBy": {
+                        "description": "Made by",
+                        "example": "John Doe (Client)",
+                        "type": "string"
+                    },
+                    "reportId": {
+                        "description": "The report ID",
+                        "example": "ff99d446-b98a-4f20-ba16-25247c79e36f",
+                        "type": "string"
+                    },
+                    "supportAgent": {
+                        "description": "Support agent",
+                        "example": "Lisa Smith",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "SignUpRequestBody": {
+                "description": "Payload for user registration request",
+                "properties": {
+                    "email": {
+                        "description": "User email",
+                        "example": "john_smith@example.com",
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "description": "User first name",
+                        "example": "John",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "User last name",
+                        "example": "Smith",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "User password",
+                        "example": "&Q5m#9bX^d8!FwZ2",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "SignUpResponseBody": {
+                "properties": {
+                    "message": {
+                        "example": "User successfully created",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "SupportAgentBookingInfo": {
+                "description": "Support agent booking info",
+                "properties": {
+                    "bookingId": {
+                        "description": "Booking ID",
+                        "example": "ce3d9306-ec01-48a9-9d1a-f9818063c734",
+                        "type": "string"
+                    },
+                    "bookingNumber": {
+                        "description": "Booking number",
+                        "example": "2437",
+                        "type": "string"
+                    },
+                    "BookingPeriod": {
+                        "description": "Booking period",
+                        "example": "Oct 25 - Nov 05",
+                        "type": "string"
+                    },
+                    "carModel": {
+                        "description": "Car model",
+                        "example": "Audi A6 Quattro 2023",
+                        "type": "string"
+                    },
+                    "clientName": {
+                        "description": "Client name",
+                        "example": "Lily Hope",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Date",
+                        "example": "25.11.24",
+                        "type": "string"
+                    },
+                    "location": {
+                        "description": "Location",
+                        "example": "Boston",
+                        "type": "string"
+                    },
+                    "madeBy": {
+                        "description": "Made by",
+                        "enum": [
+                            "CLIENT",
+                            "SUPPORT_AGENT"
+                        ],
+                        "example": "Client",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "SupportAgentBookingsResponseBody": {
+                "description": "Payload for get support agent bookings response",
+                "properties": {
+                    "content": {
+                        "items": {
+                            "$ref": "#/components/schemas/SupportAgentBookingInfo"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "UserBriefInfo": {
+                "description": "User brief info",
+                "properties": {
+                    "userId": {
+                        "description": "User ID",
+                        "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                        "type": "string"
+                    },
+                    "userName": {
+                        "description": "user name",
+                        "example": "John Smith",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "bearerFormat": "JWT",
+                "in": "header",
+                "scheme": "bearer",
+                "type": "http"
+            }
+        }
+    }
+}

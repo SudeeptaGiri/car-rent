@@ -1,0 +1,119 @@
+/* Animation for dropdown */
+.transition-transform {
+  transition: transform 0.2s ease-in-out;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu animation */
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.absolute {
+  animation: dropdownFade 0.2s ease-out;
+}
+
+/* Optional: Add a backdrop when dropdown is open */
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.pagination-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination-button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.page-number {
+  transition: all 0.2s ease-in-out;
+}
+
+.page-number.active {
+  transform: scale(1.1);
+}
+  
+.car-details::-webkit-scrollbar{
+  display: none;
+}
+.car-details {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.thumbnail-list {
+  overflow-x: auto;
+  overflow-y: hidden; /* Default: hidden on mobile (row layout) */
+}
+
+@media (min-width: 1024px) {
+  .thumbnail-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+/* Stylish scrollbar */
+.thumbnail-list{
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+.thumbnail-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.thumbnail-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thumbnail-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.thumbnail-list::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
+
+.review-section{
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+.review-section::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.review-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.review-section::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.review-section::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
