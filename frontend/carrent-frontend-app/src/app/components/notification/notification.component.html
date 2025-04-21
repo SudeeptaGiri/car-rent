@@ -1,21 +1,26 @@
 <div *ngIf="show"
-    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-white border-b border-red-200 shadow-sm">
-    <div class="flex items-center gap-3">
-        <div class="text-red-500">
-            <mat-icon>error_outline</mat-icon>
+    class="flex items-center justify-between p-4 bg-[#F8E7E7] rounded-lg shadow-md border-1 border-red-400">
+    <div>
+        <div class="flex items-center gap-3">
+            <div class="text-red-500">
+                <mat-icon>error_outline</mat-icon>
+            </div>
+            
+            <div>
+                <h3 class="font-medium text-gray-900">You are not logged in!</h3>
+                <p class="text-sm text-gray-500">To continue booking a car, you need to log in or create an account</p>
+            </div>
         </div>
-        <div>
-            <h3 class="font-medium text-gray-900">You are not logged in!</h3>
-            <p class="text-sm text-gray-500">To continue booking a car, you need to log in or create an account</p>
+
+        <div class="flex items-center gap-2 justify-end mt-2">
+            <button (click)="onCancel()"
+                class="px-4 py-2 text-sm hover:text-gray-800 transition-colors rounded-3xl border border-black hover:bg-red-50 hover:cursor-pointer">
+                Cancel
+            </button>
+            <button (click)="onLogin()"
+                class="px-4 py-2 text-sm text-white bg-red-600 rounded-3xl hover:bg-red-700 transition-colors hover:border-black hover:cursor-pointer">
+                Log In
+            </button>
         </div>
-    </div>
-    <div class="flex items-center gap-2">
-        <button (click)="onCancel()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors">
-            Cancel
-        </button>
-        <button (click)="onLogin()"
-            class="px-4 py-2 text-sm text-white bg-red-600 rounded hover:bg-red-700 transition-colors">
-            Log In
-        </button>
     </div>
 </div>

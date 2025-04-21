@@ -27,7 +27,22 @@ export interface Review {
 
 export interface BookedDate {
   startDate: string;
+  startTime: string;
   endDate: string;
+  endTime: string;
+  bookingId: string;
+  userId: string;
+  status: 'confirmed' | 'pending' | 'completed';
+}
+
+export interface BookingRequest {
+  carId: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  userId: string;
+  totalPrice: number;
 }
 
 export interface ReviewsData {
@@ -54,7 +69,7 @@ export interface CarDetails {
   rating: number;
   price: number;
   category: string;
-  status: string;
+  status: 'Available' | 'Not Available';
   images: CarImage[];
   specifications: CarSpecifications;
   bookedDates: BookedDate[];

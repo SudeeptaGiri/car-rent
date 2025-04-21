@@ -2,11 +2,12 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { CarService } from '../../services/car.service';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { 
-  CarDetails, 
-  Review, 
+import {
+  CarDetails,
+  Review,
   BookedDate,
-  SortOption 
+  SortOption,
+  BookingRequest
 } from '../../models/car.interface';
 import moment from 'moment';
 
@@ -22,8 +23,6 @@ import moment from 'moment';
   styleUrl: './car-details-popup.component.css',
 })
 export class CarDetailsPopupComponent {
-
-
   // Car Details
   carDetails: CarDetails | null = null;
   currentCarIndex = 0;
@@ -53,17 +52,15 @@ export class CarDetailsPopupComponent {
   isLoading = false;
   error: string | null = null;
 
-
-
+  isLoggedIn = true; // This should come from your auth service
   showLoginNotification = false;
-  isLoggedIn = false;
 
   constructor(
     private carService: CarService,
     private dialogRef: MatDialogRef<CarDetailsPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { carId: string },
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.data.carId) {
@@ -95,7 +92,7 @@ export class CarDetailsPopupComponent {
 
   onCarPageChange(pageIndex: number): void {
     if (pageIndex === this.currentCarIndex) return;
-    
+
     this.isLoading = true;
     if (pageIndex > this.currentCarIndex) {
       this.carService.getNextCar(this.carDetails!.id).subscribe({
@@ -159,12 +156,12 @@ export class CarDetailsPopupComponent {
 
     switch (sortValue) {
       case 'newest':
-        this.reviews.sort((a, b) => 
+        this.reviews.sort((a, b) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
         );
         break;
       case 'latest':
-        this.reviews.sort((a, b) => 
+        this.reviews.sort((a, b) =>
           new Date(a.date).getTime() - new Date(b.date).getTime()
         );
         break;
@@ -204,20 +201,42 @@ export class CarDetailsPopupComponent {
       return;
     }
 
-    const bookingRequest = {
+    // Create booking request with dates and times
+    const bookingRequest: BookingRequest = {
       carId: this.carDetails.id,
       startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
-      endDate: this.dateRange.endDate.format('YYYY-MM-DD')
+      startTime: this.dateRange.startDate.format('HH:mm'),
+      endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
+      endTime: this.dateRange.endDate.format('HH:mm'),
+      userId: 'current-user-id', // Replace with actual user ID
+      totalPrice: this.calculateTotalPrice(this.dateRange, this.carDetails.price)
     };
 
-    // Proceed with booking
-    console.log('Booking request:', bookingRequest);
+    // Close dialog with booking data
+    this.dialogRef.close({
+      action: 'book',
+      data: bookingRequest
+    });
   }
 
+  private calculateTotalPrice(dateRange: { startDate: moment.Moment, endDate: moment.Moment }, pricePerDay: number): number {
+    const days = dateRange.endDate.diff(dateRange.startDate, 'days') + 1;
+    return days * pricePerDay;
+  }
+
+
   handleLogin(): void {
-    // Close the current dialog and navigate to login
+    if (this.dateRange && this.carDetails) {
+      localStorage.setItem('bookingIntent', JSON.stringify({
+        carId: this.carDetails.id,
+        startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
+        startTime: this.dateRange.startDate.format('HH:mm'),
+        endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
+        endTime: this.dateRange.endDate.format('HH:mm'),
+        price: this.carDetails.price
+      }));
+    }
     this.dialogRef.close('login');
-    // Your navigation logic here
   }
 
   hideLoginNotification(): void {
@@ -236,10 +255,15 @@ export class CarDetailsPopupComponent {
       this.isDropdownOpen = false;
     }
   }
+
+  get formattedBookedRanges(): { startDate: string; endDate: string; }[] {
+    return this.bookedDates.map(date => ({
+      startDate: date.startDate,
+      endDate: date.endDate
+    }));
+  }
+  onDateRangeSelected(event: { startDate: moment.Moment, endDate: moment.Moment }): void {
+    // Just update the date range without checking login
+    this.dateRange = event;
+  }
 }
-
-
-
-
-
-

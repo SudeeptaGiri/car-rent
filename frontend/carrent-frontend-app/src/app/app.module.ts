@@ -11,12 +11,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationComponent } from './components/notification/notification.component';
+import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CarDetailsPopupComponent,
-    NotificationComponent
+    NotificationComponent,
+    DateRangePickerComponent
   ],
   imports: [
     BrowserModule,

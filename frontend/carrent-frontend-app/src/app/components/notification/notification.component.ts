@@ -1,5 +1,6 @@
 // notification.component.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notification',
@@ -12,11 +13,14 @@ export class NotificationComponent {
   @Output() cancel = new EventEmitter<void>();
   @Output() login = new EventEmitter<void>();
 
+  constructor(private router: Router) {}
+
   onCancel() {
     this.cancel.emit();
   }
 
   onLogin() {
     this.login.emit();
+    this.router.navigate(['/login']);
   }
 }

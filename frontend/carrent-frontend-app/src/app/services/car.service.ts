@@ -9,7 +9,8 @@ import {
   CarsResponse,
   CarFilters,
   BookedDate,
-  ReviewsData
+  ReviewsData,
+  BookingRequest
 } from '../models/car.interface';
 
 @Injectable({
@@ -103,30 +104,40 @@ export class CarService {
     );
   }
 
-  private filterCars(cars: CarDetails[], filters: CarFilters): CarDetails[] {
-    return cars.filter(car => {
-      let matches = true;
-      
-      if (filters.location) {
-        matches = matches && car.location.toLowerCase().includes(filters.location.toLowerCase());
-      }
-      if (filters.category) {
-        matches = matches && car.category === filters.category;
-      }
-      if (filters.transmission) {
-        matches = matches && car.specifications.transmission === filters.transmission;
-      }
-      if (filters.fuelType) {
-        matches = matches && car.specifications.fuelType === filters.fuelType;
-      }
-      if (filters.minPrice) {
-        matches = matches && car.price >= filters.minPrice;
-      }
-      if (filters.maxPrice) {
-        matches = matches && car.price <= filters.maxPrice;
-      }
+  createBooking(bookingRequest: BookingRequest): Observable<any> {
+    // In a real application, this would be an HTTP POST request
+    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+      map(response => {
+        const car = response.cars.find(c => c.id === bookingRequest.carId);
+        if (car) {
+          // Add new booking to car's bookedDates
+          car.bookedDates.push({
+            startDate: bookingRequest.startDate,
+            startTime: bookingRequest.startTime,
+            endDate: bookingRequest.endDate,
+            endTime: bookingRequest.endTime,
+            bookingId: `booking${Date.now()}`,
+            userId: bookingRequest.userId,
+            status: 'pending'
+          });
+        }
+        return bookingRequest;
+      })
+    );
+  }
 
-      return matches;
-    });
+  // Method to check if dates are available
+  isDateRangeAvailable(carId: string, startDate: string, endDate: string): Observable<boolean> {
+    return this.getCarBookedDates(carId).pipe(
+      map(bookedDates => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        return !bookedDates.some(booking => {
+          const bookingStart = new Date(booking.startDate);
+          const bookingEnd = new Date(booking.endDate);
+          return (start <= bookingEnd && end >= bookingStart);
+        });
+      })
+    );
   }
 }
