@@ -42,14 +42,14 @@ export class AboutUsComponent implements OnInit {
     });
 
     // Load cars data to get brands and count
-    this.http.get<CarDetails[]>('assets/data/cars.json').subscribe({
-      next: (cars) => {
+    this.http.get<{cars: CarDetails[]}>('assets/cars.json').subscribe({
+      next: (data) => {
         // Set car count
-        this.carCount = cars.length;
+        this.carCount = data.cars.length;
         
         // Extract unique car brands (first word of car name)
         const brandSet = new Set<string>();
-        cars.forEach(car => {
+        data.cars.forEach(car => {
           const brand = car.brand.split(' ')[0];
           brandSet.add(brand);
         });
