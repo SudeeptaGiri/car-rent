@@ -69,7 +69,7 @@ export interface CarDetails {
   rating: number;
   price: number;
   category: string;
-  status: 'Available' | 'Not Available';
+  status: 'Available' | 'Not Available' | 'Reserved';
   images: CarImage[];
   specifications: CarSpecifications;
   bookedDates: BookedDate[];

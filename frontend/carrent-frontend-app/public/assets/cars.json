@@ -113,7 +113,7 @@
       "images": [
         {
           "id": "1",
-          "url": "assets/Car1.svg",
+          "url": "https://images.unsplash.com/photo-1541348263662-e068662d82af?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
           "isPrimary": true
         },
         {
@@ -221,7 +221,7 @@
       "images": [
         {
           "id": "1",
-          "url": "assets/Car1.svg",
+          "url": "https://images.unsplash.com/photo-1551830820-330a71b99659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
           "isPrimary": true
         },
         {
@@ -314,6 +314,1068 @@
         "viewCount": 800,
         "favoriteCount": 50,
         "isPopular": true
+      }
+    },
+    {
+      "id": "4",
+      "brand": "Jeep",
+      "model": "Grand Cherokee",
+      "year": 2020,
+      "location": "Hyderabad, India",
+      "rating": 4.8,
+      "price": 220,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Diesel",
+        "fuelType": "DIESEL",
+        "seats": 5,
+        "fuelConsumption": "8.5 L/100km",
+        "features": ["GPS", "Off-road Mode", "Leather Seats"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-20",
+          "startTime": "10:00",
+          "endDate": "2025-04-30",
+          "endTime": "16:00",
+          "bookingId": "booking129",
+          "userId": "user459",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.8,
+            "comment": "Amazing off-road experience! Perfect for adventures.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.7,
+            "comment": "Great performance and comfortable ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          },
+          {
+            "id": "3",
+            "userName": "David Brown",
+            "rating": 4.9,
+            "comment": "Excellent off-road capabilities and luxury combined.",
+            "date": "2024-01-05",
+            "userAvatar": "assets/User3.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 3
+      },
+      "popularity": {
+        "rentCount": 95,
+        "viewCount": 780,
+        "favoriteCount": 45,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "5",
+      "brand": "Toyota",
+      "model": "Camry",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Sedan",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533046418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "7.5 L/100km",
+        "features": ["GPS", "Bluetooth"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 2
+      },
+      "popularity": {
+        "rentCount": 80,
+        "viewCount": 600,
+        "favoriteCount": 30,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "6",
+      "brand": "Ford Focus",
+      "model": "Focus",
+      "year": 2019,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Sedan",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "7.1 L/100km",
+        "features": ["GPS", "Bluetooth"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 2
+      },
+      "popularity": {
+        "rentCount": 80,
+        "viewCount": 600,
+        "favoriteCount": 30,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "7",
+      "brand": "Honda",
+      "model": "Civic",
+      "year": 2020,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Sedan",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1633859036994-6c4bf4a40d77?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 9,
+        "fuelConsumption": "7.1 L/100km",
+        "features": ["GPS", "Bluetooth"]
+      },
+      "bookedDates": [],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "8",
+      "brand": "Hyundai",
+      "model": "Elantra",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Sedan",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine":"petrol",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "",
+        "features": ["GPS",
+          "Bluetooth"]
+      },
+      "bookedDates": [],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "9",
+      "brand": "Kia",
+      "model": "Seltos",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "SUV",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "10",
+      "brand": "Mahindra",
+      "model": "Thar",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "SUV",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "11",
+      "brand": "Tata",
+      "model": "Nexon",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "SUV",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates":[
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "12",
+      "brand": "Renault",
+      "model": "Kwid",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Hatchback",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates":[
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "13",
+      "brand": "Nissan",
+      "model": "Micra",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Hatchback",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates":[
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "14",
+      "brand": "Volkswagen",
+      "model": "Polo",
+      "year": 2021,
+      "location": "Hyderabad, India",
+      "rating": 4.5,
+      "price": 120,
+      "category": "Hatchback",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission":"Automatic",
+        "engine":"petrol",
+        "fuelType":"GASOLINE",
+        "seats":"5",
+        "fuelConsumption":"7.1 L/100km",
+        "features":["GPS","Bluetooth"]
+      },
+      "bookedDates":[
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking130",
+          "userId": "user460",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking131",
+          "userId": "user792",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.5,
+            "comment": "Comfortable and reliable sedan for daily use.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 4.6,
+            "comment": "Great fuel efficiency and smooth ride.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 0,
+        "currentPage": 0,
+        "totalElements": 0
+      },
+      "popularity": {
+        "rentCount": 0,
+        "viewCount": 0,
+        "favoriteCount": 0,
+        "isPopular": false
       }
     }
   ]
