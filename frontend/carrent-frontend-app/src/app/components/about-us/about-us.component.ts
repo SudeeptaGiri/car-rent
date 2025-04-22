@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Car } from '../cards/cards.component';
+import { CarDetails } from '../../models/car.interface';
 
 interface Location {
   id: number;
@@ -42,7 +42,7 @@ export class AboutUsComponent implements OnInit {
     });
 
     // Load cars data to get brands and count
-    this.http.get<Car[]>('assets/data/cars.json').subscribe({
+    this.http.get<CarDetails[]>('assets/data/cars.json').subscribe({
       next: (cars) => {
         // Set car count
         this.carCount = cars.length;
@@ -50,7 +50,7 @@ export class AboutUsComponent implements OnInit {
         // Extract unique car brands (first word of car name)
         const brandSet = new Set<string>();
         cars.forEach(car => {
-          const brand = car.name.split(' ')[0];
+          const brand = car.brand.split(' ')[0];
           brandSet.add(brand);
         });
         
