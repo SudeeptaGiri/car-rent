@@ -2,6 +2,8 @@
     <div class="filter-container">
         <button class="clear-button" (click)="clearFilters()">Clear all filters</button>
         <div class="filter-row ">
+        <button class="clear-button" (click)="clearFilters()">Clear all filters</button>
+        <div class="filter-row ">
             <div class="filter-group">
                 <label>Pick-up location</label>
                 <div class="select-wrapper" (click)="openLocationModal(true)">
@@ -20,9 +22,8 @@
                     </div>
                 </div>
             </div>
-
-
             <calendar #calendarComponent class="cal flex-1 w-full pt-7"></calendar>
+
 
         </div>
 
@@ -91,13 +92,18 @@
             <button class="close-modal" (click)="closeLocationModal()">&times;</button>
         </div>
 
+
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(true)">
                 <span class="location-icon">📍</span>
                 Use current location
             </button>
 
+
             <div class="location-search-container">
+                <input type="text" placeholder="Search for a city or address" [(ngModel)]="pickupSearchQuery"
+                    (input)="onPickupSearchInput()" class="location-search-input">
+
                 <input type="text" placeholder="Search for a city or address" [(ngModel)]="pickupSearchQuery"
                     (input)="onPickupSearchInput()" class="location-search-input">
 
@@ -105,6 +111,8 @@
                     <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
                         Searching...
                     </div>
+                    <div class="no-suggestions"
+                        *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
                     <div class="no-suggestions"
                         *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
                         No locations found
@@ -128,13 +136,18 @@
             <button class="close-modal" (click)="closeLocationModal()">&times;</button>
         </div>
 
+
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(false)">
                 <span class="location-icon">📍</span>
                 Use current location
             </button>
 
+
             <div class="location-search-container">
+                <input type="text" placeholder="Search for a city or address" [(ngModel)]="dropoffSearchQuery"
+                    (input)="onDropoffSearchInput()" class="location-search-input">
+
                 <input type="text" placeholder="Search for a city or address" [(ngModel)]="dropoffSearchQuery"
                     (input)="onDropoffSearchInput()" class="location-search-input">
 
@@ -144,8 +157,12 @@
                     </div>
                     <div class="no-suggestions"
                         *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
+                    <div class="no-suggestions"
+                        *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
                         No locations found
                     </div>
+                    <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions"
+                        (click)="selectDropoffLocation(suggestion)">
                     <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions"
                         (click)="selectDropoffLocation(suggestion)">
                         <span class="suggestion-icon">📍</span>
