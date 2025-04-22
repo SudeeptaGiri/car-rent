@@ -5,7 +5,7 @@
             <div class="filter-group">
                 <label>Pick-up location</label>
                 <div class="select-wrapper" (click)="openLocationModal(true)">
-                    <div class="location-display">
+                    <div class="location-display text-gray-700">
                         {{ selectedPickupLocation || 'Choose location' }}
                     </div>
 
@@ -13,16 +13,16 @@
             </div>
 
             <div class="filter-group">
-                <label>Drop-off location</label>
+                <label class="">Drop-off location</label>
                 <div class="select-wrapper" (click)="openLocationModal(false)">
-                    <div class="location-display">
+                    <div class="location-display text-gray-700">
                         {{ selectedDropoffLocation || 'Choose location' }}
                     </div>
                 </div>
             </div>
 
 
-            <calendar class="cal flex-1 w-full pt-7"></calendar>
+            <calendar #calendarComponent class="cal flex-1 w-full pt-7"></calendar>
 
         </div>
 

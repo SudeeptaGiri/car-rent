@@ -3,6 +3,7 @@ import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { CalendarComponent } from '../calendar/calendar.component';
 
 
 interface LocationSuggestion {
@@ -33,6 +34,7 @@ interface FilterData {
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @ViewChild('rangeSlider') rangeSliderElement!: ElementRef;
+  @ViewChild('calendarComponent') calendarComponent!: CalendarComponent;
   
   // Price slider properties
   minPrice: number = 50;
@@ -470,6 +472,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
         break;
     }
   }
+
+  
   
   clearFilters(): void {
     // Reset all filter values
@@ -502,6 +506,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
     selects.forEach(select => {
       select.selectedIndex = 0;
     });
+
+    if (this.calendarComponent) {
+      this.calendarComponent.resetCalendar();
+    }
     
     // Reset slider
     this.updateSliderPositions();
