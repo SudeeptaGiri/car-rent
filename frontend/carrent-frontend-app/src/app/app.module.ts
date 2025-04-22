@@ -14,6 +14,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { CarBookingComponent } from './components/car-booking/car-booking.component';
@@ -33,6 +34,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { BookingSuccessDialogComponent } from './components/booking-success-dialog/booking-success-dialog.component';
 import { EditBookingComponent } from './components/edit-booking/edit-booking.component';
 import { EditBookingPageComponent } from './pages/edit-booking-page/edit-booking-page.component';
+import { CalendarComponent } from './components/calendar/calendar.component';
 
 import {
   ButtonModule,
@@ -46,7 +48,7 @@ import { IconModule, IconSetService } from '@coreui/icons-angular';
   declarations: [
     AppComponent,
     CarBookingComponent,
-    // DatePickerDialogComponent,
+    CalendarComponent,
     LocationDialogComponent,
     CarReservedDialogComponent,
     HeaderComponent,
@@ -69,6 +71,7 @@ import { IconModule, IconSetService } from '@coreui/icons-angular';
     ReactiveFormsModule,
     HttpClientModule,
     CommonModule,
+    FormsModule,
     MatDialogModule,
     MatButtonModule,
     MatInputModule,

@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -83,3 +88,4 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .no-backdrop-dialog .mat-mdc-dialog-container {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
 }
+
