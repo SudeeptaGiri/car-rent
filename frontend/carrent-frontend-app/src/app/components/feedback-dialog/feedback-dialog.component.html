@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>How was your experience?</h2>
+<div mat-dialog-content>
+  <form [formGroup]="feedbackForm">
+    <div class="rating-container">
+      <p class="rate-exp">Rate your experience</p>
+      <div class="star-rating">
+        <span 
+          *ngFor="let star of [1, 2, 3, 4, 5]" 
+          class="star"
+          [class.filled]="feedbackForm.get('rating')?.value >= star"
+          (click)="setRating(star)">
+          ★
+        </span>
+      </div>
+      <div *ngIf="feedbackForm.get('rating')?.touched && feedbackForm.get('rating')?.invalid" class="error-message">
+        Please select a rating
+      </div>
+    </div>
+    
+    <div class="comment-container">
+      <p class="review">Review</p>
+      <textarea formControlName="comment" rows="4" class="add-review" placeholder="Add your Comment"></textarea>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancelClick()" class="cancel-feedback">Cancel</button>
+  <button 
+    mat-button 
+    color="primary" 
+    [disabled]="feedbackForm.invalid" 
+    (click)="onSubmitClick()"
+    class="submit-feedback">
+    Submit
+  </button>
+</div>

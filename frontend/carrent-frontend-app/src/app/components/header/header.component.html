@@ -1,0 +1,22 @@
+<header>
+    <figure class="logo">
+        <img src="Logo.svg" alt="Page Logo" class="logo" />
+    </figure>
+
+    <nav class="nav-bar">
+        <ul>
+            <li><a [routerLink]="['/home']" routerLinkActive="active">Home</a></li>
+            <li><a [routerLink]="['/cars']" routerLinkActive="active">Cars</a></li>
+            <li><a [routerLink]="['/my-bookings']" routerLinkActive="active">My Bookings</a></li>
+        </ul>
+    </nav>
+
+    <div class="login-side">
+        <button>Log&nbsp;In</button>
+        <select name="Lang Selector" id="">
+            <option value="en" selected>En</option>
+            <option value="fr">Fr</option>
+            <option value="es">Es</option>
+        </select>
+    </div>
+</header>

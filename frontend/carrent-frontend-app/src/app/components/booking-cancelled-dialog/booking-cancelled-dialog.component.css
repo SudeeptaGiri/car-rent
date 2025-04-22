@@ -1,0 +1,45 @@
+.cancelled-dialog {
+    padding: 20px;
+  }
+  
+  .cancelled-dialog .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .cancelled-dialog .header h2 {
+    margin: 0;
+  }
+  
+  .cancelled-dialog .header .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .cancelled-dialog .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cancelled-dialog .content .icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4caf50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+  
+  .cancelled-dialog .content p {
+    font-size: 18px;
+    text-align: center;
+  }

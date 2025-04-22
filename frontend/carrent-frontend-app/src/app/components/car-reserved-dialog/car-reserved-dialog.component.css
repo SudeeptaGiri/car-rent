@@ -1,0 +1,50 @@
+.reserved-dialog-container {
+    padding: 20px;
+    min-width: 320px;
+    max-width: 400px;
+    background-color: white;
+    border-radius: 8px;
+  }
+  
+  .dialog-title {
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  .dialog-message {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 24px;
+  }
+  
+  .similar-link {
+    color: #1976d2;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .ok-button {
+    background-color: #bd2828 !important;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-transform: none;
+  }
+  
+  .ok-button:hover {
+    background-color: #d11212 !important;
+  }
