@@ -15,7 +15,7 @@
     <div class="cars-grid" *ngIf="!loading && cars.length">
       <div class="car-card" *ngFor="let car of displayedCars">
         <div class="car-image-container">
-          <img [src]="car.imageUrl" alt="{{car.name}}" class="car-image" 
+          <img [src]="car.images[0].url" alt="{{car.brand}}" class="car-image" 
                onerror="this.src='https://via.placeholder.com/300x200?text=Car+Image'">
           <div class="car-status" [ngClass]="car.status.toLowerCase()">
             {{car.status}}
@@ -24,7 +24,7 @@
         
         <div class="car-details">
           <div class="car-header">
-            <h3 class="car-name">{{car.name}} {{car.modelYear}}</h3>
+            <h3 class="car-name">{{car.brand}} {{car.year}}</h3>
             <div class="car-rating">
               {{car.rating}}
               <span class="star">★</span>
@@ -34,7 +34,7 @@
           <p class="car-location">{{car.location}}</p>
           
           <button class="book-button" (click)="bookCar(car)">
-            Book the car - {{formatPrice(car.pricePerDay)}}/day
+            Book the car - {{formatPrice(car.price)}}/day
           </button>
           
           <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>

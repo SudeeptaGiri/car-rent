@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CarDetailsPopupComponent } from '../car-details-popup/car-details-popup.component';
 import { MatDialog } from '@angular/material/dialog';
+import { CarDetails } from '../../models/car.interface';
 
 export enum CarStatus {
   AVAILABLE = 'Available',
@@ -17,21 +18,6 @@ export enum CarCategory {
   OFFROAD = 'Off-road car'
 }
 
-export interface Car {
-  id: number;
-  name: string;
-  modelYear: number;
-  location: string;
-  status: CarStatus;
-  engineType: string;
-  gearboxType: string;
-  category: CarCategory;
-  pricePerDay: number;
-  rating: number;
-  bookedFrom: string;
-  bookedTill: string;
-  imageUrl: string;
-}
 
 @Component({
   selector: 'app-cards',
@@ -40,8 +26,8 @@ export interface Car {
   styleUrls: ['./cards.component.css']
 })
 export class CardsComponent implements OnInit {
-  cars: Car[] = [];
-  popularCars: Car[] = [];
+  cars: CarDetails[] = [];
+  popularCars: CarDetails[] = [];
   loading = true;
   error: string | null = null;
   viewAllMode = false;
@@ -50,7 +36,7 @@ export class CardsComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 16; // Show 16 cars per page
   totalPages = 1;
-  displayedCars: Car[] = [];
+  displayedCars: CarDetails[] = [];
 
   constructor(private http: HttpClient, private dialog: MatDialog) {}
 
@@ -59,9 +45,11 @@ export class CardsComponent implements OnInit {
   }
 
   fetchCars(): void {
-    this.http.get<Car[]>('assets/data/cars.json').subscribe({
+    this.http.get<{ cars: CarDetails[] }>('assets/cars.json').subscribe({
       next: (data) => {
-        this.cars = data;
+        console.log('Cars data loaded successfully:',data );
+        this.cars = data.cars;
+        console.log(this.cars[0]);
         // Get top rated cars for popular section
         this.popularCars = [...this.cars]
           .sort((a, b) => b.rating - a.rating)
@@ -90,34 +78,104 @@ export class CardsComponent implements OnInit {
     // Fallback data in case the JSON file can't be loaded
     this.cars = [
       {
-        id: 1,
-        name: "Nissan Z",
-        modelYear: 2024,
-        location: "Hyderabad, India",
-        status: CarStatus.AVAILABLE,
-        engineType: "Gasoline",
-        gearboxType: "Automatic",
-        category: CarCategory.SPORTS,
-        pricePerDay: 550,
-        rating: 4.8,
-        bookedFrom: "2023-10-20",
-        bookedTill: "2023-10-25",
-        imageUrl: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80"
-      },
-      {
-        id: 2,
-        name: "Audi A6",
-        modelYear: 2023,
-        location: "Hyderabad, India",
-        status: CarStatus.AVAILABLE,
-        engineType: "Hybrid",
-        gearboxType: "Automatic",
-        category: CarCategory.LUXURY,
-        pricePerDay: 180,
-        rating: 4.7,
-        bookedFrom: "2023-10-20",
-        bookedTill: "2023-10-27",
-        imageUrl: "https://images.unsplash.com/photo-1541348263662-e068662d82af?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80"
+        "id": "1",
+        "brand": "Nissan",
+        "model": "Z",
+        "year": 2024,
+        "location": "Hyderabad, India",
+        "rating": 4.8,
+        "price": 550,
+        "category": "Sports car",
+        "status": "Not Available",
+        "images": [
+          {
+            "id": "1",
+            "url": "assets/Car1.svg",
+            "isPrimary": true
+          },
+          {
+            "id": "2",
+            "url": "assets/Car2.svg",
+            "isPrimary": false
+          },
+          {
+            "id": "3",
+            "url": "assets/Car3.svg",
+            "isPrimary": false
+          },
+          {
+            "id": "4",
+            "url": "assets/Car4.svg",
+            "isPrimary": false
+          },
+          {
+            "id": "5",
+            "url": "assets/Car5.svg",
+            "isPrimary": false
+          },
+          {
+            "id": "6",
+            "url": "assets/Car6.svg",
+            "isPrimary": false
+          }
+        ],
+        "specifications": {
+          "transmission": "Automatic",
+          "engine": "Gasoline",
+          "fuelType": "GASOLINE",
+          "seats": 2,
+          "fuelConsumption": "10.5 L/100km",
+          "features": ["Sports Mode", "GPS"]
+        },
+        "bookedDates": [
+          {
+            "startDate": "2025-04-21",
+            "startTime": "10:00",
+            "endDate": "2025-04-24",
+            "endTime": "16:00",
+            "bookingId": "booking123",
+            "userId": "user456",
+            "status": "confirmed" 
+          },
+          {
+            "startDate": "2024-02-20",
+            "startTime": "09:00",
+            "endDate": "2024-02-25",
+            "endTime": "14:00",
+            "bookingId": "booking124",
+            "userId": "user789",
+            "status": "confirmed"
+          }
+        ],
+        "reviews": {
+          "content": [
+            {
+              "id": "1",
+              "userName": "John Doe",
+              "rating": 4.8,
+              "comment": "Amazing sports car experience! The power and handling are exceptional.",
+              "date": "2024-01-15",
+              "userAvatar": "assets/User1.svg"
+            },
+            {
+              "id": "2",
+              "userName": "Sarah Smith",
+              "rating": 1.9,
+              "comment": "Perfect weekend car. Smooth ride and great features.",
+              "date": "2024-01-10",
+              "userAvatar": "assets/User2.svg"
+            }
+          ],
+          "totalPages": 1,
+          "currentPage": 0,
+          "totalElements": 2
+        },
+        "popularity": {
+          "rentCount": 150,
+          "viewCount": 1200,
+          "favoriteCount": 89,
+          "isPopular": true
+        }
       }
     ];
     this.popularCars = [...this.cars];
@@ -125,7 +183,7 @@ export class CardsComponent implements OnInit {
     this.error = null;
   }
 
-  bookCar(car: Car): void {
+  bookCar(car: CarDetails): void {
     // Empty function as requested
     console.log('Book car clicked:', car);
   }

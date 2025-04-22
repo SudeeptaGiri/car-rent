@@ -16,7 +16,7 @@ import {
   providedIn: 'root'
 })
 export class CarService {
-  private jsonUrl = 'assets/data/cars.json';
+  private jsonUrl = 'assets/cars.json';
 
   constructor(private http: HttpClient) {}
 
