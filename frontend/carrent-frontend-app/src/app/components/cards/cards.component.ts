@@ -4,11 +4,11 @@ import { CarDetailsPopupComponent } from '../car-details-popup/car-details-popup
 import { MatDialog } from '@angular/material/dialog';
 import { CarDetails } from '../../models/car.interface';
 
-export enum CarStatus {
-  AVAILABLE = 'Available',
-  RESERVED = 'Reserved',
-  UNAVAILABLE = 'Unavailable'
-}
+// export enum CarStatus {
+//   AVAILABLE = 'Available',
+//   RESERVED = 'Reserved',
+//   UNAVAILABLE = 'Unavailable'
+// }
 
 export enum CarCategory {
   PASSENGER = 'Passenger car',
