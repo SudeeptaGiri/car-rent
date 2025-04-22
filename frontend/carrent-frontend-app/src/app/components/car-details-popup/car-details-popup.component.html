@@ -28,7 +28,7 @@
         class="thumbnail-list flex flex-row lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:h-[350px] h-[100px] w-full lg:w-[10%]"
         aria-label="Image thumbnails">
         <button *ngFor="let image of carDetails.images; let i = index"
-          class="min-w-[100px] lg:min-w-full lg:h-[200px] h-full rounded-md cursor-pointer border-2 transition flex-shrink-0 lg:flex-shrink"
+          class="min-w-[100px] h-full rounded-md cursor-pointer border-2 transition flex-shrink-0 lg:flex-shrink"
           [ngClass]="{'border-red-500': image.isPrimary,'border-gray-200': !image.isPrimary}"
           (click)="selectImage(image)" [attr.aria-label]="'View car image ' + (i + 1)"
           [attr.aria-pressed]="image.isPrimary">
@@ -114,8 +114,8 @@
         </dl>
 
         <!-- Need to Add dateRange picker -->
-        <app-date-range-picker [bookedDates]="formattedBookedRanges" (dateRangeSelected)="onDateRangeSelected($event)">
-        </app-date-range-picker>
+        <calendar [bookedDates]="formattedBookedRanges" (dateRangeSelected)="onDateRangeSelected($event)">
+        </calendar>
 
         <!-- Booking Button -->
         <button

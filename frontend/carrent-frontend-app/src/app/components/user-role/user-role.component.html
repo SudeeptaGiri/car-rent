@@ -1,24 +1,23 @@
 <div class="flex items-center space-x-2 bg-cream px-4 py-2 rounded-md">
-    <img
-      *ngIf="isLoggedIn()"
-      src="https://i.pravatar.cc/30?img=1"
-      alt="User Avatar"
-      class="w-8 h-8 rounded-full object-cover"
-    />
-    <ng-container *ngIf="isLoggedIn(); else loginBtn">
-        <span class="text-sm text-gray-800 font-medium">
-          Hello, <span class="font-semibold">{{ displayName }}</span>
-          <span class="text-gray-500"> ({{ role }})</span>
-        </span>
-      </ng-container>
-    
-      <ng-template #loginBtn>
-        <a
-          routerLink="/login"
-          class="text-sm text-red-600  hover:text-red-700 transition"
-        >
-          Log in
-        </a>
-      </ng-template>
-  </div>
+  <img
+    *ngIf="isLoggedIn()"
+    src="https://i.pravatar.cc/30?img=1"
+    alt="User Avatar"
+    class="w-8 h-8 rounded-full object-cover"
+  />
+  <ng-container *ngIf="isLoggedIn(); else loginBtn">
+      <span class="text-sm text-gray-800 font-medium">
+        Hello, <span class="font-semibold">{{ displayName }}</span>
+        <span class="text-gray-500"> ({{ role }})</span>
+      </span>
+    </ng-container>
   
+    <ng-template #loginBtn>
+      <a
+        routerLink="/login"
+        class="text-lg text-red-600 hover:border-red-700"
+      >
+        Log in
+      </a>
+    </ng-template>
+</div>

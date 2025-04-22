@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CarDetailsPopupComponent } from './components/car-details-popup/car-details-popup.component';
 import { NotificationComponent } from './components/notification/notification.component';
-import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 // Pages
 import { RegisterComponent } from './pages/register/register.component';
@@ -53,8 +52,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CalendarComponent,
     UserRoleComponent,
     CarDetailsPopupComponent,
-    NotificationComponent,
-    DateRangePickerComponent
+    NotificationComponent
   ],
   imports: [
     BrowserModule,
