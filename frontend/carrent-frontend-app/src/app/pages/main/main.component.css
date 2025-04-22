@@ -2,18 +2,18 @@
   background-color: #fffbf3;
 }
 
-h1 {
+.heading1{
   font-size: 2.5rem;
   font-weight: 700;
   color: #333;
   background-color: #fffbf3;
-  margin-top: 0px;
-  margin-bottom: 1rem;
-  padding-top: 1rem;
+  margin-top: 0rem;
+  margin-bottom: 3rem;
+  padding-top: 2rem;
   margin-left: 2rem;
 }
 
-h2{
+.heading2{
   font-size: 2rem;
   font-weight: 300;
   color: black;

@@ -1,8 +1,7 @@
 /* Filter container */
-h1{
-  margin-top: 0px;
-  padding-top: 2rem;
-  padding-: 2rem;
+top-heading{
+
+  margin-left: 2rem;
 }
 .filter {
   background-color: #fff;
