@@ -31,7 +31,7 @@ export class AboutUsComponent implements OnInit {
     this.yearsInBusiness = currentYear - this.originYear;
     
     // Load locations data to get count
-    this.http.get<Location[]>('assets/data/hyderabad-locations.json').subscribe({
+    this.http.get<Location[]>('assets/data/locations.json').subscribe({
       next: (locations) => {
         this.locationCount = locations.length;
       },

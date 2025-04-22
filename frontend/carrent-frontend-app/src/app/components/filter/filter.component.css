@@ -10,7 +10,7 @@ top-heading{
   margin-bottom: 2rem;
   margin-left: 2rem;
   margin-right: 2rem;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .filter-container {
@@ -23,6 +23,7 @@ top-heading{
 
 .filter-row {
   display: flex;
+  align-items: last baseline;
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 20px;
@@ -64,7 +65,7 @@ select {
   border: 1px solid #ddd;
   border-radius: 4px;
   appearance: none;
-  background-color: #fff;
+  background-color: #fffbf3;
   font-size: 14px;
   color: #333;
   cursor: pointer;
@@ -213,7 +214,7 @@ select:focus {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  background-color: white;
+  background-color: #fffbf3;
   padding: 10px;
   border: #dddddd 1px solid;
   border-radius: 4px;

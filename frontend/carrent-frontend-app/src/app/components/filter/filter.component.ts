@@ -1,7 +1,9 @@
+import { map } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+
 
 interface LocationSuggestion {
   displayName: string;
@@ -512,4 +514,3 @@ export class FilterComponent implements OnInit, AfterViewInit {
 }
 
 // Add the missing 'map' operator
-import { map } from 'rxjs/operators';
