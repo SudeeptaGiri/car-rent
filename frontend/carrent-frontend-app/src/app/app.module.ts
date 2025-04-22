@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CarDetailsPopupComponent } from './components/car-details-popup/car-details-popup.component';
+import { NotificationComponent } from './components/notification/notification.component';
+import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 // Pages
 import { RegisterComponent } from './pages/register/register.component';
@@ -48,7 +51,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CardsComponent,
     FilterComponent,
     CalendarComponent,
-    UserRoleComponent
+    UserRoleComponent,
+    CarDetailsPopupComponent,
+    NotificationComponent,
+    DateRangePickerComponent
   ],
   imports: [
     BrowserModule,

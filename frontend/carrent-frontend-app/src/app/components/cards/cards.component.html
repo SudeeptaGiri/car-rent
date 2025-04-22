@@ -37,7 +37,7 @@
             Book the car - {{formatPrice(car.pricePerDay)}}/day
           </button>
           
-          <a class="see-more" (click)="seeMore(car)">See more details</a>
+          <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>
         </div>
       </div>
     </div>

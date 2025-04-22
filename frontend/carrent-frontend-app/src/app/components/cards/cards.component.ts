@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CarDetailsPopupComponent } from '../car-details-popup/car-details-popup.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export enum CarStatus {
   AVAILABLE = 'Available',
@@ -50,7 +52,7 @@ export class CardsComponent implements OnInit {
   totalPages = 1;
   displayedCars: Car[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchCars();
@@ -128,10 +130,20 @@ export class CardsComponent implements OnInit {
     console.log('Book car clicked:', car);
   }
 
-  seeMore(car: Car): void {
-    // Empty function as requested
-    console.log('See more details clicked:', car);
-  }
+  // seeMore(car: Car): void {
+  //   // Empty function as requested
+  //   console.log('See more details clicked:', car);
+  // }
+  openCarDetailsPopup(carId: string): void {
+      const dialogRef = this.dialog.open(CarDetailsPopupComponent, {
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        panelClass: 'custom-dialog-container',
+        data: { carId },
+        autoFocus: false,
+        hasBackdrop: true
+      });
+    }
 
   toggleViewMode(): void {
     this.viewAllMode = !this.viewAllMode;

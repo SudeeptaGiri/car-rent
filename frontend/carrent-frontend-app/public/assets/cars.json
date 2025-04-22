@@ -1,0 +1,320 @@
+{
+  "cars": [
+    {
+      "id": "1",
+      "brand": "Nissan",
+      "model": "Z",
+      "year": 2024,
+      "location": "Hyderabad, India",
+      "rating": 4.8,
+      "price": 550,
+      "category": "Sports car",
+      "status": "Not Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 2,
+        "fuelConsumption": "10.5 L/100km",
+        "features": ["Sports Mode", "GPS"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking123",
+          "userId": "user456",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking124",
+          "userId": "user789",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "John Doe",
+            "rating": 4.8,
+            "comment": "Amazing sports car experience! The power and handling are exceptional.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "2",
+            "userName": "Sarah Smith",
+            "rating": 1.9,
+            "comment": "Perfect weekend car. Smooth ride and great features.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 2
+      },
+      "popularity": {
+        "rentCount": 150,
+        "viewCount": 1200,
+        "favoriteCount": 89,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "2",
+      "brand": "Audi",
+      "model": "A6 Quattro",
+      "year": 2023,
+      "location": "Hyderabad, India",
+      "rating": 4.8,
+      "price": 180,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Hybrid",
+        "fuelType": "HYBRID",
+        "seats": 5,
+        "fuelConsumption": "6.5 L/100km",
+        "features": ["GPS", "Quattro AWD", "Leather Seats"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-05-21",
+          "startTime": "10:00",
+          "endDate": "2025-05-24",
+          "endTime": "16:00",
+          "bookingId": "booking125",
+          "userId": "user457",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2025-04-23",
+          "startTime": "09:00",
+          "endDate": "2025-05-02",
+          "endTime": "14:00",
+          "bookingId": "booking126",
+          "userId": "user790",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Sarah Smith",
+            "rating": 1.9,
+            "comment": "Perfect weekend car. Smooth ride and great features.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          },
+          {
+            "id": "2",
+            "userName": "John Doe",
+            "rating": 4.8,
+            "comment": "Amazing sports car experience! The power and handling are exceptional.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "3",
+            "userName": "David Brown",
+            "rating": 4.7,
+            "comment": "A bit pricey, but worth every penny. The performance is top-notch.",
+            "date": "2024-01-05",
+            "userAvatar": "assets/User3.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 1
+      },
+      "popularity": {
+        "rentCount": 120,
+        "viewCount": 950,
+        "favoriteCount": 75,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "3",
+      "brand": "BMW",
+      "model": "X5",
+      "year": 2022,
+      "location": "Hyderabad, India",
+      "rating": 4.7,
+      "price": 200,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "assets/Car1.svg",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "assets/Car2.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "assets/Car3.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "assets/Car4.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "assets/Car5.svg",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "assets/Car6.svg",
+          "isPrimary": false
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "David Brown",
+            "rating": 4.7,
+            "comment": "A bit pricey, but worth every penny. The performance is top-notch.",
+            "date": "2024-01-05",
+            "userAvatar": "assets/User3.svg"
+          },
+          {
+            "id": "2",
+            "userName": "John Doe",
+            "rating": 4.8,
+            "comment": "Amazing sports car experience! The power and handling are exceptional.",
+            "date": "2024-01-15",
+            "userAvatar": "assets/User1.svg"
+          },
+          {
+            "id": "3",
+            "userName": "Sarah Smith",
+            "rating": 1.9,
+            "comment": "Perfect weekend car. Smooth ride and great features.",
+            "date": "2024-01-10",
+            "userAvatar": "assets/User2.svg"
+          }
+        ],
+        "totalPages": 1,
+        "currentPage": 0,
+        "totalElements": 1
+      },
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Diesel",
+        "fuelType": "DIESEL",
+        "seats": 5,
+        "fuelConsumption": "8.0 L/100km",
+        "features": ["GPS", "Leather Seats", "Sunroof"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2025-04-21",
+          "startTime": "10:00",
+          "endDate": "2025-04-24",
+          "endTime": "16:00",
+          "bookingId": "booking127",
+          "userId": "user458",
+          "status": "confirmed" 
+        },
+        {
+          "startDate": "2024-02-20",
+          "startTime": "09:00",
+          "endDate": "2024-02-25",
+          "endTime": "14:00",
+          "bookingId": "booking128",
+          "userId": "user791",
+          "status": "confirmed"
+        }
+      ],
+      "popularity": {
+        "rentCount": 100,
+        "viewCount": 800,
+        "favoriteCount": 50,
+        "isPopular": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,231 @@
+<dialog
+  class="relative bg-[#FFFBF3] p-4 w-full h-full max-w-6xl mx-auto shadow-md flex flex-col lg:flex-row overflow-y-auto max-h-screen rounded-sm car-details"
+  role="dialog" aria-labelledby="car-details-title" aria-modal="true" *ngIf="carDetails">
+
+  <!-- Notification -->
+  <div class="w-full h-full z-10">
+    <app-notification [show]="showLoginNotification" (cancel)="hideLoginNotification()" (login)="handleLogin()"
+      class="absolute top-10 left-0 md:left-[18%] lg:left-[30%]"></app-notification>
+  </div>
+
+
+
+
+  <!-- Close Button -->
+  <button (click)="close()" aria-label="Close dialog" type="button"
+    class="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl pb-2">
+    <mat-icon aria-hidden="true">close</mat-icon>
+  </button>
+
+  <main class="flex-none p-2 pt-2 mt-6 w-full">
+    <!-- Car Details Header -->
+    <h1 id="car-details-title" class="sr-only">Car Details for {{ carDetails.brand }} {{ carDetails.model }}</h1>
+
+    <!-- Image Gallery Section -->
+    <section class="w-full flex flex-col lg:flex-row gap-4 mb-6 lg:mb-0" aria-label="Car Images">
+      <!-- Thumbnail List -->
+      <nav
+        class="thumbnail-list flex flex-row lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:h-[350px] h-[100px] w-full lg:w-[10%]"
+        aria-label="Image thumbnails">
+        <button *ngFor="let image of carDetails.images; let i = index"
+          class="min-w-[100px] lg:min-w-full lg:h-[200px] h-full rounded-md cursor-pointer border-2 transition flex-shrink-0 lg:flex-shrink"
+          [ngClass]="{'border-red-500': image.isPrimary,'border-gray-200': !image.isPrimary}"
+          (click)="selectImage(image)" [attr.aria-label]="'View car image ' + (i + 1)"
+          [attr.aria-pressed]="image.isPrimary">
+          <img [src]="image.url" [alt]="carDetails.model + ' view ' + (i + 1)"
+            class="w-full h-full object-cover rounded" />
+        </button>
+      </nav>
+
+      <!-- Main Image Display -->
+      <figure class="relative w-full lg:w-[60%] h-[350px]">
+        <img [src]="getPrimaryImageUrl()" [alt]="carDetails.brand + ' ' + carDetails.model + ' main view'"
+          class="w-full h-full object-cover shadow-md rounded-2xl" />
+        <figcaption
+          class="absolute top-2 left-2 border border-gray-100 rounded-2xl w-[100px] bg-white text-sm text-center"
+          [ngClass]="{
+            'text-green-600': carDetails.status === 'Available',
+            'text-red-600': carDetails.status === 'Not Available'
+          }" role="status">
+          {{ carDetails.status }}
+        </figcaption>
+      </figure>
+
+      <!-- Car Details Section -->
+      <section
+        class="bg-[#F0F0F0] rounded-xl p-4 shadow-md w-full lg:w-[40%] flex flex-col justify-between max-h-[350px] mt-4 lg:mt-0"
+        aria-label="Car Information">
+        <!-- Header -->
+        <header class="flex items-start justify-between mb-2">
+          <div class="mb-2">
+            <h2 class="text-base font-semibold">
+              {{ carDetails.brand }} {{ carDetails.model }} {{ carDetails.year }}
+            </h2>
+            <p class="text-gray-500 text-sm">{{ carDetails.location }}</p>
+          </div>
+          <div class="flex items-center mt-1" aria-label="Car rating">
+            <span class="text-base font-medium">{{ carDetails.rating }}</span>
+            <mat-icon aria-hidden="true" style="color: #facc15; font-size: 20px">star</mat-icon>
+          </div>
+        </header>
+
+        <!-- Specifications -->
+        <dl class="grid grid-cols-2 gap-2 mb-2 text-xs overflow-x-auto" aria-label="Car specifications">
+          <!-- Transmission -->
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">sync_alt</mat-icon>
+            <dt class="sr-only">Transmission</dt>
+            <dd>{{ carDetails.specifications.transmission }}</dd>
+          </div>
+
+          <!-- Engine -->
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">engineering</mat-icon>
+            <dt class="sr-only">Engine</dt>
+            <dd>{{ carDetails.specifications.engine }}</dd>
+          </div>
+
+          <!-- Fuel Type -->
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">local_gas_station</mat-icon>
+            <dt class="sr-only">Fuel Type</dt>
+            <dd>{{ carDetails.specifications.fuelType }}</dd>
+          </div>
+
+          <!-- Seats -->
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">event_seat</mat-icon>
+            <dt class="sr-only">Seats</dt>
+            <dd>{{ carDetails.specifications.seats }} seats</dd>
+          </div>
+
+          <!-- Fuel Consumption -->
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">speed</mat-icon>
+            <dt class="sr-only">Fuel Consumption</dt>
+            <dd>{{ carDetails.specifications.fuelConsumption }}</dd>
+          </div>
+
+          <!-- Features -->
+          <div *ngFor="let feature of carDetails.specifications.features" class="flex items-center gap-2">
+            <mat-icon class="text-gray-500" aria-hidden="true">check_circle</mat-icon>
+            <span>{{ feature }}</span>
+          </div>
+        </dl>
+
+        <!-- Need to Add dateRange picker -->
+        <app-date-range-picker [bookedDates]="formattedBookedRanges" (dateRangeSelected)="onDateRangeSelected($event)">
+        </app-date-range-picker>
+
+        <!-- Booking Button -->
+        <button
+          class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          (click)="bookCar()" [disabled]="!dateRange"
+          aria-label="Book the car for dollars per day">
+          Book the car - ${{ carDetails.price }}/day
+        </button>
+      </section>
+    </section>
+
+    <!-- Reviews Section -->
+    <section
+      class="review-section bg-[#F0F0F0] p-4 mt-6 md:p-6 rounded-lg shadow-md flex flex-col gap-4 h-[350px] overflow-y-auto"
+      aria-label="Customer Reviews">
+      <!-- Reviews Header -->
+      <header class="flex-none flex items-center justify-between mb-2 border-b border-gray-300 pb-2">
+        <h2 class="text-lg font-normal">Feedback</h2>
+
+        <!-- Sort Dropdown -->
+        <div class="relative">
+          <button type="button" (click)="toggleDropdown()" aria-haspopup="true" [attr.aria-expanded]="isDropdownOpen"
+            class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 focus:outline-none">
+            <span>Sort by: {{ selectedSort }}</span>
+            <mat-icon class="feedback-dropdown text-base transition-transform duration-200" [class.feedback-dropdown-rotate-180]="isDropdownOpen"
+              aria-hidden="true">
+              {{ isDropdownOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+            </mat-icon>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <ul *ngIf="isDropdownOpen" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10"
+            role="menu">
+            <li *ngFor="let option of sortOptions" role="menuitem">
+              <button (click)="selectSort(option.value)"
+                class="w-full px-4 py-2 text-sm text-left hover:bg-gray-100 focus:outline-none"
+                [class.font-medium]="selectedSort === option.value">
+                {{ option.label }}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </header>
+
+      <!-- Reviews List -->
+      <div class="flex-1 overflow-y-auto pr-2">
+        <ul class="space-y-6">
+          <li class="border-b border-gray-300 pb-2" *ngFor="let review of reviews">
+            <article class="flex gap-4">
+              <!-- Reviewer Info -->
+              <div class="w-[150px] shrink-0">
+                <div class="flex items-center gap-2">
+                  <img [src]="review.userAvatar" [alt]="review.userName + '\'s avatar'"
+                    class="w-10 h-10 rounded-full" />
+                  <span class="font-medium text-sm truncate">{{ review.userName }}</span>
+                </div>
+              </div>
+
+              <!-- Review Content -->
+              <div class="flex-1">
+                <div class="flex flex-col">
+                  <!-- Rating -->
+                  <div class="flex items-center mb-1" aria-label="Rating: out of 5 stars">
+                    <mat-icon *ngFor="let _ of getFilledStars(review.rating)" style="color: #facc15; font-size: 16px;"
+                      aria-hidden="true">star</mat-icon>
+                    <mat-icon *ngFor="let _ of getEmptyStars(review.rating)" style="color: #d1d5dc; font-size: 16px;"
+                      aria-hidden="true">star</mat-icon>
+                  </div>
+                  <!-- Comment -->
+                  <p class="text-gray-700 text-sm">{{ review.comment }}</p>
+                </div>
+              </div>
+
+              <!-- Review Date -->
+              <time class="w-[100px] shrink-0 text-right text-sm text-gray-500" [attr.datetime]="review.date">
+                {{ review.date | date }}
+              </time>
+            </article>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="flex justify-center items-center gap-2 mt-2 mb-2" aria-label="Car navigation">
+        <button type="button" (click)="onCarPageChange(currentCarIndex - 1)" [disabled]="currentCarIndex === 0"
+          aria-label="Previous car" class="p-1 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <mat-icon aria-hidden="true">chevron_left</mat-icon>
+        </button>
+
+        <div class="flex items-center gap-1" role="group" aria-label="Page navigation">
+          <ng-container *ngFor="let i of [-1, 0, 1]">
+            <button type="button" *ngIf="(currentCarIndex + i) >= 0 && (currentCarIndex + i) < totalCars"
+              (click)="onCarPageChange(currentCarIndex + i)"
+              class="w-8 h-8 rounded-full border flex items-center justify-center text-sm hover:cursor-pointer hover:bg-gray-100"
+              [ngClass]="{
+                'bg-black text-white': (currentCarIndex + i) === currentCarIndex,
+                'bg-white text-black': (currentCarIndex + i) !== currentCarIndex
+              }" [attr.aria-label]="'Page ' + (currentCarIndex + i + 1)"
+              [attr.aria-current]="(currentCarIndex + i) === currentCarIndex ? 'page' : undefined">
+              {{ currentCarIndex + i + 1 }}
+            </button>
+          </ng-container>
+        </div>
+
+        <button type="button" (click)="onCarPageChange(currentCarIndex + 1)"
+          [disabled]="currentCarIndex >= totalCars - 1" aria-label="Next car"
+          class="p-2 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
+        </button>
+      </nav>
+    </section>
+  </main>
+</dialog>
