@@ -1,0 +1,193 @@
+
+<section class="filter">
+    <div class="filter-container">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Pick-up location</label>
+                <div class="select-wrapper" (click)="openLocationModal(true)">
+                    <div class="location-display">
+                        {{ selectedPickupLocation || 'Choose location' }}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Drop-off location</label>
+                <div class="select-wrapper" (click)="openLocationModal(false)">
+                    <div class="location-display">
+                        {{ selectedDropoffLocation || 'Choose location' }}
+                    </div>
+                </div>
+            </div>
+
+            <calendar class="cal flex-1" ></calendar>
+
+            <!-- <div class="filter-group">
+                <label>Pick-up date</label>
+                <div class="select-wrapper">
+                    <select (change)="onSelectChange('pickupDate', $event)">
+                        <option>October 29</option>
+                        <option>October 30</option>
+                        <option>October 31</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Drop-off date</label>
+                <div class="select-wrapper">
+                    <select (change)="onSelectChange('dropoffDate', $event)">
+                        <option>October 31</option>
+                        <option>November 1</option>
+                        <option>November 2</option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Car category</label>
+                <div class="select-wrapper">
+                    <select (change)="onSelectChange('carCategory', $event)">
+                        <option>Passenger car</option>
+                        <option>Sports car</option>
+                        <option>Luxury car</option>
+                        <option>Off-road car</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Gearbox</label>
+                <div class="select-wrapper">
+                    <select (change)="onSelectChange('gearbox', $event)">
+                        <option>Automatic</option>
+                        <option>Manual</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label>Type of engine</label>
+                <div class="select-wrapper">
+                    <select (change)="onSelectChange('engineType', $event)">
+                        <option>Gasoline</option>
+                        <option>Diesel</option>
+                        <option>Electric</option>
+                        <option>Hybrid</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group price-group">
+                <div class="price-header">
+                    <label>Price per day</label>
+                    <span class="price-display">${{currentMinPrice}} - ${{currentMaxPrice}}</span>
+                </div>
+                <div class="price-range">
+                    <div #rangeSlider class="range-slider">
+                        <div class="slider-track"></div>
+                        <div class="min-handle"></div>
+                        <div class="max-handle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group button-group">
+                <button class="find-car-btn" (click)="findCars()">Find a car</button>
+            </div>
+        </div>
+
+        <button class="clear-button" (click)="clearFilters()">Clear all filters</button>
+    </div>
+</section>
+
+<!-- Pickup Location Modal -->
+<div class="location-modal" *ngIf="showPickupModal">
+    <div class="location-modal-content">
+        <div class="location-modal-header">
+            <h3>Choose pick-up location</h3>
+            <button class="close-modal" (click)="closeLocationModal()">&times;</button>
+        </div>
+        
+        <div class="location-modal-body">
+            <button class="use-current-location" (click)="useCurrentLocation(true)">
+                <span class="location-icon">📍</span>
+                Use current location
+            </button>
+            
+            <div class="location-search-container">
+                <input 
+                    type="text" 
+                    placeholder="Search for a city or address" 
+                    [(ngModel)]="pickupSearchQuery"
+                    (input)="onPickupSearchInput()"
+                    class="location-search-input"
+                >
+                
+                <div class="location-suggestions" *ngIf="showPickupSuggestions">
+                    <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
+                        Searching...
+                    </div>
+                    <div class="no-suggestions" *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
+                        No locations found
+                    </div>
+                    <div 
+                        class="suggestion-item" 
+                        *ngFor="let suggestion of pickupSuggestions"
+                        (click)="selectPickupLocation(suggestion)"
+                    >
+                        <span class="suggestion-icon">📍</span>
+                        <span class="suggestion-text">{{ suggestion.displayName }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dropoff Location Modal -->
+<div class="location-modal" *ngIf="showDropoffModal">
+    <div class="location-modal-content">
+        <div class="location-modal-header">
+            <h3>Choose drop-off location</h3>
+            <button class="close-modal" (click)="closeLocationModal()">&times;</button>
+        </div>
+        
+        <div class="location-modal-body">
+            <button class="use-current-location" (click)="useCurrentLocation(false)">
+                <span class="location-icon">📍</span>
+                Use current location
+            </button>
+            
+            <div class="location-search-container">
+                <input 
+                    type="text" 
+                    placeholder="Search for a city or address" 
+                    [(ngModel)]="dropoffSearchQuery"
+                    (input)="onDropoffSearchInput()"
+                    class="location-search-input"
+                >
+                
+                <div class="location-suggestions" *ngIf="showDropoffSuggestions">
+                    <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions">
+                        Searching...
+                    </div>
+                    <div class="no-suggestions" *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
+                        No locations found
+                    </div>
+                    <div 
+                        class="suggestion-item" 
+                        *ngFor="let suggestion of dropoffSuggestions"
+                        (click)="selectDropoffLocation(suggestion)"
+                    >
+                        <span class="suggestion-icon">📍</span>
+                        <span class="suggestion-text">{{ suggestion.displayName }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

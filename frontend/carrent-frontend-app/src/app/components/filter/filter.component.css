@@ -1,0 +1,374 @@
+/* Filter container */
+top-heading{
+
+  margin-left: 2rem;
+}
+.filter {
+  background-color: #fff;
+  margin-bottom: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  /* overflow: hidden; */
+}
+
+.filter-container {
+  padding: 20px;
+  position: relative;
+  background-color: #fffbf3;
+  border: 1px black solid;
+  border-radius: 10px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: last baseline;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Filter groups */
+.filter-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Select styling */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 10px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #777;
+}
+
+select {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  appearance: none;
+  background-color: #fffbf3;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #d32f2f;
+}
+
+/* Price range slider */
+.price-group {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.price-display {
+  font-size: 14px;
+  color: #333;
+  font-weight: 400;
+}
+
+.price-range {
+  position: relative;
+  padding-top: 10px;
+}
+
+.range-slider {
+  position: relative;
+  height: 4px;
+  background-color: #e5e5e5;
+  border-radius: 2px;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #e5e5e5 0%, #e5e5e5 0%, #d32f2f 0%, #d32f2f 20%, #e5e5e5 20%, #e5e5e5 100%);
+  border-radius: 2px;
+}
+
+.min-handle, .max-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #d32f2f;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.min-handle {
+  left: 0;
+}
+
+.max-handle {
+  left: 20%;
+}
+
+/* Button styling */
+.button-group {
+  display: flex;
+  align-items: flex-end;
+}
+
+.find-car-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.find-car-btn:hover {
+  background-color: #b71c1c;
+}
+
+.clear-button {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #d32f2f;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .filter-group {
+      min-width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-group {
+      min-width: 100%;
+  }
+  
+  .filter-row {
+      flex-direction: column;
+      gap: 15px;
+  }
+  
+  .clear-button {
+      position: static;
+      margin-top: 15px;
+      width: 100%;
+      text-align: center;
+  }
+  
+  .price-header {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .price-display {
+      margin-top: 5px;
+  }
+}
+
+/* Location display styling */
+.location-display {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: #fffbf3;
+  padding: 10px;
+  border: #dddddd 1px solid;
+  border-radius: 4px;
+}
+
+/* Location modal styling - NEW STYLES BELOW */
+.location-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.location-modal-content {
+  background-color: #fffbf3;
+  border-radius: 10px;
+  border: 1px solid black;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* Add this to hide horizontal scrollbar */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.location-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+}
+
+.location-modal-body {
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.use-current-location {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.use-current-location:hover {
+  background-color: #f5f5f5;
+}
+
+.location-icon {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.location-search-container {
+  position: relative;
+}
+
+.location-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 5px;
+  background-color: #fff;
+}
+
+.location-search-input:focus {
+  outline: none;
+  border-color: #d32f2f;
+}
+
+.location-suggestions {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9;
+}
+
+.suggestion-icon {
+  margin-right: 10px;
+  color: #777;
+}
+
+.suggestion-text {
+  font-size: 14px;
+}
+
+.loading-suggestions, .no-suggestions {
+  padding: 15px;
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+  .location-modal-content {
+    width: 95%;
+    max-height: 80vh;
+  }
+  
+  .location-modal-header h3 {
+    font-size: 16px;
+  }
+  
+  .use-current-location {
+    padding: 10px;
+  }
+}

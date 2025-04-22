@@ -1,0 +1,77 @@
+header {
+    background-color: #fffbf3;
+    border-bottom: 1px solid #dcdcdd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Replace percentage padding with fixed values */
+    padding: 15px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+}
+
+.nav-bar ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    gap: 20px;
+}
+
+.nav-bar li {
+    padding: 0;
+    margin: 0;
+}
+
+.nav-bar li a {
+    text-decoration: none;
+    color: inherit;
+    padding: 5px;
+    display: block;
+}
+
+.nav-bar li a:hover {
+    color: #d32f2f;
+}
+
+.login-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+}
+
+.login-side button {
+    background-color: #fffbf3;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.login-side select {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 5px;
+}
+
+figure.logo {
+    margin: 0;
+    padding: 0;
+}
+
+img.logo {
+    max-height: 40px;
+    width: auto;
+}

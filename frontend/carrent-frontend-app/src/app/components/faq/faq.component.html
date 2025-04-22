@@ -1,0 +1,28 @@
+<div class="faq-container">
+  
+    <div class="faq-content" *ngIf="!loading && !error">
+      <div class="faq-item" *ngFor="let item of faqItems">
+        <div class="faq-question" (click)="toggleItem(item.id)" [class.active]="isExpanded(item.id)">
+          <h3>{{ item.question }}</h3>
+          <div class="toggle-icon">
+            <span [innerHTML]="isExpanded(item.id) ? '&times;' : '+'"></span>
+          </div>
+        </div>
+        
+        <div class="faq-answer" [@expandCollapse]="getItemState(item.id)">
+          <div class="answer-content">
+            <p>{{ item.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="loading-container" *ngIf="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading FAQ...</p>
+    </div>
+  
+    <div class="error-container" *ngIf="error">
+      <p class="error-message">{{ error }}</p>
+    </div>
+  </div>
