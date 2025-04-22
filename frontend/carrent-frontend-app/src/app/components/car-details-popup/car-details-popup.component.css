@@ -1,9 +1,9 @@
 /* Animation for dropdown */
-.transition-transform {
+.feedback-dropdown {
   transition: transform 0.2s ease-in-out;
 }
 
-.rotate-180 {
+.feedback-dropdown-rotate-180 {
   transform: rotate(180deg);
 }
 
@@ -19,16 +19,8 @@
   }
 }
 
-.absolute {
+.dropdown-menu {
   animation: dropdownFade 0.2s ease-out;
-}
-
-/* Optional: Add a backdrop when dropdown is open */
-.dropdown-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.1);
-  z-index: 5;
 }
 
 .pagination-button {

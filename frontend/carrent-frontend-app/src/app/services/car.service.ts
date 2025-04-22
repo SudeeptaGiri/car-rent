@@ -7,7 +7,6 @@ import {
   CarDetails,
   CarListResponse,
   CarsResponse,
-  CarFilters,
   BookedDate,
   ReviewsData,
   BookingRequest
@@ -26,7 +25,7 @@ export class CarService {
       map(response => {
         const allCars = response.cars;
         return {
-          content: allCars, // Return all cars for the list view
+          content: allCars,
           totalPages: 1,
           currentPage: 0,
           totalElements: allCars.length

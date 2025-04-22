@@ -52,7 +52,7 @@ export class CarDetailsPopupComponent {
   isLoading = false;
   error: string | null = null;
 
-  isLoggedIn = true; // This should come from your auth service
+  isLoggedIn = false; // This should come from your auth service
   showLoginNotification = false;
 
   constructor(

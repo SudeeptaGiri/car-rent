@@ -95,19 +95,6 @@ export interface CarListResponse {
   totalElements: number;
 }
 
-// Filter interfaces
-export interface CarFilters {
-  location?: string;
-  category?: string;
-  transmission?: string;
-  fuelType?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  startDate?: string;
-  endDate?: string;
-  page?: number;
-  size?: number;
-}
 
 // Search Params interface
 export interface SearchParams {
