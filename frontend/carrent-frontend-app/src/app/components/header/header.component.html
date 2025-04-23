@@ -1,21 +1,49 @@
 <header>
+    <!-- Logo -->
     <figure class="logo">
-        <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
+      <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
     </figure>
-    
-    <nav class="nav-bar">
+  
+    <!-- Centered nav for tablet/desktop -->
+    <div class="center-nav">
+      <nav class="nav-bar">
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Cars</a></li>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Cars</a></li>
         </ul>
-    </nav>
-
-    <div class="login-side">
-        <app-user-role></app-user-role>
-        <select name="Lang Selector" id="">
-            <option value="en" selected>En</option>
-            <option value="fr">Fr</option>
-            <option value="es">Es</option>
-        </select>
+      </nav>
     </div>
-</header>
+  
+    <!-- Hamburger button (visible only on mobile) -->
+    <button class="hamburger" (click)="toggleMenu()" aria-label="Toggle menu">
+        {{ menuOpen ? '✕' : '☰' }}
+      </button>
+  
+    <!-- Mobile dropdown -->
+    <div class="mobile-menu" [class.active]="menuOpen">
+      <nav class="nav-bar">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Cars</a></li>
+        </ul>
+      </nav>
+      <div class="login-side">
+        <app-user-role></app-user-role>
+        <select>
+          <option value="en" selected>En</option>
+          <option value="fr">Fr</option>
+          <option value="es">Es</option>
+        </select>
+      </div>
+    </div>
+  
+    <!-- Desktop login -->
+    <div class="login-side desktop-only">
+      <app-user-role></app-user-role>
+      <select>
+        <option value="en" selected>En</option>
+        <option value="fr">Fr</option>
+        <option value="es">Es</option>
+      </select>
+    </div>
+  </header>
