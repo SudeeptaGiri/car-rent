@@ -82,21 +82,56 @@ export class CarBookingComponent implements OnInit {
     this.userInfo = this.carBookingService.getMockUserInfo();
     this.locationInfo = this.carBookingService.getMockLocationInfo();
     
-    // Initialize form
+    // First, initialize userInfo with default values to avoid null reference
+    this.userInfo = this.carBookingService.getMockUserInfo();
+    
+    // Then get user data from localStorage
+    this.getUserFromLocalStorage();
+    
+    // After user data is loaded, initialize form
     this.initForm();
   });
 }
   toggleCalendar(): void {
     this.isCalendarOpen = !this.isCalendarOpen;
   }
+  getUserFromLocalStorage(): void {
+    const storedUser = localStorage.getItem('currentUser');
+    
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        this.userInfo = {
+          fullName: user.firstName && user.lastName ? 
+            `${user.firstName} ${user.lastName}` : 
+            (user.fullName || user.name || 'User'),
+          email: user.email || '',
+          phone: user.phone || this.carBookingService.getMockUserInfo().phone
+        };
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+        // Fallback to mock data if there's an error
+        this.userInfo = this.carBookingService.getMockUserInfo();
+      }
+    } else {
+      // If no user in localStorage, use mock data
+      this.userInfo = this.carBookingService.getMockUserInfo();
+    }
+  }
 
   initForm(): void {
+    // Make sure userInfo is properly set before using it
+    if (!this.userInfo) {
+      this.userInfo = this.carBookingService.getMockUserInfo();
+    }
+  
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
         fullName: [this.userInfo.fullName, Validators.required],
         email: [this.userInfo.email, [Validators.required, Validators.email]],
         phone: [this.userInfo.phone, Validators.required]
       }),
+      // Rest of the form initialization remains the same
       location: this.fb.group({
         pickupLocation: [this.locationInfo.pickupLocation, Validators.required],
         dropoffLocation: [this.locationInfo.dropoffLocation, Validators.required]
@@ -106,12 +141,11 @@ export class CarBookingComponent implements OnInit {
         dateTo: ['2023-11-16T16:00', Validators.required]
       })
     });
-
-    // Set initial dateFrom and dateTo as Date objects
+  
+    // Rest of the method remains the same
     this.dateFrom = new Date(this.bookingForm.get('dates.dateFrom')?.value);
     this.dateTo = new Date(this.bookingForm.get('dates.dateTo')?.value);
-
-    // Calculate total price whenever dates change
+  
     this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
     });
