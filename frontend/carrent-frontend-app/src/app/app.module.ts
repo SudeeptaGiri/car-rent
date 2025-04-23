@@ -39,6 +39,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ReviewsComponent } from './components/profile/reviews/reviews.component';
+import { PersonalInfoComponent } from './components/profile/personal-info/personal-info.component';
+import { DocumentsComponent } from './components/profile/documents/documents.component';
+import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 
 
 @NgModule({
@@ -58,7 +63,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UserRoleComponent,
     CarDetailsPopupComponent,
     NotificationComponent,
-    DateRangePickerComponent
+    DateRangePickerComponent,
+    ProfileComponent,
+    ReviewsComponent,
+    PersonalInfoComponent,
+    DocumentsComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
