@@ -15,7 +15,7 @@ export class CarReservedDialogComponent {
   }
 
   onFindSimilarClick(): void {
-    window.location.href = '/cars';
+    window.location.href = '/main';
     this.dialogRef.close();
   }
 }

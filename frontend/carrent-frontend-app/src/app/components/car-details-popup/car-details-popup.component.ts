@@ -10,6 +10,8 @@ import {
   BookingRequest
 } from '../../models/car.interface';
 import moment from 'moment';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 // interface DateRangeForm {
 //   startDate: FormControl<Date | null>;
@@ -57,15 +59,18 @@ export class CarDetailsPopupComponent {
 
   constructor(
     private carService: CarService,
+    private route: Router,
     private dialogRef: MatDialogRef<CarDetailsPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { carId: string },
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService // Assuming you have an AuthService to check login status
   ) { }
 
   ngOnInit(): void {
     if (this.data.carId) {
       this.loadCarDetailsWithNavigation(this.data.carId);
     }
+    this.isLoggedIn = this.authService.isAuthenticated(); // Check login status
   }
 
   private loadCarDetailsWithNavigation(carId: string): void {
@@ -209,7 +214,6 @@ export class CarDetailsPopupComponent {
       endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
       endTime: this.dateRange.endDate.format('HH:mm'),
       userId: 'current-user-id', // Replace with actual user ID
-      totalPrice: this.calculateTotalPrice(this.dateRange, this.carDetails.price)
     };
 
     // Close dialog with booking data
@@ -217,13 +221,17 @@ export class CarDetailsPopupComponent {
       action: 'book',
       data: bookingRequest
     });
-  }
 
-  private calculateTotalPrice(dateRange: { startDate: moment.Moment, endDate: moment.Moment }, pricePerDay: number): number {
-    const days = dateRange.endDate.diff(dateRange.startDate, 'days') + 1;
-    return days * pricePerDay;
-  }
-
+    this.route.navigate(['/cars'], {
+      queryParams: {
+        carId: this.carDetails.id,
+        startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
+        startTime: this.dateRange.startDate.format('HH:mm'),
+        endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
+        endTime: this.dateRange.endDate.format('HH:mm'),
+      }
+    });
+  } 
 
   handleLogin(): void {
     if (this.dateRange && this.carDetails) {
@@ -267,3 +275,4 @@ export class CarDetailsPopupComponent {
     this.dateRange = event;
   }
 }
+

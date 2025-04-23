@@ -1,83 +1,74 @@
 <div class="car-booking-container">
-    <div class="breadcrumb">
-      <a href="/cars">Cars</a> &gt; Car booking
-    </div>
+  <div class="breadcrumb">
+    <a href="/cars">Cars</a> &gt; Car booking
+  </div>
+
+  <h1>Car booking</h1>
   
-    <h1>Car booking</h1>
-    
-    <section class="booking-section">
-      <form [formGroup]="bookingForm">
-        <!-- Personal Info Section -->
-        <div class="section">
-          <h2>Personal info</h2>
-          <div class="personal-info-card" formGroupName="personalInfo">
-            <div class="form-field">
-              <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
-              <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
-              <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- Location Section -->
-        <div class="section">
-          <h2>Location</h2>
-          <div class="location-card" formGroupName="location">
-            <div class="form-field">
-              <label>Pick-up location</label>
-              <div class="location-value">{{ bookingForm.get('location.pickupLocation')?.value }}</div>
-            </div>
-            <div class="form-field">
-              <label>Drop-off location</label>
-              <div class="location-value">{{ bookingForm.get('location.dropoffLocation')?.value }}</div>
-            </div>
-            <button type="button" class="change-btn" (click)="openLocationChange()">Change</button>
-          </div>
-        </div>
-    
-        <!-- Dates & Time Section -->
-        <div class="section">
-          <h2>Dates & Time</h2>
-          <div class="dates-card" formGroupName="dates">
-            <div class="form-field">
-              <label>Pick-up date & Time</label>
-              <div class="date-value">
-                {{ dateFrom ? (formatDate(dateFrom) + ' | ' + formatTime(dateFrom)) : 'Select date and time' }}
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Drop-off date & Time</label>
-              <div class="date-value">
-                {{ dateTo ? (formatDate(dateTo) + ' | ' + formatTime(dateTo)) : 'Select date and time' }}
-              </div>
-            </div>
-            <button type="button" class="change-btn" (click)="openDateChange()">Change</button>
-          </div>
-        </div>
-      </form>
-    
-      <!-- Car Details and Confirmation Section -->
-       <div class="section-car-details-section">
-        <div class="car-details-container">
-          <div class="car-image">
-            <img [src]="selectedCar.image" alt="Audi A6 Quattro 2023">
-          </div>
-          <div class="car-info">
-            <h3>{{ selectedCar.model }}</h3>
-            <p class="location">{{ selectedCar.location }}</p>
-            
-            <div class="pricing-info">
-              <div class="total-section">
-                <div class="total-label">Total</div>
-                <div class="total-price">${{ totalPrice }}</div>
-              </div>
-              <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
-              <button type="button" class="confirm-btn" (click)="confirmReservation()">
-                Confirm reservation
-              </button>
-            </div>
+  <section class="booking-section">
+    <form [formGroup]="bookingForm">
+      <!-- Personal Info Section -->
+      <div class="section">
+        <h2>Personal info</h2>
+        <div class="personal-info-card" formGroupName="personalInfo">
+          <div class="form-field">
+            <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
+            <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
+            <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+  
+      <!-- Location Section -->
+      <div class="section">
+        <h2>Location</h2>
+        <div class="location-card" formGroupName="location">
+          <div class="form-field">
+            <label>Pick-up location</label>
+            <div class="location-value">{{ bookingForm.get('location.pickupLocation')?.value }}</div>
+          </div>
+          <div class="form-field">
+            <label>Drop-off location</label>
+            <div class="location-value">{{ bookingForm.get('location.dropoffLocation')?.value }}</div>
+          </div>
+          <button type="button" class="change-btn" (click)="openLocationChange()">Change</button>
+        </div>
+      </div>
+  
+      <!-- Dates & Time Section -->
+      <div class="section">
+        <h2>Dates & Time</h2>
+        <div class="dates-card" formGroupName="dates">
+          <div class="w-full pb-8">
+            <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
+          </div>
+          <calendar class="booking-calendar" [externalToggle]="isCalendarOpen"></calendar>
+        </div>
+      </div>
+    </form>
+  
+    <!-- Car Details and Confirmation Section -->
+     <div class="section-car-details-section">
+      <div class="car-details-container">
+        <div class="car-image">
+          <img [src]="selectedCar.image" alt="Audi A6 Quattro 2023">
+        </div>
+        <div class="car-info">
+          <h3>{{ selectedCar.model }}</h3>
+          <p class="location">{{ selectedCar.location }}</p>
+          
+          <div class="pricing-info">
+            <div class="total-section">
+              <div class="total-label">Total</div>
+              <div class="total-price">${{ totalPrice }}</div>
+            </div>
+            <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
+            <button type="button" class="confirm-btn" (click)="confirmReservation()">
+              Confirm reservation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

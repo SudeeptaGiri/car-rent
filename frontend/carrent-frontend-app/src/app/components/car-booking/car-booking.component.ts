@@ -27,6 +27,7 @@ export class CarBookingComponent implements OnInit {
   numberOfDays = 0;
   dateFrom!: Date;
   dateTo!: Date;
+  isCalendarOpen = false;
 
   constructor(
     private fb: FormBuilder,
@@ -45,6 +46,10 @@ export class CarBookingComponent implements OnInit {
     
     // Calculate initial price
     this.calculateTotalPrice();
+  }
+
+  toggleCalendar(): void {
+    this.isCalendarOpen = !this.isCalendarOpen;
   }
 
   initForm(): void {
@@ -162,39 +167,50 @@ export class CarBookingComponent implements OnInit {
     });
   }
 
-  openDateChange(): void {
-    const dialogRef = this.dialog.open(CalendarComponent, {
-      width: '700px',
-      maxWidth: '95vw',
-      data: {
-        bookedDates: [] // Pass any booked dates here
-      },
-      panelClass: 'date-picker-dialog'
-    });
+  // Update in car-booking.component.ts
+// openDateChange(): void {
+//   const dialogRef = this.dialog.open(CalendarComponent, {
+//     width: '700px',
+//     maxWidth: '95vw',
+//     data: {
+//       bookedDates: [] // Pass any booked dates here
+//     },
+//     panelClass: 'date-picker-dialog',
+//     autoFocus: false // Add this to prevent focus stealing
+//   });
+
+//   // Set isOpen to true directly after dialog is opened
+//   const calendarInstance = dialogRef.componentInstance;
+//   calendarInstance.isOpen = true;
   
-    dialogRef.componentInstance.dateRangeSelected.subscribe(result => {
-      if (result) {
-        // Convert moment objects to Date objects
-        this.dateFrom = result.startDate.toDate();
-        this.dateTo = result.endDate.toDate();
-  
-        // Update the form with the new dates
-        this.bookingForm.patchValue({
-          dates: {
-            dateFrom: this.dateFrom.toISOString(),
-            dateTo: this.dateTo.toISOString()
-          }
-        });
-  
-        // Recalculate total price
-        this.calculateTotalPrice();
-      }
-    });
-  
-    dialogRef.componentInstance.closed.subscribe(() => {
-      dialogRef.close();
-    });
-  }
+//   // Subscribe to dateRangeSelected event
+//   const subscription = calendarInstance.dateRangeSelected.subscribe(result => {
+//     if (result) {
+//       // Convert moment objects to Date objects
+//       this.dateFrom = result.startDate.toDate();
+//       this.dateTo = result.endDate.toDate();
+
+//       // Update the form with the new dates
+//       this.bookingForm.patchValue({
+//         dates: {
+//           dateFrom: this.dateFrom.toISOString(),
+//           dateTo: this.dateTo.toISOString()
+//         }
+//       });
+
+//       // Recalculate total price
+//       this.calculateTotalPrice();
+      
+//       // Close the dialog
+//       dialogRef.close();
+//     }
+//   });
+
+//   // Clean up subscription when dialog closes
+//   dialogRef.afterClosed().subscribe(() => {
+//     subscription.unsubscribe();
+//   });
+// }
 
   getDefaultEndDate(): Date {
     const endDate = new Date();

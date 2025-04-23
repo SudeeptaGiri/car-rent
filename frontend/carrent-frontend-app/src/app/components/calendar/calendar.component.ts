@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, SimpleChanges } from '@angular/core';
 import moment from 'moment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { BookedDate } from '../../models/car.interface';
 })
 export class CalendarComponent {
   @Input() bookedDates: { startDate: string; endDate: string; }[] = [];
+  @Input() externalToggle = false;
   @Output() dateRangeSelected = new EventEmitter<{
     startDate: moment.Moment,
     endDate: moment.Moment
@@ -41,6 +42,12 @@ export class CalendarComponent {
       return month;
     });
     this.updateCalendarMonths();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['externalToggle'] && !changes['externalToggle'].firstChange) {
+      this.isOpen = this.externalToggle;
+    }
   }
   updateCalendarMonths() {
     const base = new Date(this.today.getFullYear(), this.today.getMonth() + this.currentMonthIndex, 1);

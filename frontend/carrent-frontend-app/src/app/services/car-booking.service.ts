@@ -17,7 +17,7 @@ export class CarBookingService {
       name: 'Audi A6 Quattro 2023',
       model: 'Audi A6 Quattro 2023',
       location: 'Ukraine, Kyiv',
-      image: 'audi-a6.png',
+      image: 'assets/audi-a6.png',
       pricePerDay: 180
     };
   }
