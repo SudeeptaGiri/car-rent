@@ -4,7 +4,7 @@
   </div>
 
   <h1>Car booking</h1>
-  
+
   <section class="booking-section">
     <form [formGroup]="bookingForm">
       <!-- Personal Info Section -->
@@ -18,7 +18,7 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Location Section -->
       <div class="section">
         <h2>Location</h2>
@@ -34,7 +34,7 @@
           <button type="button" class="change-btn" (click)="openLocationChange()">Change</button>
         </div>
       </div>
-  
+
       <!-- Dates & Time Section -->
       <div class="section">
         <h2>Dates & Time</h2>
@@ -42,21 +42,25 @@
           <div class="w-full pb-8">
             <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
           </div>
-          <calendar class="booking-calendar" [externalToggle]="isCalendarOpen"></calendar>
+          <!-- In car-booking.component.html -->
+          <calendar class="booking-calendar" [externalToggle]="isCalendarOpen" [initialStartDate]="dateFrom"
+            [initialEndDate]="dateTo" [bookedDates]="bookedDatesFormatted"
+            (dateRangeSelected)="onDateRangeSelected($event)">
+          </calendar>
         </div>
       </div>
     </form>
-  
+
     <!-- Car Details and Confirmation Section -->
-     <div class="section-car-details-section">
+    <div class="section-car-details-section">
       <div class="car-details-container">
         <div class="car-image">
-          <img [src]="selectedCar.image" alt="Audi A6 Quattro 2023">
+          <img [src]="selectedCar.images" alt="Audi A6 Quattro 2023">
         </div>
         <div class="car-info">
           <h3>{{ selectedCar.model }}</h3>
           <p class="location">{{ selectedCar.location }}</p>
-          
+
           <div class="pricing-info">
             <div class="total-section">
               <div class="total-label">Total</div>
