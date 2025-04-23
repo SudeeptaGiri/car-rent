@@ -62,9 +62,6 @@ export class LoginComponent {
         // Save token and full user data
         localStorage.setItem('token', response.token);
         localStorage.setItem('currentUser', JSON.stringify(response.user));
-  
-        alert("Login successful");
-        // this.router.navigate(['/dashboard']);
         this.router.navigate(['/']);
       },
       error: (error) => {

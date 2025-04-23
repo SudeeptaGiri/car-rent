@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { User } from '../models/users';
 import { RoleAssignmentService } from './role-assignment.service';
 
@@ -9,31 +8,47 @@ import { RoleAssignmentService } from './role-assignment.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private users: User[] = [
-    {
-      firstName: 'Anastasia',
-      lastName: 'Doe',
-      email: 'anastasia@gmail.com',
-      password: 'password123',
-      role: 'Support Agent'
-    }
-  ];
+  private users: User[] = [];
 
-  constructor(private http: HttpClient,private roleService: RoleAssignmentService) {}
+  constructor(
+    private http: HttpClient,
+    private roleService: RoleAssignmentService
+  ) {
+    const storedUsers = localStorage.getItem('registeredUsers');
+    if (storedUsers) {
+      this.users = JSON.parse(storedUsers);
+    } else {
+      // Optional: preload with a default user
+      this.users = [
+        {
+          firstName: 'Anastasia',
+          lastName: 'Doe',
+          email: 'anastasia@gmail.com',
+          password: 'Password123',
+          role: 'Support Agent'
+        }
+      ];
+      this.saveUsersToStorage();
+    }
+  }
+
+  private saveUsersToStorage() {
+    localStorage.setItem('registeredUsers', JSON.stringify(this.users));
+  }
 
   // Register a new user
   register(user: User): Observable<any> {
     const existingUser = this.users.find(u => u.email === user.email);
-
     if (existingUser) {
       return throwError(() => ({ error: { message: 'This email is already registered' } }));
     }
+
     const role = this.roleService.assignRole(user.email);
     user.role = role;
-    // Save new user (mock)
-    this.users.push(user);
 
-    // Store session data
+    this.users.push(user);
+    this.saveUsersToStorage();
+
     sessionStorage.setItem('ShowPopup', 'true');
 
     return of({ success: true, message: 'Registration successful' });
@@ -42,10 +57,14 @@ export class AuthService {
   // Login user
   login(email: string, password: string): Observable<any> {
     const user = this.users.find(u => u.email === email );
-    if(!user) return throwError(() => ({success: false, message: 'Invalid email'}));
-    const passwordMatch = user.password === password;
-    if(!passwordMatch) return throwError(() => ({success: false, message: 'Invalid password'}));
-    
+    if (!user) {
+      return throwError(() => ({ success: false, message: 'Invalid email' }));
+    }
+
+    if (user.password !== password) {
+      return throwError(() => ({ success: false, message: 'Invalid password' }));
+    }
+
     localStorage.setItem('token', 'demo-jwt-token');
     sessionStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -55,8 +74,6 @@ export class AuthService {
       token: 'demo-jwt-token',
       user
     });
-  
-
   }
 
   // Check if user is authenticated

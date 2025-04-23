@@ -2,6 +2,7 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { CarService } from '../../services/car.service';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../services/auth.service';
 import {
   CarDetails,
   Review,
@@ -59,13 +60,15 @@ export class CarDetailsPopupComponent {
     private carService: CarService,
     private dialogRef: MatDialogRef<CarDetailsPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { carId: string },
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     if (this.data.carId) {
       this.loadCarDetailsWithNavigation(this.data.carId);
     }
+    this.isLoggedIn = this.authService.isAuthenticated(); 
   }
 
   private loadCarDetailsWithNavigation(carId: string): void {

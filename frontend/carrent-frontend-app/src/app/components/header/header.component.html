@@ -1,49 +1,85 @@
 <header>
-    <!-- Logo -->
-    <figure class="logo">
-      <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
-    </figure>
-  
-    <!-- Centered nav for tablet/desktop -->
-    <div class="center-nav">
-      <nav class="nav-bar">
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Cars</a></li>
-        </ul>
-      </nav>
-    </div>
-  
-    <!-- Hamburger button (visible only on mobile) -->
-    <button class="hamburger" (click)="toggleMenu()" aria-label="Toggle menu">
-        {{ menuOpen ? '✕' : '☰' }}
-      </button>
-  
-    <!-- Mobile dropdown -->
-    <div class="mobile-menu" [class.active]="menuOpen">
-      <nav class="nav-bar">
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Cars</a></li>
-        </ul>
-      </nav>
-      <div class="login-side">
-        <app-user-role></app-user-role>
-        <select>
-          <option value="en" selected>En</option>
-          <option value="fr">Fr</option>
-          <option value="es">Es</option>
-        </select>
+  <!-- Logo -->
+  <figure class="logo">
+    <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
+  </figure>
+
+  <!-- Centered nav for tablet/desktop -->
+  <div class="center-nav">
+    <nav class="nav-bar">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Cars</a></li>
+        <li *ngIf="user"><a href="#">My Bookings</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Hamburger button (visible only on mobile) -->
+  <button class="hamburger" (click)="toggleMenu()" aria-label="Toggle menu">
+    {{ menuOpen ? '✕' : '☰' }}
+  </button>
+
+  <!-- Mobile dropdown -->
+  <div class="mobile-menu" [class.active]="menuOpen">
+    <nav class="nav-bar">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Cars</a></li>
+        <li *ngIf="user"><a href="#">My Bookings</a></li>
+      </ul>
+    </nav>
+    <div class="login-side" *ngIf="user; else mobileGuest">
+      <div class="user-dropdown">
+        <span (click)="toggleDropdown()" class="user-name">
+         {{ user.firstName }} ▼
+        </span>
+        <ul [class.expanded]="dropdownOpen" class="dropdown-menu-mobile">
+          <li (click)="goToProfile()">Profile</li>
+          <li (click)="logout()">Logout</li>
+        </ul>        
       </div>
-    </div>
-  
-    <!-- Desktop login -->
-    <div class="login-side desktop-only">
-      <app-user-role></app-user-role>
       <select>
         <option value="en" selected>En</option>
         <option value="fr">Fr</option>
         <option value="es">Es</option>
       </select>
     </div>
-  </header>
+    <ng-template #mobileGuest>
+      <app-user-role></app-user-role>
+      <select>
+        <option value="en" selected>En</option>
+        <option value="fr">Fr</option>
+        <option value="es">Es</option>
+      </select>
+    </ng-template>
+  </div>
+
+  <!-- Desktop login -->
+  <div class="login-side desktop-only" *ngIf="user; else guestLinks">
+    <div class="user-dropdown">
+      <img *ngIf="user" src="assets/profile-icon.svg" alt="Profile" class="profile-icon" />
+      <span (click)="toggleDropdown()" class="user-name">
+       Hello, {{ user.firstName }} ( {{user.role }} )
+      </span>
+      <ul *ngIf="dropdownOpen" class="dropdown-menu">
+        <li (click)="goToProfile()">Profile</li>
+        <li (click)="logout()">Logout</li>
+      </ul>
+    </div>
+    <select>
+      <option value="en" selected>En</option>
+      <option value="fr">Fr</option>
+      <option value="es">Es</option>
+    </select>
+  </div>
+
+  <ng-template #guestLinks>
+    <app-user-role></app-user-role>
+    <select>
+      <option value="en" selected>En</option>
+      <option value="fr">Fr</option>
+      <option value="es">Es</option>
+    </select>
+  </ng-template>
+</header>

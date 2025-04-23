@@ -30,7 +30,7 @@
     id="email" 
     formControlName="email" 
     placeholder="example@gmail.com" 
-    class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1" 
+    class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500 focus:text-black" 
     [ngClass]="{'border-red-500': submitted && f['email'].errors || errorMessage}"
   >
   <div *ngIf="submitted && f['email'].errors" class="text-red-500 text-xs mt-1">
@@ -52,7 +52,7 @@
                 id="password" 
                 formControlName="password" 
                 placeholder="********" 
-                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1" 
+                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500 focus:text-black" 
                 [ngClass]="{'border-red-500': submitted && f['password'].errors || errorMessage}"
               >
               <button 

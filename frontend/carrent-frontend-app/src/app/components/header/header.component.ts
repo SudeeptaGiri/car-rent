@@ -1,5 +1,7 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/users';
 
 @Component({
   selector: 'app-header',
@@ -7,11 +9,33 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   menuOpen = false;
+  user: User | null = null;
+  dropdownOpen = false;
+
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    const userData = sessionStorage.getItem('currentUser');
+    this.user = userData ? JSON.parse(userData) : null;
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.user = null;
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   @HostListener('window:resize', [])
@@ -21,4 +45,3 @@ export class HeaderComponent {
     }
   }
 }
-
