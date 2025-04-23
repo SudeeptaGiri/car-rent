@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Change Locations</h2>
+<div mat-dialog-content>
+  <form [formGroup]="locationForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Pick-up Location</mat-label>
+      <mat-select formControlName="pickupLocation">
+        <mat-option *ngFor="let location of locations" [value]="location">
+          {{ location }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Drop-off Location</mat-label>
+      <mat-select formControlName="dropoffLocation">
+        <mat-option *ngFor="let location of locations" [value]="location">
+          {{ location }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!locationForm.valid">Save</button>
+</div>

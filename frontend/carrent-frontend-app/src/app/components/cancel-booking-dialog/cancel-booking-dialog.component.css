@@ -1,0 +1,35 @@
+/* Add any specific styles for the cancel booking dialog here */
+.mat-dialog-title {
+    margin-bottom: 16px;
+  }
+  
+  .mat-dialog-content p {
+    margin-bottom: 20px;
+  }
+  
+  .mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .cancel-booking{
+    font-size: 16px;
+    font-weight: 400;
+    padding: 24px;
+    color: black !important;
+    background-color: white !important;
+    border: 1px solid black;
+    transition: background-color 0.3s;
+  }
+  .resume-booking {
+    font-size: 16px;
+    font-weight: 400;
+    padding: 23px;
+    color: white !important;
+    background-color: #CC1D1D;
+  }
+  .resume-booking:hover {
+    background-color: #d11212 !important;
+    transition: background-color 0.3s !important;
+  }

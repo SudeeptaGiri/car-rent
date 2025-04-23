@@ -1,6 +1,9 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import moment from 'moment';
-import { BookedDate } from '../../models/car.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { BookedDate } from '../../models/car.interface';
 
 @Component({
   selector: 'calendar',

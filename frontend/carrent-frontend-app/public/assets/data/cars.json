@@ -1,0 +1,33 @@
+
+[
+    {
+      "id": "101",
+      "name": "Audi A6 Quattro 2023",
+      "image": "assets/images/audi-a6.jpg"
+    },
+    {
+      "id": "102",
+      "name": "Range Rover 2019",
+      "image": "assets/images/range-rover.jpg"
+    },
+    {
+      "id": "103",
+      "name": "Porsche 911 2021",
+      "image": "assets/images/porsche-911.jpg"
+    },
+    {
+      "id": "104",
+      "name": "Nissan Z 2024",
+      "image": "assets/images/nissan-z.jpg"
+    },
+    {
+      "id": "105",
+      "name": "Mercedes-Benz A class 2019",
+      "image": "assets/images/mercedes-a.jpg"
+    },
+    {
+      "id": "106",
+      "name": "BMW 330i 2020",
+      "image": "assets/images/bmw-330i.jpg"
+    }
+  ]

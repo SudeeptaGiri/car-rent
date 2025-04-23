@@ -1,0 +1,84 @@
+<!-- src/app/components/edit-booking/edit-booking.component.html -->
+<div class="car-booking-container">
+    <div class="breadcrumb">
+      <a routerLink="/my-bookings">My bookings</a> &gt; Booking modification
+    </div>
+  
+    <h1>Booking modification</h1>
+    
+    <section class="booking-section" *ngIf="booking">
+      <form [formGroup]="bookingForm">
+        <!-- Personal Info Section -->
+        <div class="section">
+          <h2>Personal info</h2>
+          <div class="personal-info-card" formGroupName="personalInfo">
+            <div class="form-field">
+              <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
+              <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
+              <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Location Section -->
+        <div class="section">
+          <h2>Location</h2>
+          <div class="location-card" formGroupName="location">
+            <div class="form-field">
+              <label>Pick-up location</label>
+              <div class="location-value">{{ bookingForm.get('location.pickupLocation')?.value }}</div>
+            </div>
+            <div class="form-field">
+              <label>Drop-off location</label>
+              <div class="location-value">{{ bookingForm.get('location.dropoffLocation')?.value }}</div>
+            </div>
+            <button type="button" class="change-btn" (click)="openLocationChange()">Change</button>
+          </div>
+        </div>
+    
+        <!-- Dates & Time Section -->
+        <div class="section">
+          <h2>Dates & Time</h2>
+          <div class="dates-card" formGroupName="dates">
+            <div class="form-field">
+              <label>Pick-up date & Time</label>
+              <div class="date-value">
+                {{ dateFrom ? (formatDate(dateFrom) + ' | ' + formatTime(dateFrom)) : 'Select date and time' }}
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Drop-off date & Time</label>
+              <div class="date-value">
+                {{ dateTo ? (formatDate(dateTo) + ' | ' + formatTime(dateTo)) : 'Select date and time' }}
+              </div>
+            </div>
+            <button type="button" class="change-btn" (click)="openDateChange()">Change</button>
+          </div>
+        </div>
+      </form>
+    
+      <!-- Car Details and Save Section -->
+      <div class="section-car-details-section">
+        <div class="car-details-container">
+          <div class="car-image">
+            <img [src]="booking.carImage" [alt]="booking.carName">
+          </div>
+          <div class="car-info">
+            <h3>{{ booking.carName }}</h3>
+            <p class="location">Ukraine, Kyiv</p>
+            
+            <div class="pricing-info">
+              <div class="total-section">
+                <div class="total-label">Total</div>
+                <div class="total-price">${{ totalPrice }}</div>
+              </div>
+              <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
+              <button type="button" class="confirm-btn" (click)="saveBooking()">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>

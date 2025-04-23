@@ -1,0 +1,185 @@
+.booking-section{
+  display:flex;
+  flex-wrap: wrap;
+}
+.booking-section form {
+  flex: 1;
+  min-width: 350px; /* Important for flexbox to allow shrinking below content size */
+}
+.car-booking-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  
+  .breadcrumb a {
+    color: #565656;
+    text-decoration: none;
+  }
+  
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  
+  h1 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+  
+  h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+  
+  .section {
+    margin-bottom: 30px;
+  }
+  
+  .personal-info-card, .location-card, .dates-card {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    background-color: white;
+  }
+  
+  .form-field {
+    margin-bottom: 15px;
+  }
+  
+  .form-field label {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .location-value, .date-value {
+    font-weight: bold;
+  }
+  
+  .full-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .email, .phone {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .change-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .change-btn:hover {
+    text-decoration: underline;
+  }
+  
+  /* Car details section */
+  .car-details-container {
+    
+    /* border: 1px solid #e0e0e0; */
+    flex:1;
+    border-radius: 8px;
+
+    margin-top: 40px;
+    margin-left: 20px;
+    overflow: hidden;
+    background-color: #e8f3fcab;
+  }
+  
+  .car-image {
+    flex: 0 0 40%;
+    padding: 20px;
+  }
+  
+  .car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .car-info {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .car-info h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .car-info .location {
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .pricing-info {
+    margin-top: auto;
+  }
+  
+  .total-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .total-label {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .total-price {
+    font-weight: bold;
+    font-size: 24px;
+  }
+  
+  .deposit-info {
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .confirm-btn {
+    width: 100%;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .confirm-btn:hover {
+    background-color: #b71c1c;
+  }
+
+  @media (max-width: 878px) {
+    .section-car-details-container, .car-details-container {
+      width: 300px;
+      height: auto;
+      /* object-fit: cover; */
+    }
+  }

@@ -1,0 +1,111 @@
+<!-- my-bookings.component.html -->
+<div class="my-bookings-container">
+  <h1>My bookings</h1>
+  
+  <!-- Desktop tabs - visible on larger screens -->
+  <div class="tabs desktop-tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === 'ALL'"
+      (click)="changeTab('ALL')">
+      All bookings
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === BookingStatus.RESERVED"
+      (click)="changeTab(BookingStatus.RESERVED)">
+      Reserved
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === BookingStatus.SERVICE_STARTED"
+      (click)="changeTab(BookingStatus.SERVICE_STARTED)">
+      Service started
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === BookingStatus.SERVICE_PROVIDED"
+      (click)="changeTab(BookingStatus.SERVICE_PROVIDED)">
+      Service provided
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === BookingStatus.BOOKING_FINISHED"
+      (click)="changeTab(BookingStatus.BOOKING_FINISHED)">
+      Booking finished
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="currentTab === BookingStatus.CANCELLED"
+      (click)="changeTab(BookingStatus.CANCELLED)">
+      Cancelled
+    </button>
+  </div>
+  
+  <!-- Mobile dropdown - visible on small screens -->
+  <div class="mobile-tabs-dropdown">
+    <button class="dropdown-toggle" (click)="toggleDropdown()">
+      {{ getTabDisplayName(currentTab) }}
+      <span class="dropdown-arrow">&#9662;</span>
+    </button>
+    <div class="dropdown-menu" [class.show]="dropdownOpen">
+      <button class="dropdown-item" (click)="changeTab('ALL'); toggleDropdown()">
+        All bookings
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.RESERVED); toggleDropdown()">
+        Reserved
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.SERVICE_STARTED); toggleDropdown()">
+        Service started
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.SERVICE_PROVIDED); toggleDropdown()">
+        Service provided
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.BOOKING_FINISHED); toggleDropdown()">
+        Booking finished
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.CANCELLED); toggleDropdown()">
+        Cancelled
+      </button>
+    </div>
+  </div>
+  
+  <div class="bookings-grid">
+    <div class="booking-card" *ngFor="let booking of filteredBookings">
+      <div class="car-image-container">
+        <img [src]="booking.carImage" [alt]="booking.carName" class="car-image">
+        <div class="status-badge" [ngClass]="booking.status.toLowerCase().replace(' ', '-')">
+          {{ booking.status }}
+        </div>
+      </div>
+      
+      <div class="car-details">
+        <h3>{{ booking.carName }}</h3>
+        <p>Order: {{ booking.orderNumber }}</p>
+      </div>
+      
+      <div class="booking-actions">
+        <!-- Show Cancel and Edit buttons for Reserved status and not within 12 hours -->
+        <ng-container *ngIf="booking.status === BookingStatus.RESERVED && !isWithin12Hours(booking)">
+          <button class="btn-cancel" (click)="openCancelDialog(booking)">Cancel</button>
+          <button class="btn-edit" (click)="navigateToEditBooking(booking)">Edit</button>
+        </ng-container>
+        
+        <!-- Show Leave Feedback button for Service Provided status -->
+        <ng-container *ngIf="booking.status === BookingStatus.SERVICE_PROVIDED">
+          <button class="btn-feedback" (click)="openFeedbackDialog(booking)">Leave feedback</button>
+        </ng-container>
+        
+        <!-- Show View Feedback button for Booking Finished status -->
+        <ng-container *ngIf="booking.status === BookingStatus.BOOKING_FINISHED">
+          <button class="btn-view-feedback" (click)="openViewFeedbackDialog(booking)">View feedback</button>
+        </ng-container>
+      </div>
+      
+      <div class="support-chat">
+        <span>Have any questions?</span>
+        <button class="btn-support">Support chat</button>
+      </div>
+    </div>
+  </div>
+</div>

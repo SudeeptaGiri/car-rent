@@ -1,0 +1,231 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, interval, of, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Booking, BookingStatus, Feedback } from '../models/booking.model';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookingService {
+  private bookings: Booking[] = [];
+  private bookingsSubject = new BehaviorSubject<Booking[]>([]);
+  
+  constructor(private http: HttpClient) {
+    // Initialize with sample data
+    this.loadSampleBookings();
+    
+    // Check booking statuses every second to update status automatically
+    interval(1000).subscribe(() => this.updateBookingStatuses());
+  }
+  
+  private loadSampleBookings(): void {
+    // Set specific fixed dates for the bookings
+    // Assuming today is April 22, 2023 for example
+    
+    // Booking 1: Reserved for future date
+    const pickup1 = new Date('2025-04-24T10:00:00');
+    const dropoff1 = new Date('2025-04-28T16:00:00');
+    
+    // Booking 2: Reserved for further future date
+    const pickup2 = new Date('2025-04-26T10:00:00');
+    const dropoff2 = new Date('2025-05-01T16:00:00');
+    
+    // Booking 3: Service started (pickup date in past, dropoff in future)
+    const pickup3 = new Date('2025-04-21T10:00:00');
+    const dropoff3 = new Date('2025-04-25T16:00:00');
+    
+    // Booking 4: Cancelled booking
+    const pickup4 = new Date('2025-04-15T10:00:00');
+    const dropoff4 = new Date('2025-04-20T16:00:00');
+    
+    // Booking 5: Service provided (both dates in past)
+    const pickup5 = new Date('2025-04-12T10:00:00');
+    const dropoff5 = new Date('2025-04-17T16:00:00');
+    
+    // Booking 6: Booking finished with feedback
+    const pickup6 = new Date('2025-04-07T10:00:00');
+    const dropoff6 = new Date('2025-04-12T16:00:00');
+    const feedbackDate = new Date('2025-04-13T12:00:00');
+
+    // Sample data
+    this.bookings = [
+      {
+        id: '1',
+        carId: '101',
+        carName: 'Audi A6 Quattro 2023',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2437',
+        pickupDate: pickup1,
+        dropoffDate: dropoff1,
+        status: BookingStatus.RESERVED
+      },
+      {
+        id: '2',
+        carId: '102',
+        carName: 'Range Rover 2019',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2438',
+        pickupDate: pickup2,
+        dropoffDate: dropoff2,
+        status: BookingStatus.RESERVED,
+        reservedBy: 'SA'
+      },
+      {
+        id: '3',
+        carId: '103',
+        carName: 'Porsche 911 2021',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2439',
+        pickupDate: pickup3,
+        dropoffDate: dropoff3,
+        status: BookingStatus.SERVICE_STARTED
+      },
+      {
+        id: '4',
+        carId: '104',
+        carName: 'Nissan Z 2024',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2440',
+        pickupDate: pickup4,
+        dropoffDate: dropoff4,
+        status: BookingStatus.CANCELLED
+      },
+      {
+        id: '5',
+        carId: '105',
+        carName: 'Mercedes-Benz A class 2019',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2452',
+        pickupDate: pickup5,
+        dropoffDate: dropoff5,
+        status: BookingStatus.SERVICE_PROVIDED
+      },
+      {
+        id: '6',
+        carId: '106',
+        carName: 'BMW 330i 2020',
+        carImage: 'audi-a6.png',
+        orderNumber: '#2437',
+        pickupDate: pickup6,
+        dropoffDate: dropoff6,
+        status: BookingStatus.BOOKING_FINISHED,
+        feedback: {
+          rating: 5,
+          comment: 'Great car, excellent service!',
+          submittedAt: feedbackDate
+        }
+      }
+    ];
+    
+    // Initialize the status based on current date
+    this.updateBookingStatuses();
+    
+    // Emit the initial bookings
+    this.bookingsSubject.next([...this.bookings]);
+  }
+  
+  private updateBookingStatuses(): void {
+    const now = new Date();
+    let updated = false;
+    
+    this.bookings.forEach(booking => {
+      // Skip cancelled bookings - they stay cancelled
+      if (booking.status === BookingStatus.CANCELLED) {
+        return;
+      }
+      
+      // If booking is in the future, it should be RESERVED
+      if (now < booking.pickupDate) {
+        if (booking.status !== BookingStatus.RESERVED) {
+          booking.status = BookingStatus.RESERVED;
+          updated = true;
+        }
+      }
+      // If pickup date has passed but not dropoff, it's SERVICE_STARTED
+      else if (now >= booking.pickupDate && now < booking.dropoffDate) {
+        if (booking.status !== BookingStatus.SERVICE_STARTED) {
+          booking.status = BookingStatus.SERVICE_STARTED;
+          updated = true;
+        }
+      }
+      // If dropoff date has passed, it's SERVICE_PROVIDED
+      else if (now >= booking.dropoffDate) {
+        // Only change to SERVICE_PROVIDED if not already in a later state
+        if (booking.status !== BookingStatus.SERVICE_PROVIDED && 
+            booking.status !== BookingStatus.BOOKING_FINISHED) {
+          booking.status = BookingStatus.SERVICE_PROVIDED;
+          updated = true;
+        }
+      }
+      
+      // If feedback is provided, move to booking finished
+      if (booking.status === BookingStatus.SERVICE_PROVIDED && booking.feedback) {
+        booking.status = BookingStatus.BOOKING_FINISHED;
+        updated = true;
+      }
+    });
+    
+    if (updated) {
+      this.bookingsSubject.next([...this.bookings]);
+    }
+  }
+  
+  getBookings(): Observable<Booking[]> {
+    return this.bookingsSubject.asObservable();
+  }
+  
+  getBookingsByStatus(status: BookingStatus | 'ALL'): Observable<Booking[]> {
+    return this.getBookings().pipe(
+      map(bookings => status === 'ALL' ? bookings : bookings.filter(b => b.status === status))
+    );
+  }
+  
+  cancelBooking(bookingId: string): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+      this.bookingsSubject.next([...this.bookings]);
+    }
+  }
+  
+  submitFeedback(bookingId: string, rating: number, comment: string): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].feedback = {
+        rating,
+        comment,
+        submittedAt: new Date()
+      };
+      this.bookings[bookingIndex].status = BookingStatus.BOOKING_FINISHED;
+      this.bookingsSubject.next([...this.bookings]);
+    }
+  }
+  
+  isWithin12Hours(booking: Booking): boolean {
+    const now = new Date();
+    const hoursRemaining = (booking.pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    return hoursRemaining <= 12 && hoursRemaining > 0;
+  }
+  // Add this method to the BookingService class
+  updateBookingDates(bookingId: string, pickupDate: Date, dropoffDate: Date): Observable<any> {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      // Update the booking dates
+      this.bookings[bookingIndex].pickupDate = pickupDate;
+      this.bookings[bookingIndex].dropoffDate = dropoffDate;
+      
+      // Reset the status if needed based on the new dates
+      this.updateBookingStatuses();
+      
+      // Emit the updated bookings
+      this.bookingsSubject.next([...this.bookings]);
+      
+      // Return an observable that completes immediately
+      return of({ success: true });
+    }
+    
+    // Return an error observable if booking not found
+    return throwError(() => new Error('Booking not found'));
+  }
+}

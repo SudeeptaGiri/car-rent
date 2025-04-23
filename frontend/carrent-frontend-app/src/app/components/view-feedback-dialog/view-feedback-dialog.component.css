@@ -1,0 +1,68 @@
+.feedback-dialog {
+    padding: 20px;
+  }
+  .header{
+    background-color: transparent;
+  }
+  
+  .feedback-dialog .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .feedback-dialog .header h2 {
+    margin: 0;
+  }
+  
+  .feedback-dialog .header .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .feedback-dialog .content .rating {
+    margin-bottom: 16px;
+  }
+  
+  .feedback-dialog .content .rating p {
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .feedback-dialog .content .rating .stars {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .feedback-dialog .content .rating .stars .star {
+    font-size: 24px;
+    color: #ddd;
+  }
+  
+  .feedback-dialog .content .rating .stars .star.filled {
+    color: #ffc107;
+  }
+  
+  .feedback-dialog .content .comment {
+    margin-bottom: 16px;
+  }
+  
+  .feedback-dialog .content .comment p {
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .feedback-dialog .content .comment .comment-text {
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    font-style: italic;
+  }
+  
+  .feedback-dialog .content .submission-date {
+    font-size: 14px;
+    color: #666;
+  }

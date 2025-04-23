@@ -1,0 +1,23 @@
+<div class="feedback-dialog">
+    <div class="header">
+      <h2>Your Feedback</h2>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+    <div class="content">
+      <div class="rating">
+        <p>Your Rating:</p>
+        <div class="stars">
+          <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star" [class.filled]="data.feedback.rating >= star">★</span>
+        </div>
+      </div>
+      
+      <div class="comment" *ngIf="data.feedback.comment">
+        <p>Your Comment:</p>
+        <div class="comment-text">{{ data.feedback.comment }}</div>
+      </div>
+      
+      <div class="submission-date">
+        <p>Submitted on: {{ data.feedback.submittedAt | date:'medium' }}</p>
+      </div>
+    </div>
+  </div>
