@@ -23,7 +23,7 @@ export class CarBookingComponent implements OnInit {
   selectedCar!: CarDetails;
   userInfo!: UserInfo;
   locationInfo!: LocationInfo;
-  isReserved = true;
+  isReserved = false;     // change this to display reserved dialog
   
   totalPrice = 0;
   depositAmount = 2000;
@@ -41,15 +41,11 @@ export class CarBookingComponent implements OnInit {
   ) {}
 
  // In car-booking.component.ts
-ngOnInit(): void {
+ ngOnInit(): void {
   // Get car ID and dates from route parameters
   this.route.queryParams.subscribe(params => {
-
-    this.userInfo = this.carBookingService.getMockUserInfo();
-    this.locationInfo = this.carBookingService.getMockLocationInfo();
-    this.initForm();
     if (params['carId']) {
-      // Replace carBookingService with carService
+      // Get car details using CarService
       this.carService.getCarDetails(params['carId']).subscribe({
         next: (car) => {
           if (car) {
@@ -57,10 +53,11 @@ ngOnInit(): void {
             
             // If dates are provided in the URL, use them
             if (params['startDate'] && params['endDate']) {
-              const startDate = new Date(params['startDate']);
-              const endDate = new Date(params['endDate']);
+              const startDate = new Date(`${params['startDate']} ${params['startTime']}`);
+              const endDate = new Date(`${params['endDate']} ${params['endTime']}`);
               
-              console.log('Received dates from URL:', startDate, endDate);
+              this.dateFrom = startDate;
+              this.dateTo = endDate;
               
               // Update form with these dates
               this.bookingForm.patchValue({
@@ -70,55 +67,25 @@ ngOnInit(): void {
                 }
               });
               
-              // Update component properties
-              this.dateFrom = startDate;
-              this.dateTo = endDate;
+              // Calculate total price
+              this.calculateTotalPrice();
             }
-            
-            // Recalculate price based on these dates
-            this.calculateTotalPrice();
           }
         },
         error: (error) => {
           console.error('Error loading car details:', error);
         }
       });
-      
-      // If dates are provided in the URL, use them
-      if (params['startDate'] && params['endDate']) {
-        const startDate = new Date(params['startDate']);
-        const endDate = new Date(params['endDate']);
-        
-        // Update form with these dates
-        this.bookingForm.patchValue({
-          dates: {
-            dateFrom: startDate.toISOString(),
-            dateTo: endDate.toISOString()
-          }
-        });
-        
-        // Update component properties
-        this.dateFrom = startDate;
-        this.dateTo = endDate;
-        
-        // Recalculate price based on these dates
-        this.calculateTotalPrice();
-        
-        // Update calendar component if needed
-        // (You might need to add an @Input to the calendar component to set initial dates)
-      }
     }
+
+    // Get mock user and location info
+    this.userInfo = this.carBookingService.getMockUserInfo();
+    this.locationInfo = this.carBookingService.getMockLocationInfo();
+    
+    // Initialize form
+    this.initForm();
   });
-
-  // Get mock data
-  // this.selectedCar = this.carBookingService.getMockCarDetails();
-  this.userInfo = this.carBookingService.getMockUserInfo();
-  this.locationInfo = this.carBookingService.getMockLocationInfo();
-  
-  // Initialize form
-  this.initForm();
 }
-
   toggleCalendar(): void {
     this.isCalendarOpen = !this.isCalendarOpen;
   }
@@ -176,48 +143,44 @@ ngOnInit(): void {
       });
       return;
     }
-    if (this.bookingForm.valid) {
+    if (this.bookingForm.valid && this.selectedCar) {
       const bookingData = {
-        dateFrom: this.bookingForm.get('dates.dateFrom')?.value,
-        dateTo: this.bookingForm.get('dates.dateTo')?.value,
-        clientId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479' // This would typically come from authentication
+        dateFrom: this.dateFrom.toISOString(), // Convert Date to ISO string
+        dateTo: this.dateTo.toISOString(),     // Convert Date to ISO string
+        clientId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
       };
       
       this.carBookingService.bookCar(bookingData).subscribe({
         next: (response) => {
           console.log('Booking confirmed:', response);
-          
-          // Show booking success dialog instead of alert
           this.showBookingSuccessDialog();
         },
         error: (error) => {
           console.error('Booking failed:', error);
-          // Handle error
           alert('Booking failed. Please try again.');
         }
       });
     }
-  }
-
-  // New method to show booking success dialog
-  showBookingSuccessDialog(): void {
-    // Generate a random order number (in a real app, this would come from the backend)
-    const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
-    
-    // Open the success dialog
-    this.dialog.open(BookingSuccessDialogComponent, {
-      width: '500px',
-      maxWidth: '95vw',
-      panelClass: 'success-dialog-container',
-      data: {
-        carName: "Auto",
-        startDate: this.dateFrom,
-        endDate: this.dateTo,
-        orderNumber: orderNumber,
-        bookingDate: new Date() // Current date as booking date
-      }
-    });
-  }
+}
+  
+showBookingSuccessDialog(): void {
+  const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
+  
+  this.dialog.open(BookingSuccessDialogComponent, {
+    width: '500px',
+    maxWidth: '95vw',
+    panelClass: 'success-dialog-container',
+    data: {
+      carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,
+      startDate: this.dateFrom,
+      endDate: this.dateTo,
+      orderNumber: orderNumber,
+      bookingDate: new Date(),
+      totalPrice: this.totalPrice,
+      numberOfDays: this.numberOfDays
+    }
+  });
+}
 
   openLocationChange(): void {
     const dialogRef = this.dialog.open(LocationDialogComponent, {

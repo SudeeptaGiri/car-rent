@@ -53,14 +53,16 @@
 
     <!-- Car Details and Confirmation Section -->
     <div class="section-car-details-section">
-      <div class="car-details-container">
+      <div class="car-details-container" *ngIf="selectedCar">
         <div class="car-image">
-          <img [src]="selectedCar.images" alt="Audi A6 Quattro 2023">
+          <!-- Use the primary image from the car details -->
+          <img [src]="selectedCar.images[0].url || selectedCar.images[0]" class="image-car"
+               [alt]="selectedCar.brand + ' ' + selectedCar.model">
         </div>
         <div class="car-info">
-          <h3>{{ selectedCar.model }}</h3>
+          <h3>{{ selectedCar.brand }} {{ selectedCar.model }} {{ selectedCar.year }}</h3>
           <p class="location">{{ selectedCar.location }}</p>
-
+      
           <div class="pricing-info">
             <div class="total-section">
               <div class="total-label">Total</div>
