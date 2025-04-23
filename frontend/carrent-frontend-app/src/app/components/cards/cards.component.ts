@@ -194,6 +194,7 @@ export class CardsComponent implements OnInit {
         height: '90vh',
         maxWidth: '1200px', 
         maxHeight: '800px',
+        position: { top: '50px' },
         panelClass: 'custom-dialog-container',
         data: { carId },
         autoFocus: false,
