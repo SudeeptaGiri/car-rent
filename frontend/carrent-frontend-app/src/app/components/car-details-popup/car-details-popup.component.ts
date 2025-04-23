@@ -11,11 +11,6 @@ import {
 } from '../../models/car.interface';
 import moment from 'moment';
 
-// interface DateRangeForm {
-//   startDate: FormControl<Date | null>;
-//   endDate: FormControl<Date | null>;
-// }
-
 @Component({
   selector: 'app-car-details-popup',
   standalone: false,
