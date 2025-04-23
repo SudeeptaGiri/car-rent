@@ -13,12 +13,56 @@
     margin: 0;
   }
   
-  .cancelled-dialog .header .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-  }
+  /* Add this to your component's CSS file */
+
+.cancelled-dialog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cancelled-dialog {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.cancelled-dialog p {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: #333;
+}
+
+.ok-button {
+  margin-top: 20px;
+}
+
+.cancelled-dialog button {
+
+  background-color: #f44336; /* Red color matching your other buttons */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  min-width: 120px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cancelled-dialog button:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+.cancelled-dialog button:active {
+  transform: translateY(0);
+}
   
   .cancelled-dialog .content {
     display: flex;

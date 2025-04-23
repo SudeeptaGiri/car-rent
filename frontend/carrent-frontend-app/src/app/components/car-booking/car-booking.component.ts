@@ -167,17 +167,16 @@ export class CarBookingComponent implements OnInit {
       width: '700px',
       maxWidth: '95vw',
       data: {
-        dateFrom: this.dateFrom?.toISOString() || new Date().toISOString(),
-        dateTo: this.dateTo?.toISOString() || this.getDefaultEndDate().toISOString()
+        bookedDates: [] // Pass any booked dates here
       },
       panelClass: 'date-picker-dialog'
     });
   
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.componentInstance.dateRangeSelected.subscribe(result => {
       if (result) {
-        // Create new Date objects from the result
-        this.dateFrom = new Date(result.dateFrom);
-        this.dateTo = new Date(result.dateTo);
+        // Convert moment objects to Date objects
+        this.dateFrom = result.startDate.toDate();
+        this.dateTo = result.endDate.toDate();
   
         // Update the form with the new dates
         this.bookingForm.patchValue({
@@ -185,11 +184,15 @@ export class CarBookingComponent implements OnInit {
             dateFrom: this.dateFrom.toISOString(),
             dateTo: this.dateTo.toISOString()
           }
-        }, { emitEvent: true }); // Ensure the valueChanges event is triggered
+        });
   
         // Recalculate total price
         this.calculateTotalPrice();
       }
+    });
+  
+    dialogRef.componentInstance.closed.subscribe(() => {
+      dialogRef.close();
     });
   }
 

@@ -1,7 +1,9 @@
+<!-- my-bookings.component.html -->
 <div class="my-bookings-container">
   <h1>My bookings</h1>
   
-  <div class="tabs">
+  <!-- Desktop tabs - visible on larger screens -->
+  <div class="tabs desktop-tabs">
     <button 
       class="tab-button" 
       [class.active]="currentTab === 'ALL'"
@@ -40,13 +42,40 @@
     </button>
   </div>
   
+  <!-- Mobile dropdown - visible on small screens -->
+  <div class="mobile-tabs-dropdown">
+    <button class="dropdown-toggle" (click)="toggleDropdown()">
+      {{ getTabDisplayName(currentTab) }}
+      <span class="dropdown-arrow">&#9662;</span>
+    </button>
+    <div class="dropdown-menu" [class.show]="dropdownOpen">
+      <button class="dropdown-item" (click)="changeTab('ALL'); toggleDropdown()">
+        All bookings
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.RESERVED); toggleDropdown()">
+        Reserved
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.SERVICE_STARTED); toggleDropdown()">
+        Service started
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.SERVICE_PROVIDED); toggleDropdown()">
+        Service provided
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.BOOKING_FINISHED); toggleDropdown()">
+        Booking finished
+      </button>
+      <button class="dropdown-item" (click)="changeTab(BookingStatus.CANCELLED); toggleDropdown()">
+        Cancelled
+      </button>
+    </div>
+  </div>
+  
   <div class="bookings-grid">
     <div class="booking-card" *ngFor="let booking of filteredBookings">
       <div class="car-image-container">
         <img [src]="booking.carImage" [alt]="booking.carName" class="car-image">
         <div class="status-badge" [ngClass]="booking.status.toLowerCase().replace(' ', '-')">
           {{ booking.status }}
-          <!-- <span *ngIf="booking.reservedBy"> by {{ booking.reservedBy }}</span> -->
         </div>
       </div>
       
@@ -59,8 +88,7 @@
         <!-- Show Cancel and Edit buttons for Reserved status and not within 12 hours -->
         <ng-container *ngIf="booking.status === BookingStatus.RESERVED && !isWithin12Hours(booking)">
           <button class="btn-cancel" (click)="openCancelDialog(booking)">Cancel</button>
-          <!-- Update the Edit button in my-bookings.component.html -->
-          <button class="btn-edit" [routerLink]="['/edit-booking', booking.id]">Edit</button>
+          <button class="btn-edit" (click)="navigateToEditBooking(booking)">Edit</button>
         </ng-container>
         
         <!-- Show Leave Feedback button for Service Provided status -->
