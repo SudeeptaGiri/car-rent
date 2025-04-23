@@ -57,7 +57,7 @@
 
   <!-- Desktop login -->
   <div class="login-side desktop-only" *ngIf="user; else guestLinks">
-    <div class="user-dropdown">
+    <div class="user-dropdown" style="display: contents; justify-content: center;">
       <img *ngIf="user" src="assets/profile-icon.svg" alt="Profile" class="profile-icon" />
       <span (click)="toggleDropdown()" class="user-name">
        Hello, {{ user.firstName }} ( {{user.role }} )
