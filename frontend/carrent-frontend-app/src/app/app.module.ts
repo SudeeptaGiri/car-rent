@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CarDetailsPopupComponent } from './components/car-details-popup/car-details-popup.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
+import { HttpClientModule } from '@angular/common/http';
 
 // Pages
 import { RegisterComponent } from './pages/register/register.component';
@@ -23,9 +24,11 @@ import { CardsComponent } from './components/cards/cards.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { UserRoleComponent } from './components/user-role/user-role.component';
+import { FeedbackComponent } from './components/feedbacks/feedbacks.component';
 
 // Services
 import { LocationService } from './services/locations.service';
+import { FilterService } from './services/filter.service';
 
 // Angular Material Modules
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,6 +39,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
@@ -66,9 +70,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    FeedbackComponent
   ],
-  providers: [ provideHttpClient(),LocationService],
+  providers: [ provideHttpClient(),LocationService,FilterService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
+import { FilterService } from '../../services/filter.service';
+
 
 
 interface LocationSuggestion {
@@ -28,26 +30,27 @@ interface FilterData {
 
 @Component({
   selector: 'app-filter',
-  standalone:false,
+  standalone: false,
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @ViewChild('rangeSlider') rangeSliderElement!: ElementRef;
   @ViewChild('calendarComponent') calendarComponent!: CalendarComponent;
-  
+
   // Price slider properties
   minPrice: number = 50;
   maxPrice: number = 2000;
-  currentMinPrice: number = 52;
-  currentMaxPrice: number = 400;
-  
+  currentMinPrice: number = 50; // Changed from 52
+  currentMaxPrice: number = 2000; // Changed from 400
+
+
   // Track slider state
-  isDraggingMin = false;
-  isDraggingMax = false;
+  private isDraggingMin = false;
+  private isDraggingMax = false;
   sliderWidth = 0;
   sliderLeft = 0;
-  
+
   // Location search properties
   pickupSearchQuery = '';
   dropoffSearchQuery = '';
@@ -57,23 +60,22 @@ export class FilterComponent implements OnInit, AfterViewInit {
   showDropoffSuggestions = false;
   isLoadingPickupSuggestions = false;
   isLoadingDropoffSuggestions = false;
-  
+
   // Location modal state
   showPickupModal = false;
   showDropoffModal = false;
-  
+
   // Search subjects for debouncing
   private pickupSearchSubject = new Subject<string>();
   private dropoffSearchSubject = new Subject<string>();
   private searchSubscriptions: Subscription[] = [];
-  
+
   // Selected locations
   selectedPickupLocation: string | null = null;
   selectedPickupCoordinates: { lat: number; lon: number } | null = null;
   selectedDropoffLocation: string | null = null;
   selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
-  
-  // Filter data object
+
   filterData: FilterData = {
     pickupLocation: null,
     pickupCoordinates: null,
@@ -81,15 +83,29 @@ export class FilterComponent implements OnInit, AfterViewInit {
     dropoffCoordinates: null,
     pickupDate: 'October 29',
     dropoffDate: 'October 31',
-    carCategory: 'Passenger car',
-    gearbox: 'Automatic',
-    engineType: 'Gasoline',
-    priceMin: 52,
-    priceMax: 400
+    carCategory: '',
+    gearbox: '',
+    engineType: '',
+    priceMin: 50,
+    priceMax: 2000
   };
   
-  constructor(private http: HttpClient) { }
+  // Filter data object
+  private defaultFilters: FilterData = {
+    pickupLocation: null,
+    pickupCoordinates: null,
+    dropoffLocation: null,
+    dropoffCoordinates: null,
+    pickupDate: 'October 29',
+    dropoffDate: 'October 31',
+    carCategory: '', // Changed from 'Passenger car' to empty string
+    gearbox: '',     // Changed from 'Automatic' to empty string
+    engineType: '',  // Changed from 'Gasoline' to empty string
+    priceMin: 50,
+    priceMax: 2000
+  };
 
+  constructor(private http: HttpClient, private filterService: FilterService) { }
   ngOnInit(): void {
     // Setup search debouncing for pickup location
     this.searchSubscriptions.push(
@@ -102,7 +118,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
             this.isLoadingPickupSuggestions = false;
             return of([]);
           }
-          
+
           this.isLoadingPickupSuggestions = true;
           return this.searchLocations(query).pipe(
             catchError(() => {
@@ -116,7 +132,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.isLoadingPickupSuggestions = false;
       })
     );
-    
+
     // Setup search debouncing for dropoff location
     this.searchSubscriptions.push(
       this.dropoffSearchSubject.pipe(
@@ -128,7 +144,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
             this.isLoadingDropoffSuggestions = false;
             return of([]);
           }
-          
+
           this.isLoadingDropoffSuggestions = true;
           return this.searchLocations(query).pipe(
             catchError(() => {
@@ -145,32 +161,163 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initRangeSlider();
-    
-    window.addEventListener('resize', () => {
-      this.updateSliderDimensions();
-      this.updateSliderPositions();
-    });
-    
-    // Close suggestion lists when clicking outside
-    document.addEventListener('click', (event) => {
-      if (!(event.target as HTMLElement).closest('.location-search-container')) {
-        this.showPickupSuggestions = false;
-        this.showDropoffSuggestions = false;
+    if (this.rangeSliderElement) {
+      const sliderElement = this.rangeSliderElement.nativeElement;
+      const minHandle = sliderElement.querySelector('.min-handle');
+      const maxHandle = sliderElement.querySelector('.max-handle');
+
+      if (minHandle && maxHandle) {
+        // Initialize handle positions
+        this.updateSliderPositions();
+
+        // Add mouse events
+        minHandle.addEventListener('mousedown', (e: MouseEvent) => {
+          e.preventDefault();
+          this.isDraggingMin = true;
+        });
+
+        maxHandle.addEventListener('mousedown', (e: MouseEvent) => {
+          e.preventDefault();
+          this.isDraggingMax = true;
+        });
+
+        document.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.addEventListener('mouseup', this.onMouseUp.bind(this));
+
+        // Add touch events
+        minHandle.addEventListener('touchstart', (e: TouchEvent) => {
+          e.preventDefault();
+          this.isDraggingMin = true;
+        }, { passive: false });
+
+        maxHandle.addEventListener('touchstart', (e: TouchEvent) => {
+          e.preventDefault();
+          this.isDraggingMax = true;
+        }, { passive: false });
+
+        document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
+        document.addEventListener('touchend', this.onTouchEnd.bind(this));
       }
-    });
+    }
+  }
+
+
+  private onTouchMove(e: TouchEvent): void {
+    if (!this.isDraggingMin && !this.isDraggingMax) return;
+    
+    const touch = e.touches[0];
+    const sliderRect = this.rangeSliderElement.nativeElement.getBoundingClientRect();
+    const sliderWidth = sliderRect.width;
+    
+    // Calculate position as percentage within slider
+    let position = (touch.clientX - sliderRect.left) / sliderWidth;
+    position = Math.max(0, Math.min(1, position)); // Clamp to [0,1]
+    
+    // Same logic as onMouseMove
+    const minBasePrice = this.minPrice;
+    const maxBasePrice = this.maxPrice;
+    const priceSpan = maxBasePrice - minBasePrice;
+    
+    if (this.isDraggingMin) {
+      // Ensure min handle doesn't exceed max handle
+      const maxPerc = (this.currentMaxPrice - minBasePrice) / priceSpan;
+      if (position > maxPerc - 0.05) {
+        position = maxPerc - 0.05;
+      }
+      
+      const newPrice = Math.round(minBasePrice + (position * priceSpan));
+      this.currentMinPrice = newPrice;
+      this.filterData.priceMin = newPrice;
+    } else if (this.isDraggingMax) {
+      // Ensure max handle doesn't go below min handle
+      const minPerc = (this.currentMinPrice - minBasePrice) / priceSpan;
+      if (position < minPerc + 0.05) {
+        position = minPerc + 0.05;
+      }
+      
+      const newPrice = Math.round(minBasePrice + (position * priceSpan));
+      this.currentMaxPrice = newPrice;
+      this.filterData.priceMax = newPrice;
+    }
+    
+    this.updateSliderPositions();
+  }
+
+  private onTouchEnd(e: TouchEvent): void {
+    if (this.isDraggingMin || this.isDraggingMax) {
+      this.isDraggingMin = false;
+      this.isDraggingMax = false;
+
+      // Important: Update filter service with price changes
+      this.filterService.updateFilters({ ...this.filterData });
+    }
+  }
+
+  private onMouseUp(e: MouseEvent): void {
+    if (this.isDraggingMin || this.isDraggingMax) {
+      this.isDraggingMin = false;
+      this.isDraggingMax = false;
+
+      // Important: Update filter service with price changes
+      this.filterService.updateFilters({ ...this.filterData });
+    }
+  }
+
+  // Fix the price calculation in the onMouseMove method
+
+  private onMouseMove(e: MouseEvent): void {
+  if (!this.isDraggingMin && !this.isDraggingMax) return;
+  
+  const sliderRect = this.rangeSliderElement.nativeElement.getBoundingClientRect();
+  const sliderWidth = sliderRect.width;
+  
+  // Calculate position as percentage within slider
+  let position = (e.clientX - sliderRect.left) / sliderWidth;
+  position = Math.max(0, Math.min(1, position)); // Clamp to [0,1]
+  
+  const minBasePrice = this.minPrice;
+  const maxBasePrice = this.maxPrice;
+  const priceSpan = maxBasePrice - minBasePrice;
+  
+  if (this.isDraggingMin) {
+    // Ensure min handle doesn't exceed max handle
+    const maxPerc = (this.currentMaxPrice - minBasePrice) / priceSpan;
+    if (position > maxPerc - 0.05) {
+      position = maxPerc - 0.05;
+    }
+    
+    const newPrice = Math.round(minBasePrice + (position * priceSpan));
+    this.currentMinPrice = newPrice;
+    this.filterData.priceMin = newPrice;
+    
+    console.log(`Min price set to: $${newPrice}`);
+  } else if (this.isDraggingMax) {
+    // Ensure max handle doesn't go below min handle
+    const minPerc = (this.currentMinPrice - minBasePrice) / priceSpan;
+    if (position < minPerc + 0.05) {
+      position = minPerc + 0.05;
+    }
+    
+    const newPrice = Math.round(minBasePrice + (position * priceSpan));
+    this.currentMaxPrice = newPrice;
+    this.filterData.priceMax = newPrice;
+    
+    console.log(`Max price set to: $${newPrice}`);
   }
   
+  this.updateSliderPositions();
+}
+
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this.searchSubscriptions.forEach(sub => sub.unsubscribe());
   }
-  
+
   // Location search methods
   searchLocations(query: string) {
     // Using OpenStreetMap's Nominatim API for geocoding
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
-    
+
     return this.http.get<any[]>(url).pipe(
       map(results => results.map(item => ({
         displayName: item.display_name.split(',').slice(0, 2).join(','), // Simplify display name
@@ -179,41 +326,41 @@ export class FilterComponent implements OnInit, AfterViewInit {
       })))
     );
   }
-  
+
   onPickupSearchInput(): void {
     this.showPickupSuggestions = true;
     this.pickupSearchSubject.next(this.pickupSearchQuery);
   }
-  
+
   onDropoffSearchInput(): void {
     this.showDropoffSuggestions = true;
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
-  
+
   selectPickupLocation(suggestion: LocationSuggestion): void {
     this.selectedPickupLocation = suggestion.displayName;
     this.selectedPickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.pickupSearchQuery = suggestion.displayName;
     this.showPickupSuggestions = false;
     this.showPickupModal = false;
-    
+
     // Update filter data
     this.filterData.pickupLocation = suggestion.displayName;
     this.filterData.pickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
   }
-  
+
   selectDropoffLocation(suggestion: LocationSuggestion): void {
     this.selectedDropoffLocation = suggestion.displayName;
     this.selectedDropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.dropoffSearchQuery = suggestion.displayName;
     this.showDropoffSuggestions = false;
     this.showDropoffModal = false;
-    
+
     // Update filter data
     this.filterData.dropoffLocation = suggestion.displayName;
     this.filterData.dropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
   }
-  
+
   useCurrentLocation(forPickup: boolean): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -222,7 +369,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
             lat: position.coords.latitude,
             lon: position.coords.longitude
           };
-          
+
           // Reverse geocode to get address
           this.reverseGeocode(coords.lat, coords.lon).subscribe(
             (address) => {
@@ -231,7 +378,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
                 this.selectedPickupCoordinates = coords;
                 this.pickupSearchQuery = address;
                 this.showPickupModal = false;
-                
+
                 // Update filter data
                 this.filterData.pickupLocation = address;
                 this.filterData.pickupCoordinates = coords;
@@ -240,7 +387,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
                 this.selectedDropoffCoordinates = coords;
                 this.dropoffSearchQuery = address;
                 this.showDropoffModal = false;
-                
+
                 // Update filter data
                 this.filterData.dropoffLocation = address;
                 this.filterData.dropoffCoordinates = coords;
@@ -261,10 +408,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
       alert('Geolocation is not supported by your browser. Please enter your location manually.');
     }
   }
-  
+
   reverseGeocode(lat: number, lon: number) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    
+
     return this.http.get<any>(url).pipe(
       map(result => {
         if (result && result.display_name) {
@@ -275,7 +422,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
       catchError(() => of('Current location'))
     );
   }
-  
+
   openLocationModal(forPickup: boolean): void {
     if (forPickup) {
       this.showPickupModal = true;
@@ -285,73 +432,73 @@ export class FilterComponent implements OnInit, AfterViewInit {
       this.showDropoffModal = true;
     }
   }
-  
+
   closeLocationModal(): void {
     this.showPickupModal = false;
     this.showDropoffModal = false;
   }
-  
+
   // Price slider methods
   initRangeSlider(): void {
     this.updateSliderDimensions();
     this.updateSliderPositions();
-    
+
     const slider = this.rangeSliderElement.nativeElement;
     const minHandle = slider.querySelector('.min-handle');
     const maxHandle = slider.querySelector('.max-handle');
-    
+
     minHandle.addEventListener('mousedown', (e: MouseEvent) => {
       this.startDragMin(e);
     });
-    
+
     maxHandle.addEventListener('mousedown', (e: MouseEvent) => {
       this.startDragMax(e);
     });
-    
+
     document.addEventListener('mousemove', (e: MouseEvent) => {
       this.onDrag(e);
     });
-    
+
     document.addEventListener('mouseup', () => {
       this.stopDrag();
     });
-    
+
     minHandle.addEventListener('touchstart', (e: TouchEvent) => {
       this.startDragMin(e.touches[0]);
       e.preventDefault();
     });
-    
+
     maxHandle.addEventListener('touchstart', (e: TouchEvent) => {
       this.startDragMax(e.touches[0]);
       e.preventDefault();
     });
-    
+
     document.addEventListener('touchmove', (e: TouchEvent) => {
       this.onDrag(e.touches[0]);
     }, { passive: false });
-    
+
     document.addEventListener('touchend', () => {
       this.stopDrag();
     });
   }
-  
+
   updateSliderDimensions(): void {
     const slider = this.rangeSliderElement.nativeElement;
     const rect = slider.getBoundingClientRect();
     this.sliderWidth = rect.width;
     this.sliderLeft = rect.left;
   }
-  
+
   startDragMin(e: MouseEvent | Touch): void {
     this.isDraggingMin = true;
     this.updateMinPosition(e.clientX);
   }
-  
+
   startDragMax(e: MouseEvent | Touch): void {
     this.isDraggingMax = true;
     this.updateMaxPosition(e.clientX);
   }
-  
+
   onDrag(e: MouseEvent | Touch): void {
     if (this.isDraggingMin) {
       this.updateMinPosition(e.clientX);
@@ -359,102 +506,105 @@ export class FilterComponent implements OnInit, AfterViewInit {
       this.updateMaxPosition(e.clientX);
     }
   }
-  
+
   stopDrag(): void {
     this.isDraggingMin = false;
     this.isDraggingMax = false;
   }
-  
+
   updateMinPosition(clientX: number): void {
     const slider = this.rangeSliderElement.nativeElement;
     const minHandle = slider.querySelector('.min-handle');
     const maxHandle = slider.querySelector('.max-handle');
-    
+
     let position = clientX - this.sliderLeft;
     position = Math.max(0, Math.min(position, this.sliderWidth));
-    
+
     const maxHandlePosition = parseInt(maxHandle.style.left || '0', 10);
     position = Math.min(position, maxHandlePosition);
-    
+
     const priceRange = this.maxPrice - this.minPrice;
     const percentage = position / this.sliderWidth;
     this.currentMinPrice = Math.round(this.minPrice + (percentage * priceRange));
-    
+
     // Update filter data
     this.filterData.priceMin = this.currentMinPrice;
-    
+
     minHandle.style.left = `${position}px`;
     this.updateTrackFill();
   }
-  
+
   updateMaxPosition(clientX: number): void {
     const slider = this.rangeSliderElement.nativeElement;
     const minHandle = slider.querySelector('.min-handle');
     const maxHandle = slider.querySelector('.max-handle');
-    
+
     let position = clientX - this.sliderLeft;
     position = Math.max(0, Math.min(position, this.sliderWidth));
-    
+
     const minHandlePosition = parseInt(minHandle.style.left || '0', 10);
     position = Math.max(position, minHandlePosition);
-    
+
     const priceRange = this.maxPrice - this.minPrice;
     const percentage = position / this.sliderWidth;
     this.currentMaxPrice = Math.round(this.minPrice + (percentage * priceRange));
-    
+
     // Update filter data
     this.filterData.priceMax = this.currentMaxPrice;
-    
+
     maxHandle.style.left = `${position}px`;
     this.updateTrackFill();
   }
-  
-  updateTrackFill(): void {
-    const slider = this.rangeSliderElement.nativeElement;
-    const track = slider.querySelector('.slider-track');
-    const minHandle = slider.querySelector('.min-handle');
-    const maxHandle = slider.querySelector('.max-handle');
+
+  private updateTrackFill(): void {
+    if (!this.rangeSliderElement) return;
     
-    const minPos = parseInt(minHandle.style.left || '0', 10);
-    const maxPos = parseInt(maxHandle.style.left || '0', 10);
+    const sliderTrack = this.rangeSliderElement.nativeElement.querySelector('.slider-track');
+    if (!sliderTrack) return;
     
-    const fillStart = (minPos / this.sliderWidth) * 100;
-    const fillEnd = (maxPos / this.sliderWidth) * 100;
+    const minBasePrice = this.minPrice;
+    const maxBasePrice = this.maxPrice;
     
-    track.style.background = `linear-gradient(
-      to right, 
-      #e5e5e5 0%, 
-      #e5e5e5 ${fillStart}%, 
-      #d32f2f ${fillStart}%, 
-      #d32f2f ${fillEnd}%, 
-      #e5e5e5 ${fillEnd}%, 
-      #e5e5e5 100%
-    )`;
+    const minPerc = ((this.currentMinPrice - minBasePrice) / (maxBasePrice - minBasePrice)) * 100;
+    const maxPerc = ((this.currentMaxPrice - minBasePrice) / (maxBasePrice - minBasePrice)) * 100;
+    
+    sliderTrack.style.background = 
+      `linear-gradient(to right, #e5e5e5 0%, #e5e5e5 ${minPerc}%, #d32f2f ${minPerc}%, #d32f2f ${maxPerc}%, #e5e5e5 ${maxPerc}%, #e5e5e5 100%)`;
   }
-  
+
+  // Method to programmatically update slider positions
   updateSliderPositions(): void {
-    const slider = this.rangeSliderElement.nativeElement;
-    const minHandle = slider.querySelector('.min-handle');
-    const maxHandle = slider.querySelector('.max-handle');
+    if (!this.rangeSliderElement) return;
     
-    const priceRange = this.maxPrice - this.minPrice;
-    const minPercentage = (this.currentMinPrice - this.minPrice) / priceRange;
-    const maxPercentage = (this.currentMaxPrice - this.minPrice) / priceRange;
+    const sliderElement = this.rangeSliderElement.nativeElement;
+    const minHandle = sliderElement.querySelector('.min-handle');
+    const maxHandle = sliderElement.querySelector('.max-handle');
     
-    const minPosition = minPercentage * this.sliderWidth;
-    const maxPosition = maxPercentage * this.sliderWidth;
+    if (!minHandle || !maxHandle) return;
+    
+    const sliderWidth = sliderElement.offsetWidth;
+    
+    const minBasePrice = this.minPrice;
+    const maxBasePrice = this.maxPrice;
+    const priceRange = maxBasePrice - minBasePrice;
+    
+    const minPercentage = (this.currentMinPrice - minBasePrice) / priceRange;
+    const maxPercentage = (this.currentMaxPrice - minBasePrice) / priceRange;
+    
+    const minPosition = minPercentage * sliderWidth;
+    const maxPosition = maxPercentage * sliderWidth;
     
     minHandle.style.left = `${minPosition}px`;
     maxHandle.style.left = `${maxPosition}px`;
     
     this.updateTrackFill();
   }
-  
+
   // Form handling methods
   onSelectChange(field: string, event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
-    
-    switch(field) {
+
+    switch (field) {
       case 'pickupDate':
         this.filterData.pickupDate = value;
         break;
@@ -473,10 +623,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }
   }
 
-  
-  
+
+
   clearFilters(): void {
-    // Reset all filter values
+    // Reset filter values
     this.filterData = {
       pickupLocation: null,
       pickupCoordinates: null,
@@ -484,13 +634,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
       dropoffCoordinates: null,
       pickupDate: 'October 29',
       dropoffDate: 'October 31',
-      carCategory: 'Passenger car',
-      gearbox: 'Automatic',
-      engineType: 'Gasoline',
-      priceMin: 52,
-      priceMax: 400
+      carCategory: '',  // Changed to empty string
+      gearbox: '',      // Changed to empty string
+      engineType: '',   // Changed to empty string
+      priceMin: this.minPrice,
+      priceMax: this.maxPrice
     };
-    
+
     // Reset UI state
     this.selectedPickupLocation = null;
     this.selectedPickupCoordinates = null;
@@ -498,9 +648,9 @@ export class FilterComponent implements OnInit, AfterViewInit {
     this.selectedDropoffCoordinates = null;
     this.pickupSearchQuery = '';
     this.dropoffSearchQuery = '';
-    this.currentMinPrice = 52;
-    this.currentMaxPrice = 400;
-    
+    this.currentMinPrice = 50;
+    this.currentMaxPrice = 2000;
+
     // Reset form controls
     const selects = document.querySelectorAll('select');
     selects.forEach(select => {
@@ -510,14 +660,24 @@ export class FilterComponent implements OnInit, AfterViewInit {
     if (this.calendarComponent) {
       this.calendarComponent.resetCalendar();
     }
-    
+
     // Reset slider
     this.updateSliderPositions();
+    this.filterService.resetFilters();
   }
-  
+
   findCars(): void {
-    console.log('Filter data:', this.filterData);
-    // Implement your search logic here
+    console.log('Finding cars with filters:', this.filterData);
+    
+    // Make sure price range is correctly set
+    this.filterData = {
+      ...this.filterData,
+      priceMin: this.currentMinPrice,
+      priceMax: this.currentMaxPrice
+    };
+    
+    // Update the filter service
+    this.filterService.updateFilters({...this.filterData});
   }
 }
 

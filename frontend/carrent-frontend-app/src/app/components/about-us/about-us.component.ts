@@ -21,12 +21,12 @@ interface Location {
   styleUrls: ['./about-us.component.css']
 })
 export class AboutUsComponent implements OnInit {
-  readonly originYear: number = 2011;
+  readonly originYear: number = 2009;
   
   yearsInBusiness: number = 0;
   locationCount: number = 0;
-  carBrands: number = 0; // Will be calculated dynamically
-  carCount: number = 0;  // Will be calculated dynamically
+  carBrands: number = 0; 
+  carCount: number = 0;  
   
   constructor(private http: HttpClient) {}
   

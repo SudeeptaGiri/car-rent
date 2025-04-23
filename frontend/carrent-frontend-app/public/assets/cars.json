@@ -2233,6 +2233,2206 @@
         "favoriteCount": 45,
         "isPopular": false
       }
+    },
+    {
+      "id": "26",
+      "brand": "Toyota",
+      "model": "Corolla",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.5,
+      "price": 220,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "5.8 L/100km",
+        "features": ["Backup Camera", "Bluetooth", "Cruise Control", "Lane Departure Warning", "Smart Key"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-05",
+          "startTime": "09:00",
+          "endDate": "2024-04-10",
+          "endTime": "17:00",
+          "bookingId": "booking150",
+          "userId": "user456",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Rahul Sharma",
+            "rating": 4.6,
+            "comment": "Excellent fuel economy and very reliable. Perfect for city commuting.",
+            "date": "2024-01-12",
+            "userAvatar": "https://randomuser.me/api/portraits/men/81.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Priya Patel",
+            "rating": 4.4,
+            "comment": "Comfortable ride with all the basic features you need. Great value.",
+            "date": "2023-12-18",
+            "userAvatar": "https://randomuser.me/api/portraits/women/81.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 185,
+        "viewCount": 140,
+        "favoriteCount": 40,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "27",
+      "brand": "Hyundai",
+      "model": "i20",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.4,
+      "price": 200,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "5.5 L/100km",
+        "features": ["Touchscreen Infotainment", "Apple CarPlay", "Android Auto", "Rear AC Vents", "Wireless Charging"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-15",
+          "startTime": "10:00",
+          "endDate": "2024-03-20",
+          "endTime": "18:00",
+          "bookingId": "booking151",
+          "userId": "user567",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Arun Kumar",
+            "rating": 4.5,
+            "comment": "Great hatchback with premium features. Fuel efficient and easy to drive.",
+            "date": "2024-01-05",
+            "userAvatar": "https://randomuser.me/api/portraits/men/82.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Neha Singh",
+            "rating": 4.3,
+            "comment": "Perfect city car. Comfortable and has all the tech you need.",
+            "date": "2023-12-10",
+            "userAvatar": "https://randomuser.me/api/portraits/women/82.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 175,
+        "viewCount": 130,
+        "favoriteCount": 35,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "28",
+      "brand": "Maruti Suzuki",
+      "model": "Swift",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.3,
+      "price": 180,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "5.2 L/100km",
+        "features": ["Keyless Entry", "Push Button Start", "Touchscreen Display", "Rear Parking Sensors", "Auto Climate Control"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-10",
+          "startTime": "09:00",
+          "endDate": "2024-05-15",
+          "endTime": "17:00",
+          "bookingId": "booking152",
+          "userId": "user678",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Vikram Reddy",
+            "rating": 4.4,
+            "comment": "Fun to drive and extremely fuel efficient. Perfect for city traffic.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/83.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Anjali Gupta",
+            "rating": 4.2,
+            "comment": "Great value for money. Compact yet spacious enough for 4 adults.",
+            "date": "2023-12-20",
+            "userAvatar": "https://randomuser.me/api/portraits/women/83.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 195,
+        "viewCount": 120,
+        "favoriteCount": 30,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "29",
+      "brand": "Kia",
+      "model": "EV6",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.7,
+      "price": 580,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "17 kWh/100km",
+        "features": ["Dual Panoramic Displays", "Vehicle-to-Load Function", "Augmented Reality HUD", "Remote Smart Parking", "Fast Charging"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-12",
+          "startTime": "10:00",
+          "endDate": "2024-04-16",
+          "endTime": "18:00",
+          "bookingId": "booking153",
+          "userId": "user789",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Sanjay Mehta",
+            "rating": 4.8,
+            "comment": "Incredible EV with futuristic features. The range is impressive.",
+            "date": "2024-01-22",
+            "userAvatar": "https://randomuser.me/api/portraits/men/84.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Divya Kapoor",
+            "rating": 4.6,
+            "comment": "Smooth, silent, and powerful. The tech features are amazing.",
+            "date": "2023-12-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/84.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 90,
+        "viewCount": 320,
+        "favoriteCount": 85,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "30",
+      "brand": "Hyundai",
+      "model": "Kona Electric",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.6,
+      "price": 520,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "15.5 kWh/100km",
+        "features": ["Heat Pump", "Bluelink Connected Car Tech", "Heated Steering Wheel", "Ventilated Seats", "Smart Regenerative Braking"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-25",
+          "startTime": "09:00",
+          "endDate": "2024-03-30",
+          "endTime": "17:00",
+          "bookingId": "booking154",
+          "userId": "user890",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Rajesh Verma",
+            "rating": 4.7,
+            "comment": "Great electric car with good range. Very comfortable for city driving.",
+            "date": "2024-01-18",
+            "userAvatar": "https://randomuser.me/api/portraits/men/85.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Meera Joshi",
+            "rating": 4.5,
+            "comment": "Quiet, smooth, and packed with features. Charging was convenient.",
+            "date": "2023-12-22",
+            "userAvatar": "https://randomuser.me/api/portraits/women/85.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 85,
+        "viewCount": 290,
+        "favoriteCount": 70,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "31",
+      "brand": "Tata",
+      "model": "Nexon EV",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.5,
+      "price": 450,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "16 kWh/100km",
+        "features": ["ZConnect App", "Auto Headlamps", "Rain Sensing Wipers", "Sunroof", "iTPMS"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-05",
+          "startTime": "10:00",
+          "endDate": "2024-05-10",
+          "endTime": "18:00",
+          "bookingId": "booking155",
+          "userId": "user901",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Karthik Nair",
+            "rating": 4.6,
+            "comment": "Great Indian EV with good range and features. Perfect for city commuting.",
+            "date": "2024-01-08",
+            "userAvatar": "https://randomuser.me/api/portraits/men/86.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Shreya Desai",
+            "rating": 4.4,
+            "comment": "Comfortable ride with zero emissions. The connected features are useful.",
+            "date": "2023-12-12",
+            "userAvatar": "https://randomuser.me/api/portraits/women/86.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 95,
+        "viewCount": 260,
+        "favoriteCount": 60,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "32",
+      "brand": "Toyota",
+      "model": "Camry Hybrid",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.7,
+      "price": 550,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Hybrid",
+        "fuelType": "HYBRID",
+        "seats": 5,
+        "fuelConsumption": "4.5 L/100km",
+        "features": ["Leather Seats", "JBL Audio", "Wireless Charging", "Head-Up Display", "Toyota Safety Sense"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-20",
+          "startTime": "09:00",
+          "endDate": "2024-04-25",
+          "endTime": "17:00",
+          "bookingId": "booking156",
+          "userId": "user123",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Arjun Menon",
+            "rating": 4.8,
+            "comment": "Luxurious and fuel-efficient. The hybrid system is seamless.",
+            "date": "2024-01-25",
+            "userAvatar": "https://randomuser.me/api/portraits/men/87.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Lakshmi Krishnan",
+            "rating": 4.6,
+            "comment": "Smooth, quiet, and comfortable. Perfect executive sedan.",
+            "date": "2023-12-28",
+            "userAvatar": "https://randomuser.me/api/portraits/women/87.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 110,
+        "viewCount": 280,
+        "favoriteCount": 75,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "33",
+      "brand": "Honda",
+      "model": "Accord Hybrid",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.6,
+      "price": 520,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Hybrid",
+        "fuelType": "HYBRID",
+        "seats": 5,
+        "fuelConsumption": "4.3 L/100km",
+        "features": ["Honda Sensing", "Apple CarPlay", "Android Auto", "Leather Interior", "Adaptive Cruise Control"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-18",
+          "startTime": "10:00",
+          "endDate": "2024-03-23",
+          "endTime": "18:00",
+          "bookingId": "booking157",
+          "userId": "user234",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Nikhil Rao",
+            "rating": 4.7,
+            "comment": "Excellent hybrid with great fuel economy. Very comfortable for long drives.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/88.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Ananya Sharma",
+            "rating": 4.5,
+            "comment": "Smooth ride with premium feel. The hybrid system works flawlessly.",
+            "date": "2023-12-18",
+            "userAvatar": "https://randomuser.me/api/portraits/women/88.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 105,
+        "viewCount": 260,
+        "favoriteCount": 70,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "34",
+      "brand": "Lexus",
+      "model": "ES 300h",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.8,
+      "price": 680,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Hybrid",
+        "fuelType": "HYBRID",
+        "seats": 5,
+        "fuelConsumption": "4.6 L/100km",
+        "features": ["Mark Levinson Audio", "Semi-Aniline Leather", "Panoramic View Monitor", "Lexus Safety System+", "Climate Concierge"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-12",
+          "startTime": "09:00",
+          "endDate": "2024-05-17",
+          "endTime": "17:00",
+          "bookingId": "booking158",
+          "userId": "user345",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Ravi Shankar",
+            "rating": 4.9,
+            "comment": "The epitome of luxury and efficiency. Whisper quiet and supremely comfortable.",
+            "date": "2024-01-20",
+            "userAvatar": "https://randomuser.me/api/portraits/men/89.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Shalini Khanna",
+            "rating": 4.7,
+            "comment": "Exceptional build quality and refinement. The hybrid system is seamless.",
+            "date": "2023-12-25",
+            "userAvatar": "https://randomuser.me/api/portraits/women/89.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 95,
+        "viewCount": 310,
+        "favoriteCount": 85,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "35",
+      "brand": "Mahindra",
+      "model": "Thar",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.5,
+      "price": 450,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 4,
+        "fuelConsumption": "9.8 L/100km",
+        "features": ["4x4 Drivetrain", "Adventure Statistics Display", "Roof-Mounted Speakers", "Washable Interior", "Cruise Control"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-08",
+          "startTime": "09:00",
+          "endDate": "2024-04-12",
+          "endTime": "17:00",
+          "bookingId": "booking159",
+          "userId": "user456",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Suresh Iyer",
+            "rating": 4.6,
+            "comment": "Incredible off-road capability. Took it to some rough terrain and it performed flawlessly.",
+            "date": "2024-01-12",
+            "userAvatar": "https://randomuser.me/api/portraits/men/90.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Pooja Malhotra",
+            "rating": 4.4,
+            "comment": "Rugged yet comfortable. A true adventure vehicle with modern amenities.",
+            "date": "2023-12-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/90.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 120,
+        "viewCount": 270,
+        "favoriteCount": 75,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "36",
+      "brand": "Force",
+      "model": "Gurkha",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.4,
+      "price": 420,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 4,
+        "fuelConsumption": "10.2 L/100km",
+        "features": ["Snorkel", "Differential Locks", "All-Wheel Drive", "High Ground Clearance", "All-Terrain Tires"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-22",
+          "startTime": "10:00",
+          "endDate": "2024-03-26",
+          "endTime": "18:00",
+          "bookingId": "booking160",
+          "userId": "user567",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Deepak Chandra",
+            "rating": 4.5,
+            "comment": "Unstoppable off-road machine. Took it to some challenging trails and it conquered them all.",
+            "date": "2024-01-08",
+            "userAvatar": "https://randomuser.me/api/portraits/men/91.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Kavita Rajan",
+            "rating": 4.3,
+            "comment": "Rugged and capable. Not the most refined on-road, but unbeatable off-road.",
+            "date": "2023-12-10",
+            "userAvatar": "https://randomuser.me/api/portraits/women/91.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 95,
+        "viewCount": 240,
+        "favoriteCount": 65,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "37",
+      "brand": "Jeep",
+      "model": "Wrangler",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.7,
+      "price": 620,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "11.2 L/100km",
+        "features": ["Removable Top", "Rock-Trac 4x4", "Sway Bar Disconnect", "Trail Rail System", "Alpine Premium Audio"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-18",
+          "startTime": "09:00",
+          "endDate": "2024-05-22",
+          "endTime": "17:00",
+          "bookingId": "booking161",
+          "userId": "user678",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Ajay Mathur",
+            "rating": 4.8,
+            "comment": "The ultimate off-road icon. Incredible capability with modern comforts.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/92.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Nisha Bajaj",
+            "rating": 4.6,
+            "comment": "So much fun with the top down. Great for weekend adventures.",
+            "date": "2023-12-20",
+            "userAvatar": "https://randomuser.me/api/portraits/women/92.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 110,
+        "viewCount": 300,
+        "favoriteCount": 85,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "38",
+      "brand": "Ford",
+      "model": "Mustang",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.8,
+      "price": 750,
+      "category": "Sports car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 4,
+        "fuelConsumption": "12.8 L/100km",
+        "features": ["Track Apps", "Line Lock", "Launch Control", "Active Valve Exhaust", "SYNC 3"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-15",
+          "startTime": "10:00",
+          "endDate": "2024-04-18",
+          "endTime": "18:00",
+          "bookingId": "booking162",
+          "userId": "user789",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Rohit Malhotra",
+            "rating": 4.9,
+            "comment": "American muscle at its finest! The V8 sound is addictive.",
+            "date": "2024-01-22",
+            "userAvatar": "https://randomuser.me/api/portraits/men/93.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Tanya Saxena",
+            "rating": 4.7,
+            "comment": "Incredible performance and head-turning looks. The manual transmission is a joy.",
+            "date": "2023-12-28",
+            "userAvatar": "https://randomuser.me/api/portraits/women/93.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 125,
+        "viewCount": 380,
+        "favoriteCount": 110,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "39",
+      "brand": "Subaru",
+      "model": "WRX STI",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.7,
+      "price": 580,
+      "category": "Sports car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "10.4 L/100km",
+        "features": ["Symmetrical AWD", "Driver-Controlled Center Differential", "Recaro Seats", "Brembo Brakes", "SI-Drive"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-12",
+          "startTime": "09:00",
+          "endDate": "2024-03-16",
+          "endTime": "17:00",
+          "bookingId": "booking163",
+          "userId": "user890",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Vivek Sinha",
+            "rating": 4.8,
+            "comment": "Rally car for the road! Incredible grip and performance in all conditions.",
+            "date": "2024-01-18",
+            "userAvatar": "https://randomuser.me/api/portraits/men/94.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Ritu Agarwal",
+            "rating": 4.6,
+            "comment": "Exhilarating to drive with that boxer rumble. The manual gearbox is precise.",
+            "date": "2023-12-22",
+            "userAvatar": "https://randomuser.me/api/portraits/women/94.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 115,
+        "viewCount": 340,
+        "favoriteCount": 95,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "40",
+      "brand": "Volkswagen",
+      "model": "Golf GTI",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.6,
+      "price": 480,
+      "category": "Sports car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "7.8 L/100km",
+        "features": ["Dynamic Chassis Control", "Digital Cockpit Pro", "Tartan Cloth Seats", "Adaptive Cruise Control", "Harman Kardon Sound"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-08",
+          "startTime": "10:00",
+          "endDate": "2024-05-12",
+          "endTime": "18:00",
+          "bookingId": "booking164",
+          "userId": "user901",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Prakash Jha",
+            "rating": 4.7,
+            "comment": "The original hot hatch still delivers! Fun to drive with practical everyday usability.",
+            "date": "2024-01-10",
+            "userAvatar": "https://randomuser.me/api/portraits/men/95.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Aarti Nair",
+            "rating": 4.5,
+            "comment": "Perfect balance of performance and practicality. The manual gearbox is a delight.",
+            "date": "2023-12-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/95.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 130,
+        "viewCount": 290,
+        "favoriteCount": 80,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "41",
+      "brand": "Mercedes-Benz",
+      "model": "EQS",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.9,
+      "price": 1100,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "16.5 kWh/100km",
+        "features": ["Hyperscreen", "MBUX", "Energizing Comfort", "Burmester 3D Sound", "Augmented Reality Navigation"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-22",
+          "startTime": "09:00",
+          "endDate": "2024-04-26",
+          "endTime": "17:00",
+          "bookingId": "booking165",
+          "userId": "user123",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Vikrant Khanna",
+            "rating": 5.0,
+            "comment": "The future of luxury. Silent, powerful, and packed with cutting-edge tech.",
+            "date": "2024-01-25",
+            "userAvatar": "https://randomuser.me/api/portraits/men/96.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Shikha Patel",
+            "rating": 4.8,
+            "comment": "Incredible electric range and the Hyperscreen is mind-blowing. Pure luxury.",
+            "date": "2023-12-30",
+            "userAvatar": "https://randomuser.me/api/portraits/women/96.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 85,
+        "viewCount": 400,
+        "favoriteCount": 115,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "42",
+      "brand": "BMW",
+      "model": "i7",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.9,
+      "price": 1200,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "19.2 kWh/100km",
+        "features": ["Theater Screen", "Panoramic Sky Lounge", "Executive Lounge", "Bowers & Wilkins Diamond Surround", "Illuminated Grille"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-28",
+          "startTime": "10:00",
+          "endDate": "2024-04-02",
+          "endTime": "18:00",
+          "bookingId": "booking166",
+          "userId": "user234",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Rahul Mehra",
+            "rating": 5.0,
+            "comment": "The ultimate electric luxury sedan. The Theater Screen is incredible for rear passengers.",
+            "date": "2024-01-20",
+            "userAvatar": "https://randomuser.me/api/portraits/men/97.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Aditi Kapoor",
+            "rating": 4.9,
+            "comment": "Whisper quiet with incredible performance. The tech features are from the future.",
+            "date": "2023-12-25",
+            "userAvatar": "https://randomuser.me/api/portraits/women/97.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 70,
+        "viewCount": 420,
+        "favoriteCount": 105,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "43",
+      "brand": "Audi",
+      "model": "e-tron GT",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.8,
+      "price": 950,
+      "category": "Luxury car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 4,
+        "fuelConsumption": "20.1 kWh/100km",
+        "features": ["Matrix LED Headlights", "Bang & Olufsen 3D Sound", "Adaptive Air Suspension", "Virtual Cockpit Plus", "Head-Up Display"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-15",
+          "startTime": "09:00",
+          "endDate": "2024-05-19",
+          "endTime": "17:00",
+          "bookingId": "booking167",
+          "userId": "user345",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Nitin Sharma",
+            "rating": 4.9,
+            "comment": "Electric performance that rivals supercars. Stunning design and comfortable ride.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/98.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Leela Krishnan",
+            "rating": 4.7,
+            "comment": "Incredible acceleration with luxury appointments. The future of grand touring.",
+            "date": "2023-12-20",
+            "userAvatar": "https://randomuser.me/api/portraits/women/98.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 80,
+        "viewCount": 390,
+        "favoriteCount": 100,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "44",
+      "brand": "Toyota",
+      "model": "Fortuner",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.6,
+      "price": 520,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 7,
+        "fuelConsumption": "10.8 L/100km",
+        "features": ["4x4 with Low Range", "Downhill Assist Control", "JBL Premium Audio", "Leather Seats", "360° Camera"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-10",
+          "startTime": "10:00",
+          "endDate": "2024-04-15",
+          "endTime": "18:00",
+          "bookingId": "booking168",
+          "userId": "user456",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Aman Choudhary",
+            "rating": 4.7,
+            "comment": "Reliable and capable SUV. Great for family trips with off-road capability.",
+            "date": "2024-01-12",
+            "userAvatar": "https://randomuser.me/api/portraits/men/99.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Sonia Reddy",
+            "rating": 4.5,
+            "comment": "Comfortable ride with rugged capability. Plenty of space for passengers and luggage.",
+            "date": "2023-12-18",
+            "userAvatar": "https://randomuser.me/api/portraits/women/99.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 125,
+        "viewCount": 270,
+        "favoriteCount": 70,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "45",
+      "brand": "Ford",
+      "model": "Bronco",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.7,
+      "price": 580,
+      "category": "Off-road car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "11.5 L/100km",
+        "features": ["G.O.A.T. Modes", "Removable Doors", "Trail Turn Assist", "Trail Maps", "Bash Plates"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-15",
+          "startTime": "09:00",
+          "endDate": "2024-03-20",
+          "endTime": "17:00",
+          "bookingId": "booking169",
+          "userId": "user567",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Akash Singh",
+            "rating": 4.8,
+            "comment": "The ultimate adventure vehicle. Capable off-road yet comfortable on-road.",
+            "date": "2024-01-08",
+            "userAvatar": "https://randomuser.me/api/portraits/men/70.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Priyanka Das",
+            "rating": 4.6,
+            "comment": "Fun to drive with the doors off. Great features for off-road enthusiasts.",
+            "date": "2023-12-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/70.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 115,
+        "viewCount": 310,
+        "favoriteCount": 85,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "46",
+      "brand": "Maruti Suzuki",
+      "model": "Baleno",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.3,
+      "price": 210,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "5.4 L/100km",
+        "features": ["SmartPlay Studio", "Cruise Control", "LED Projector Headlamps", "Auto Climate Control", "Keyless Entry"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-22",
+          "startTime": "10:00",
+          "endDate": "2024-05-27",
+          "endTime": "18:00",
+          "bookingId": "booking170",
+          "userId": "user678",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Manish Kumar",
+            "rating": 4.4,
+            "comment": "Spacious premium hatchback with good fuel economy. Perfect for city driving.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/71.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Kavita Sharma",
+            "rating": 4.2,
+            "comment": "Comfortable ride with good features. The automatic transmission is smooth.",
+            "date": "2023-12-20",
+            "userAvatar": "https://randomuser.me/api/portraits/women/71.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 170,
+        "viewCount": 150,
+        "favoriteCount": 35,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "47",
+      "brand": "Hyundai",
+      "model": "Creta",
+      "year": 2023,
+      "location": "Gachibowli, Hyderabad",
+      "rating": 4.5,
+      "price": 350,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "7.0 L/100km",
+        "features": ["Panoramic Sunroof", "Ventilated Seats", "Bose Premium Sound", "BlueLink Connected Car Tech", "Air Purifier"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-02",
+          "startTime": "09:00",
+          "endDate": "2024-04-07",
+          "endTime": "17:00",
+          "bookingId": "booking171",
+          "userId": "user789",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Rajiv Malhotra",
+            "rating": 4.6,
+            "comment": "Feature-packed compact SUV. Comfortable ride with good ground clearance.",
+            "date": "2024-01-10",
+            "userAvatar": "https://randomuser.me/api/portraits/men/72.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Sneha Gupta",
+            "rating": 4.4,
+            "comment": "Great value with premium features. The automatic transmission is smooth.",
+            "date": "2023-12-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/72.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 155,
+        "viewCount": 220,
+        "favoriteCount": 50,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "48",
+      "brand": "Skoda",
+      "model": "Octavia",
+      "year": 2023,
+      "location": "Hitech City, Hyderabad",
+      "rating": 4.6,
+      "price": 380,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 5,
+        "fuelConsumption": "6.2 L/100km",
+        "features": ["Virtual Cockpit", "Canton Sound System", "Adaptive Cruise Control", "Park Assist", "Ambient Lighting"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-03-08",
+          "startTime": "10:00",
+          "endDate": "2024-03-13",
+          "endTime": "18:00",
+          "bookingId": "booking172",
+          "userId": "user890",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Vineet Khanna",
+            "rating": 4.7,
+            "comment": "European quality and refinement. Great driving dynamics with practical space.",
+            "date": "2024-01-18",
+            "userAvatar": "https://randomuser.me/api/portraits/men/73.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Reena Kapoor",
+            "rating": 4.5,
+            "comment": "Comfortable sedan with premium feel. The DSG transmission is responsive.",
+            "date": "2023-12-22",
+            "userAvatar": "https://randomuser.me/api/portraits/women/73.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 130,
+        "viewCount": 190,
+        "favoriteCount": 45,
+        "isPopular": false
+      }
+    },
+    {
+      "id": "49",
+      "brand": "Mazda",
+      "model": "MX-5",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.7,
+      "price": 520,
+      "category": "Sports car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Manual",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 2,
+        "fuelConsumption": "6.9 L/100km",
+        "features": ["Retractable Hardtop", "Bose Sound System", "Recaro Seats", "Limited Slip Differential", "Bilstein Dampers"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-05-25",
+          "startTime": "09:00",
+          "endDate": "2024-05-28",
+          "endTime": "17:00",
+          "bookingId": "booking173",
+          "userId": "user901",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Deepak Verma",
+            "rating": 4.8,
+            "comment": "The perfect roadster! Lightweight, agile, and so much fun with the top down.",
+            "date": "2024-01-22",
+            "userAvatar": "https://randomuser.me/api/portraits/men/74.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Anita Rao",
+            "rating": 4.6,
+            "comment": "Pure driving joy. The manual gearbox is precise and the handling is sublime.",
+            "date": "2023-12-28",
+            "userAvatar": "https://randomuser.me/api/portraits/women/74.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 105,
+        "viewCount": 320,
+        "favoriteCount": 90,
+        "isPopular": true
+      }
+    },
+    {
+      "id": "50",
+      "brand": "Nissan",
+      "model": "Leaf",
+      "year": 2023,
+      "location": "Kondapur, Hyderabad",
+      "rating": 4.4,
+      "price": 380,
+      "category": "Passenger car",
+      "status": "Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Electric",
+        "fuelType": "ELECTRIC",
+        "seats": 5,
+        "fuelConsumption": "15 kWh/100km",
+        "features": ["ProPILOT Assist", "e-Pedal", "Bose Premium Audio", "Around View Monitor", "NissanConnect EV"]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-04-05",
+          "startTime": "10:00",
+          "endDate": "2024-04-10",
+          "endTime": "18:00",
+          "bookingId": "booking174",
+          "userId": "user123",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "Sameer Joshi",
+            "rating": 4.5,
+            "comment": "Great electric car for city commuting. The e-Pedal feature makes driving easy.",
+            "date": "2024-01-15",
+            "userAvatar": "https://randomuser.me/api/portraits/men/75.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Nisha Tiwari",
+            "rating": 4.3,
+            "comment": "Quiet, smooth, and eco-friendly. Perfect for daily commutes.",
+            "date": "2023-12-20",
+            "userAvatar": "https://randomuser.me/api/portraits/women/75.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 95,
+        "viewCount": 210,
+        "favoriteCount": 55,
+        "isPopular": false
+      }
     }
   ]
 }

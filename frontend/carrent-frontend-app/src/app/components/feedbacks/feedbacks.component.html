@@ -1,0 +1,58 @@
+<div class="feedback-container">
+  
+    <div class="scrollable-container" [class.mobile]="isMobile">
+      <div class="review-cards">
+        @for (car of displayCars; track car.id) {
+          <div class="review-card">
+            <div class="review-header">
+              <img [src]="getPrimaryImageUrl(car)" alt="{{car.brand}} {{car.model}}" class="car-image">
+              <div class="car-info">
+                <h3>{{car.brand}} {{car.model}} {{car.year}}</h3>
+                <p class="order-history">Order history: {{orderHistory}}</p>
+              </div>
+            </div>
+            
+            <div class="rating">
+              @for (star of getStarRating(car.rating); track $index) {
+                @if (star === 1) {
+                  <span class="star filled">★</span>
+                } @else if (star === 0.5) {
+                  <span class="star half-filled">★</span>
+                } @else {
+                  <span class="star">★</span>
+                }
+              }
+            </div>
+            
+            <div class="review-content">
+              <p class="review-text">"{{getFirstReviewComment(car)}}"</p>
+            </div>
+            
+            <div class="review-footer">
+              <div class="user-info">
+                <span class="user-name">{{getFirstReviewUser(car)}},</span>
+                <span class="user-location">{{getCity(car)}}</span>
+              </div>
+              <div class="review-date">{{reviewDate}}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    
+    <!-- Navigation buttons -->
+    <div class="navigation-buttons" *ngIf="!isMobile">
+      <button class="nav-button prev" [disabled]="currentIndex === 0" (click)="previousCars()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5m6-6l-6 6 6 6"/>
+        </svg>
+      </button>
+      <button class="nav-button next" [disabled]="currentIndex + 3 >= cars.length" (click)="nextCars()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  
