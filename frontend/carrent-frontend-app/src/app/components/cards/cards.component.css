@@ -264,6 +264,43 @@
     border-radius: 4px;
     cursor: pointer;
   }
+
+  .page-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .page-info {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* Improve pagination buttons for better visibility */
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .page-button {
+    min-width: 32px;
+  }
+  
+  /* Add styling for current count display */
+  .results-count {
+    margin: 1rem 0;
+    font-size: 14px;
+    color: #666;
+  }
   
   .retry-button:hover {
     background-color: #555;

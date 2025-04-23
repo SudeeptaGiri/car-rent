@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CarDetailsPopupComponent } from './components/car-details-popup/car-details-popup.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { HttpClientModule } from '@angular/common/http';
 
 // Pages
 import { RegisterComponent } from './pages/register/register.component';
@@ -22,9 +23,11 @@ import { CardsComponent } from './components/cards/cards.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { UserRoleComponent } from './components/user-role/user-role.component';
+import { FeedbackComponent } from './components/feedbacks/feedbacks.component';
 
 // Services
 import { LocationService } from './services/locations.service';
+import { FilterService } from './services/filter.service';
 
 // Angular Material Modules
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,7 +38,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 
 // Angular Material modules
@@ -58,6 +60,7 @@ import { MyBookingsPageComponent } from './pages/my-bookings-page/my-bookings-pa
 import { BookingSuccessDialogComponent } from './components/booking-success-dialog/booking-success-dialog.component';
 import { EditBookingComponent } from './components/edit-booking/edit-booking.component';
 import { EditBookingPageComponent } from './pages/edit-booking-page/edit-booking-page.component';
+
 
 @NgModule({
   declarations: [
@@ -110,9 +113,10 @@ import { EditBookingPageComponent } from './pages/edit-booking-page/edit-booking
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
-    MatSelectModule
+    MatSelectModule,
+    FeedbackComponent
   ],
-  providers: [ provideHttpClient(),LocationService],
+  providers: [ provideHttpClient(),LocationService,FilterService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

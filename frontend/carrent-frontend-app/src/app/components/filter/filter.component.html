@@ -1,27 +1,25 @@
-
 <section class="filter">
     <div class="filter-container">
+        <button class="clear-button" (click)="clearFilters()">Clear all filters</button>
         <div class="filter-row">
             <div class="filter-group">
                 <label>Pick-up location</label>
                 <div class="select-wrapper" (click)="openLocationModal(true)">
-                    <div class="location-display">
+                    <div class="location-display text-gray-700">
                         {{ selectedPickupLocation || 'Choose location' }}
                     </div>
-
                 </div>
             </div>
 
             <div class="filter-group">
-                <label>Drop-off location</label>
+                <label class="">Drop-off location</label>
                 <div class="select-wrapper" (click)="openLocationModal(false)">
-                    <div class="location-display">
+                    <div class="location-display text-gray-700">
                         {{ selectedDropoffLocation || 'Choose location' }}
                     </div>
                 </div>
             </div>
-
-            <calendar class="cal flex-1 w-full mt-7" ></calendar>
+            <calendar #calendarComponent class="cal flex-1 w-full pt-7"></calendar>
         </div>
 
         <div class="filter-row">
@@ -77,8 +75,6 @@
                 <button class="find-car-btn" (click)="findCars()">Find a car</button>
             </div>
         </div>
-
-        <button class="clear-button" (click)="clearFilters()">Clear all filters</button>
     </div>
 </section>
 
@@ -89,34 +85,27 @@
             <h3>Choose pick-up location</h3>
             <button class="close-modal" (click)="closeLocationModal()">&times;</button>
         </div>
-        
+
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(true)">
                 <span class="location-icon">📍</span>
                 Use current location
             </button>
-            
+
             <div class="location-search-container">
-                <input 
-                    type="text" 
-                    placeholder="Search for a city or address" 
-                    [(ngModel)]="pickupSearchQuery"
-                    (input)="onPickupSearchInput()"
-                    class="location-search-input"
-                >
-                
+                <input type="text" placeholder="Search for a city or address" [(ngModel)]="pickupSearchQuery"
+                    (input)="onPickupSearchInput()" class="location-search-input">
+
                 <div class="location-suggestions" *ngIf="showPickupSuggestions">
                     <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
                         Searching...
                     </div>
-                    <div class="no-suggestions" *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
+                    <div class="no-suggestions"
+                        *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
                         No locations found
                     </div>
-                    <div 
-                        class="suggestion-item" 
-                        *ngFor="let suggestion of pickupSuggestions"
-                        (click)="selectPickupLocation(suggestion)"
-                    >
+                    <div class="suggestion-item" *ngFor="let suggestion of pickupSuggestions"
+                        (click)="selectPickupLocation(suggestion)">
                         <span class="suggestion-icon">📍</span>
                         <span class="suggestion-text">{{ suggestion.displayName }}</span>
                     </div>
@@ -133,34 +122,27 @@
             <h3>Choose drop-off location</h3>
             <button class="close-modal" (click)="closeLocationModal()">&times;</button>
         </div>
-        
+
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(false)">
                 <span class="location-icon">📍</span>
                 Use current location
             </button>
-            
+
             <div class="location-search-container">
-                <input 
-                    type="text" 
-                    placeholder="Search for a city or address" 
-                    [(ngModel)]="dropoffSearchQuery"
-                    (input)="onDropoffSearchInput()"
-                    class="location-search-input"
-                >
-                
+                <input type="text" placeholder="Search for a city or address" [(ngModel)]="dropoffSearchQuery"
+                    (input)="onDropoffSearchInput()" class="location-search-input">
+
                 <div class="location-suggestions" *ngIf="showDropoffSuggestions">
                     <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions">
                         Searching...
                     </div>
-                    <div class="no-suggestions" *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
+                    <div class="no-suggestions"
+                        *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
                         No locations found
                     </div>
-                    <div 
-                        class="suggestion-item" 
-                        *ngFor="let suggestion of dropoffSuggestions"
-                        (click)="selectDropoffLocation(suggestion)"
-                    >
+                    <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions"
+                        (click)="selectDropoffLocation(suggestion)">
                         <span class="suggestion-icon">📍</span>
                         <span class="suggestion-text">{{ suggestion.displayName }}</span>
                     </div>

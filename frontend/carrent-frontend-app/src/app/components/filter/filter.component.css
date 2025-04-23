@@ -3,6 +3,43 @@ top-heading{
 
   margin-left: 2rem;
 }
+.min-handle, .max-handle {
+  position: absolute;
+  width: 20px; /* Increased size for better mobile touch */
+  height: 20px;
+  background: #d32f2f;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+  touch-action: none; /* Prevent default touch actions */
+}
+
+.min-handle:hover, .max-handle:hover,
+.min-handle:active, .max-handle:active {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Add active class for visual feedback */
+.min-handle.active, .max-handle.active {
+  transform: translate(-50%, -50%) scale(1.2);
+  background: #b71c1c;
+}
+
+/* Improve slider track appearance */
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #e5e5e5 0%, #e5e5e5 0%, #d32f2f 0%, #d32f2f 20%, #e5e5e5 20%, #e5e5e5 100%);
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+
 .filter {
   background-color: #fff;
   margin-bottom: 2rem;

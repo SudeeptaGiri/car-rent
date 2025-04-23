@@ -42,6 +42,15 @@ export class CalendarComponent {
     });
     this.updateCalendarMonths();
   }
+  resetCalendar(): void {
+    this.selectedPickup = null;
+    this.selectedDropoff = null;
+    this.selectedPickupDate = null; 
+    this.selectedDropoffDate = null;
+    // Reset to default times if needed
+    this.pickupTime = '07:00'; 
+    this.dropoffTime = '10:30';
+  }
   updateCalendarMonths() {
     const base = new Date(this.today.getFullYear(), this.today.getMonth() + this.currentMonthIndex, 1);
     this.calendarMonths = [0, 1].map(i => {
@@ -162,9 +171,6 @@ export class CalendarComponent {
     this.isOpen = false;
   }
 
-
-
-  // date-range-picker.component.ts
 
   formatStartDate(): string {
     if (!this.selectedPickup) {

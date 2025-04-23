@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CarDetails } from '../../models/car.interface';
 
+// Create an interface for the actual JSON structure
+interface CarsResponse {
+  cars: CarDetails[];
+}
+
 interface Location {
   id: number;
   name: string;
@@ -16,12 +21,12 @@ interface Location {
   styleUrls: ['./about-us.component.css']
 })
 export class AboutUsComponent implements OnInit {
-  readonly originYear: number = 2010;
+  readonly originYear: number = 2009;
   
   yearsInBusiness: number = 0;
   locationCount: number = 0;
-  carBrands: number = 0; // Will be calculated dynamically
-  carCount: number = 0;  // Will be calculated dynamically
+  carBrands: number = 0; 
+  carCount: number = 0;  
   
   constructor(private http: HttpClient) {}
   
@@ -41,20 +46,25 @@ export class AboutUsComponent implements OnInit {
       }
     });
 
-    // Load cars data to get brands and count
-    this.http.get<{cars: CarDetails[]}>('assets/cars.json').subscribe({
-      next: (data) => {
-        // Set car count
-        this.carCount = data.cars.length;
+    // Load cars data to get brands and count - using correct path and response type
+    this.http.get<CarsResponse>('/assets/cars.json').subscribe({
+      next: (response) => {
+        // Set car count from the cars array
+        this.carCount = response.cars.length;
         
-        // Extract unique car brands (first word of car name)
-        const brandSet = new Set<string>();
-        data.cars.forEach(car => {
-          const brand = car.brand.split(' ')[0];
-          brandSet.add(brand);
+        // Extract unique car brands using a Set
+        const uniqueBrands = new Set<string>();
+        response.cars.forEach(car => {
+          if (car && car.brand) {
+            uniqueBrands.add(car.brand);
+          }
         });
         
-        this.carBrands = brandSet.size;
+        // Count of unique brands
+        this.carBrands = uniqueBrands.size;
+        
+        console.log(`Loaded ${this.carCount} cars from ${uniqueBrands.size} unique brands`);
+        console.log('Unique brands:', Array.from(uniqueBrands));
       },
       error: (error) => {
         console.error('Error loading cars:', error);
