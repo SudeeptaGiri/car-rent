@@ -1,99 +1,137 @@
 /* Main container */
 .about-us-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-    background-color: #fffbf3;
-  }
-  
-  
-  /* Stats grid layout */
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  gap: 100px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background-color: #fffbf3;
+}
+
+.image-section {
+  position: relative;
+  background-color: #fffbf3;
+}
+
+.about-us-image {
+  width: 100%;
+  height: auto;
+  mix-blend-mode: darken;
+  filter: brightness(1.1) saturate(0.95);
+  border-radius: 24px;
+}
+
+/* Add a subtle gradient overlay */
+.image-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255, 251, 243, 0.2),
+    rgba(255, 251, 243, 0.1)
+  );
+  pointer-events: none;
+}
+
+
+/* Stats grid layout */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+/* Individual stat item */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+/* Stat label (years, locations, etc) */
+.stat-label {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* Stat value (15, 6, 25, 100+) */
+.stat-value {
+  font-size: 72px;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 15px;
+}
+
+/* Stat description text */
+.stat-description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+  max-width: 90%;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
+    gap: 30px;
   }
-  
-  /* Individual stat item */
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-  }
-  
-  /* Stat label (years, locations, etc) */
-  .stat-label {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 5px;
-  }
-  
-  /* Stat value (15, 6, 25, 100+) */
+
   .stat-value {
-    font-size: 72px;
-    font-weight: bold;
-    line-height: 1;
-    margin-bottom: 15px;
+    font-size: 60px;
   }
-  
-  /* Stat description text */
+
   .stat-description {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #555;
-    max-width: 90%;
+    font-size: 15px;
   }
-  
-  /* Responsive styles */
-  @media (max-width: 992px) {
-    .stats-grid {
-      gap: 30px;
-    }
-    
-    .stat-value {
-      font-size: 60px;
-    }
-    
-    .stat-description {
-      font-size: 15px;
-    }
+}
+
+@media (max-width: 768px) {
+  .about-us-container {
+    flex-direction: column;
+    padding: 10px;
   }
-  
-  @media (max-width: 768px) {
-    .stats-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    
-    .stat-item {
-      padding: 15px 0;
-    }
-    
-    .stat-value {
-      font-size: 54px;
-    }
-    
-    .stat-description {
-      max-width: 100%;
-    }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
-  
-  @media (max-width: 480px) {
-    .about-us-container {
-      padding: 15px;
-    }
-    
-    .stat-label {
-      font-size: 18px;
-    }
-    
-    .stat-value {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-    
-    .stat-description {
-      font-size: 14px;
-    }
+
+  .stat-item {
+    padding: 15px 0;
   }
+
+  .stat-value {
+    font-size: 54px;
+  }
+
+  .stat-description {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-us-container {
+    padding: 15px;
+    flex-direction: column;
+  }
+
+  .stat-label {
+    font-size: 18px;
+  }
+
+  .stat-value {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+
+  .stat-description {
+    font-size: 14px;
+  }
+}

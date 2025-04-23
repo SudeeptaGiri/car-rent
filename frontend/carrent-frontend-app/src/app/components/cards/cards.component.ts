@@ -348,14 +348,12 @@ export class CardsComponent implements OnInit {
     console.log('Book car clicked:', car);
   }
 
-  // seeMore(car: Car): void {
-  //   // Empty function as requested
-  //   console.log('See more details clicked:', car);
-  // }
   openCarDetailsPopup(carId: string): void {
       const dialogRef = this.dialog.open(CarDetailsPopupComponent, {
-        maxWidth: '90vw',
-        maxHeight: '90vh',
+        width: '90vw',
+        height: '90vh',
+        maxWidth: '1200px', 
+        maxHeight: '800px',
         panelClass: 'custom-dialog-container',
         data: { carId },
         autoFocus: false,
