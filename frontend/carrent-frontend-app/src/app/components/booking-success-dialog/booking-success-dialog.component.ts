@@ -33,7 +33,7 @@ export class BookingSuccessDialogComponent {
   // Format deadline time
   formatDeadline(date: Date): string {
     const deadlineDate = new Date(date);
-    deadlineDate.setHours(22, 30, 0); // 10:30 PM
+    // deadlineDate.setHours(22, 30, 0); // 10:30 PM
     
     const options: Intl.DateTimeFormatOptions = { 
       hour: '2-digit', 

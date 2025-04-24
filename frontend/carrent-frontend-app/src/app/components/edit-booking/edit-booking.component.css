@@ -112,8 +112,8 @@
     }
     
     .car-image img {
-      width: 100%;
-      height: 100%;
+      width: 400px;
+      height: auto;
       object-fit: cover;
     }
     
@@ -176,10 +176,33 @@
       background-color: #b71c1c;
     }
   
+    /* Add these styles for the calendar */
+    .booking-calendar ::ng-deep .handle-buttons {
+      flex-direction: column;
+    }
+
+    .booking-calendar ::ng-deep .calendar-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 630px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 8px;
+      border-radius: 50px;
+    }
+
+    .booking-calendar ::ng-deep .button1,
+    .booking-calendar ::ng-deep .flex-1 {
+      width: 100% !important;
+      margin-bottom: 10px;
+    }
     @media (max-width: 878px) {
       .section-car-details-container, .car-details-container {
-        width: 300px;
+        width: 330px;
         height: auto;
+
         /* object-fit: cover; */
       }
     }

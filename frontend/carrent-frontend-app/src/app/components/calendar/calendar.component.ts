@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, SimpleChanges } from '@angular/core';
 import moment from 'moment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +13,10 @@ import { BookedDate } from '../../models/car.interface';
 })
 export class CalendarComponent {
   @Input() bookedDates: { startDate: string; endDate: string; }[] = [];
+  @Input() externalToggle = false;
+  @Input() initialStartDate: Date | null = null;
+  @Input() initialEndDate: Date | null = null;
+
   @Output() dateRangeSelected = new EventEmitter<{
     startDate: moment.Moment,
     endDate: moment.Moment
@@ -27,13 +31,18 @@ export class CalendarComponent {
   currentMonthIndex = 0;
   isOpen = false;
 
-
-
   selectedPickupDate: Date | null = null;
   selectedDropoffDate: Date | null = null;
 
 
   ngOnInit(): void {
+    if (this.initialStartDate) {
+      this.selectedPickup = this.initialStartDate;
+    }
+    
+    if (this.initialEndDate) {
+      this.selectedDropoff = this.initialEndDate;
+    }
     const base = new Date(this.today.getFullYear(), this.today.getMonth(), 1);
     this.calendarMonths = [0, 1].map(i => {
       const month = new Date(base);
@@ -42,6 +51,7 @@ export class CalendarComponent {
     });
     this.updateCalendarMonths();
   }
+
   resetCalendar(): void {
     this.selectedPickup = null;
     this.selectedDropoff = null;
@@ -50,6 +60,31 @@ export class CalendarComponent {
     // Reset to default times if needed
     this.pickupTime = '07:00'; 
     this.dropoffTime = '10:30';
+    this.isOpen = false;
+    this.closed.emit(true);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('Calendar received changes:', changes);
+    
+    if (changes['externalToggle'] && !changes['externalToggle'].firstChange) {
+      this.isOpen = this.externalToggle;
+    }
+    
+    // Also handle changes to initialStartDate and initialEndDate
+    if (changes['initialStartDate'] && !changes['initialStartDate'].firstChange) {
+      if (this.initialStartDate) {
+        this.selectedPickup = new Date(this.initialStartDate);
+        console.log('Updated pickup date from changes:', this.selectedPickup);
+      }
+    }
+    
+    if (changes['initialEndDate'] && !changes['initialEndDate'].firstChange) {
+      if (this.initialEndDate) {
+        this.selectedDropoff = new Date(this.initialEndDate);
+        console.log('Updated dropoff date from changes:', this.selectedDropoff);
+      }
+    }
   }
   updateCalendarMonths() {
     const base = new Date(this.today.getFullYear(), this.today.getMonth() + this.currentMonthIndex, 1);

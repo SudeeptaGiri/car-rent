@@ -21,6 +21,25 @@ export class CarService {
   constructor(private http: HttpClient) {}
 
 
+  getAllCars(page: number = 0): Observable<CarListResponse> {
+    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+      map(response => {
+        const allCars = response.cars;
+        return {
+          content: allCars,
+          totalPages: 1,
+          currentPage: 0,
+          totalElements: allCars.length
+        };
+      })
+    );
+  }
+  getCarDetails(carId: string): Observable<CarDetails | undefined> {
+    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+      map(response => response.cars.find(car => car.id === carId))
+    );
+  }
+ 
   getCarDetailsWithNavigation(carId: string): Observable<{
     car: CarDetails | undefined,
     totalCars: number,

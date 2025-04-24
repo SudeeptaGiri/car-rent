@@ -48,4 +48,8 @@ export interface BookingParams {
     status: BookingStatus;
     feedback?: Feedback;
     reservedBy?: string;
+    totalPrice: number;    // Add this
+    numberOfDays: number;  // Add this
+    pickupLocation: string;
+    dropoffLocation: string;
   }

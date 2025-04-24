@@ -42,7 +42,6 @@ export interface BookingRequest {
   endDate: string;
   endTime: string;
   userId: string;
-  totalPrice: number;
 }
 
 export interface ReviewsData {

@@ -11,6 +11,7 @@ import {
   BookingRequest
 } from '../../models/car.interface';
 import moment from 'moment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-car-details-popup',
@@ -53,6 +54,7 @@ export class CarDetailsPopupComponent {
 
   constructor(
     private carService: CarService,
+    private route: Router,
     private dialogRef: MatDialogRef<CarDetailsPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { carId: string },
     private dialog: MatDialog,
@@ -207,7 +209,6 @@ export class CarDetailsPopupComponent {
       endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
       endTime: this.dateRange.endDate.format('HH:mm'),
       userId: 'current-user-id', // Replace with actual user ID
-      totalPrice: this.calculateTotalPrice(this.dateRange, this.carDetails.price)
     };
 
     // Close dialog with booking data
@@ -215,13 +216,17 @@ export class CarDetailsPopupComponent {
       action: 'book',
       data: bookingRequest
     });
-  }
 
-  private calculateTotalPrice(dateRange: { startDate: moment.Moment, endDate: moment.Moment }, pricePerDay: number): number {
-    const days = dateRange.endDate.diff(dateRange.startDate, 'days') + 1;
-    return days * pricePerDay;
-  }
-
+    this.route.navigate(['/cars'], {
+      queryParams: {
+        carId: this.carDetails.id,
+        startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
+        startTime: this.dateRange.startDate.format('HH:mm'),
+        endDate: this.dateRange.endDate.format('YYYY-MM-DD'),
+        endTime: this.dateRange.endDate.format('HH:mm'),
+      }
+    });
+  } 
 
   handleLogin(): void {
     if (this.dateRange && this.carDetails) {
@@ -265,3 +270,4 @@ export class CarDetailsPopupComponent {
     this.dateRange = event;
   }
 }
+
