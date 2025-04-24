@@ -1,8 +1,8 @@
 /* Main container */
 .faq-container {
     max-width: 1200px;
-    margin-left: 5rem;
-    margin-right: 2rem;
+    
+    margin: 2rem;
     padding: 20px;
     font-family: Arial, sans-serif;
     background-color: #fffbf3;
