@@ -10,15 +10,47 @@ import { HttpClient } from '@angular/common/http';
 export class BookingService {
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  
+  private readonly STORAGE_KEY = 'bookings';
+
   constructor(private http: HttpClient) {
     // Initialize with sample data
     this.loadSampleBookings();
+    this.loadBookingsFromStorage();
     
     // Check booking statuses every second to update status automatically
     interval(1000).subscribe(() => this.updateBookingStatuses());
   }
+
+  private loadBookingsFromStorage(): void {
+    const storedBookings = localStorage.getItem(this.STORAGE_KEY);
+    if (storedBookings) {
+      this.bookings = JSON.parse(storedBookings);
+      // Convert string dates back to Date objects
+      this.bookings = this.bookings.map(booking => ({
+        ...booking,
+        pickupDate: new Date(booking.pickupDate),
+        dropoffDate: new Date(booking.dropoffDate)
+      }));
+      this.bookingsSubject.next(this.bookings);
+    }
+  }
+
+  private saveBookingsToStorage(): void {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.bookings));
+  }
   
+  // Add this method to BookingService
+addBooking(booking: Booking): Observable<any> {
+  // Add the new booking to the array
+  this.bookings.push(booking);
+  
+  // Emit the updated bookings
+  this.bookingsSubject.next([...this.bookings]);
+  
+  // Return success observable
+  return of({ success: true, booking });
+}
+
   private loadSampleBookings(): void {
     // Set specific fixed dates for the bookings
     // Assuming today is April 22, 2023 for example
@@ -51,27 +83,6 @@ export class BookingService {
     // Sample data
     this.bookings = [
       {
-        id: '1',
-        carId: '101',
-        carName: 'Audi A6 Quattro 2023',
-        carImage: 'assets/audi-a6.png',
-        orderNumber: '#2437',
-        pickupDate: pickup1,
-        dropoffDate: dropoff1,
-        status: BookingStatus.RESERVED
-      },
-      {
-        id: '2',
-        carId: '102',
-        carName: 'Range Rover 2019',
-        carImage: 'assets/audi-a6.png',
-        orderNumber: '#2438',
-        pickupDate: pickup2,
-        dropoffDate: dropoff2,
-        status: BookingStatus.RESERVED,
-        reservedBy: 'SA'
-      },
-      {
         id: '3',
         carId: '103',
         carName: 'Porsche 911 2021',
@@ -79,33 +90,39 @@ export class BookingService {
         orderNumber: '#2439',
         pickupDate: pickup3,
         dropoffDate: dropoff3,
-        status: BookingStatus.SERVICE_STARTED
+        status: BookingStatus.SERVICE_STARTED,
+        totalPrice:900,
+        numberOfDays:5
       },
       {
         id: '4',
         carId: '104',
         carName: 'Nissan Z 2024',
-        carImage: 'assets/audi-a6.png',
+        carImage: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
         orderNumber: '#2440',
         pickupDate: pickup4,
         dropoffDate: dropoff4,
-        status: BookingStatus.CANCELLED
+        status: BookingStatus.CANCELLED,
+        totalPrice:900,
+        numberOfDays:5
       },
       {
         id: '5',
         carId: '105',
         carName: 'Mercedes-Benz A class 2019',
-        carImage: 'assets/audi-a6.png',
+        carImage: 'assets/Car7.svg',
         orderNumber: '#2452',
         pickupDate: pickup5,
         dropoffDate: dropoff5,
-        status: BookingStatus.SERVICE_PROVIDED
+        status: BookingStatus.SERVICE_PROVIDED,
+        totalPrice:900,
+        numberOfDays:5
       },
       {
         id: '6',
         carId: '106',
         carName: 'BMW 330i 2020',
-        carImage: 'assets/audi-a6.png',
+        carImage: "https://images.unsplash.com/photo-1551830820-330a71b99659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
         orderNumber: '#2437',
         pickupDate: pickup6,
         dropoffDate: dropoff6,
@@ -114,7 +131,9 @@ export class BookingService {
           rating: 5,
           comment: 'Great car, excellent service!',
           submittedAt: feedbackDate
-        }
+        },
+        totalPrice:900,
+        numberOfDays:5
       }
     ];
     

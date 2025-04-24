@@ -39,10 +39,20 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription.add(
       this.bookingService.getBookings().subscribe(bookings => {
+        console.log('Loaded bookings:', bookings); // Debug log
         this.bookings = bookings;
         this.filterBookings();
       })
     );
+  }
+
+  private filterBookings(): void {
+    if (this.currentTab === 'ALL') {
+      this.filteredBookings = this.bookings;
+    } else {
+      this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
+    }
+    console.log('Filtered bookings:', this.filteredBookings); // Debug log
   }
   
   ngOnDestroy(): void {
@@ -52,14 +62,6 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   changeTab(status: BookingStatus | 'ALL'): void {
     this.currentTab = status;
     this.filterBookings();
-  }
-  
-  private filterBookings(): void {
-    if (this.currentTab === 'ALL') {
-      this.filteredBookings = this.bookings;
-    } else {
-      this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
-    }
   }
   
   isWithin12Hours(booking: Booking): boolean {
