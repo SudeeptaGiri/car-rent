@@ -1,97 +1,98 @@
 <div class="cards-container">
-    <!-- Loading state -->
-    <div class="loading-container" *ngIf="loading">
-      <div class="loading-spinner"></div>
-      <p>Loading cars...</p>
-    </div>
-  
-    <!-- Error state -->
-    <div class="error-container" *ngIf="error && !cars.length">
-      <p class="error-message">{{ error }}</p>
-      <button class="retry-button" (click)="fetchCars()">Try Again</button>
-    </div>
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading cars...</p>
+  </div>
 
-    <!-- Add this right after the error-container div -->
-    <div class="no-results-container" *ngIf="!loading && !error && filteredCars.length === 0">
-      <p class="no-results-message">No cars match your current filter criteria.</p>
-      <button class="retry-button" (click)="clearFilters()">Clear Filters</button>
-    </div>
+  <!-- Error state -->
+  <div class="error-container" *ngIf="error && !cars.length">
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="fetchCars()">Try Again</button>
+  </div>
 
-    <!-- Add this right before the cars-grid div -->
-    <div class="results-count" *ngIf="!loading && filteredCars.length > 0">
-      <span *ngIf="viewAllMode">
-        Showing {{(currentPage-1)*itemsPerPage + 1}}-{{Math.min(currentPage*itemsPerPage, filteredCars.length)}} of {{filteredCars.length}} cars
-      </span>
-      <span *ngIf="!viewAllMode">
-        Showing {{displayedCars.length}} popular cars out of {{filteredCars.length}} total cars
-      </span>
-    </div>
-  
-    <!-- Cars grid -->
-    <div class="cars-grid" *ngIf="!loading && cars.length">
-      <div class="car-card" *ngFor="let car of displayedCars">
-        <div class="car-image-container">
-          <img [src]="car.images[0].url" alt="{{car.brand}}" class="car-image" 
-               onerror="this.src='https:via.placeholder.com/300x200?text=Car+Image'" />
-          <div class="car-status" [ngClass]="car.status.toLowerCase()">
-            {{car.status}}
-          </div>
-        </div>
-        
-        <div class="car-details">
-          <div class="car-header">
-            <h3 class="car-name">{{car.brand}} {{car.year}}</h3>
-            <div class="car-rating">
-              {{car.rating}}
-              <span class="star">★</span>
-            </div>
-          </div>
-          
-          <p class="car-location">{{car.location}}</p>
-          
-          <button class="book-button" (click)="bookCar(car)">
-            Book the car - {{formatPrice(car.price)}}/day
-          </button>
-          
-          <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>
+  <!-- Add this right after the error-container div -->
+  <div class="no-results-container" *ngIf="!loading && !error && filteredCars.length === 0">
+    <p class="no-results-message">No cars match your current filter criteria.</p>
+    <button class="retry-button" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <!-- Add this right before the cars-grid div -->
+  <div class="results-count" *ngIf="!loading && filteredCars.length > 0">
+    <span *ngIf="viewAllMode">
+      Showing {{(currentPage-1)*itemsPerPage + 1}}-{{Math.min(currentPage*itemsPerPage, filteredCars.length)}} of
+      {{filteredCars.length}} cars
+    </span>
+    <span *ngIf="!viewAllMode">
+      Showing {{displayedCars.length}} popular cars out of {{filteredCars.length}} total cars
+    </span>
+  </div>
+
+  <!-- Cars grid -->
+  <div class="cars-grid" *ngIf="!loading && cars.length">
+    <div class="car-card" *ngFor="let car of displayedCars">
+      <div class="car-image-container">
+        <img [src]="car.images[0].url" alt="{{car.brand}}" class="car-image"
+          onerror="this.src='https:via.placeholder.com/300x200?text=Car+Image'" />
+        <div class="car-status" [ngClass]="car.status.toLowerCase()">
+          {{car.status}}
         </div>
       </div>
-    </div>
-  
-    <!-- Pagination -->
-    <div class="pagination-container" *ngIf="viewAllMode && totalPages > 1">
-      <div class="pagination">
-        <button class="page-button" [disabled]="currentPage === 1" (click)="prevPage()">
-          <span class="arrow">←</span>
-        </button>
-        
-        <ng-container *ngFor="let page of getPaginationNumbers()">
-          <!-- Regular page number -->
-          <button *ngIf="page > 0" 
-            class="page-button" 
-            [class.active]="currentPage === page"
-            (click)="goToPage(page)">
-            {{ page }}
-          </button>
-          
-          <!-- Ellipsis (not clickable) -->
-          <span *ngIf="page < 0" class="page-ellipsis">...</span>
-        </ng-container>
-        
-        <button class="page-button" [disabled]="currentPage === totalPages" (click)="nextPage()">
-          <span class="arrow">→</span>
-        </button>
-      </div>
 
-      <div class="page-info">
-        Page {{currentPage}} of {{totalPages}} ({{filteredCars.length}} cars)
+      <div class="car-details">
+        <div class="car-header">
+          <h3 class="car-name">{{car.brand}} {{car.year}}</h3>
+          <div class="car-rating">
+            {{car.rating}}
+            <span class="star">★</span>
+          </div>
+        </div>
+
+        <p class="car-location">{{car.location}}</p>
+
+        <!-- (click)="bookCar(car)  -->
+        <button class="book-button" (click)="openCarDetailsPopup(car.id.toString())"
+          [disabled]="car.status.toLowerCase() !== 'available'"
+          [ngClass]="{'disabled': car.status.toLowerCase() !== 'available'}">
+          Book the car - {{formatPrice(car.price)}}/day
+        </button>
+
+        <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>
       </div>
-    </div>
-    
-    <!-- View toggle button (OUTSIDE the pagination container) -->
-    <div class="view-toggle-container" *ngIf="!loading && filteredCars.length > 0">
-      <button class="view-toggle-button" (click)="toggleViewMode()">
-        {{ viewAllMode ? 'View popular cars' : 'View all cars' }}
-      </button>
     </div>
   </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="viewAllMode && totalPages > 1">
+    <div class="pagination">
+      <button class="page-button" [disabled]="currentPage === 1" (click)="prevPage()">
+        <span class="arrow">←</span>
+      </button>
+
+      <ng-container *ngFor="let page of getPaginationNumbers()">
+        <!-- Regular page number -->
+        <button *ngIf="page > 0" class="page-button" [class.active]="currentPage === page" (click)="goToPage(page)">
+          {{ page }}
+        </button>
+
+        <!-- Ellipsis (not clickable) -->
+        <span *ngIf="page < 0" class="page-ellipsis">...</span>
+      </ng-container>
+
+      <button class="page-button" [disabled]="currentPage === totalPages" (click)="nextPage()">
+        <span class="arrow">→</span>
+      </button>
+    </div>
+
+    <div class="page-info">
+      Page {{currentPage}} of {{totalPages}} ({{filteredCars.length}} cars)
+    </div>
+  </div>
+
+  <!-- View toggle button (OUTSIDE the pagination container) -->
+  <div class="view-toggle-container" *ngIf="!loading && filteredCars.length > 0">
+    <button class="view-toggle-button" (click)="toggleViewMode()">
+      {{ viewAllMode ? 'View popular cars' : 'View all cars' }}
+    </button>
+  </div>
+</div>

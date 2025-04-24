@@ -345,7 +345,7 @@ export class CardsComponent implements OnInit {
 
   bookCar(car: CarDetails): void {
     // Empty function as requested
-    console.log('Book car clicked:', car);
+    
   }
 
   openCarDetailsPopup(carId: string): void {
