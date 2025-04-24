@@ -8,6 +8,15 @@ import { CarBookingService } from '../../services/car-booking.service';
 import { CarDetails, UserInfo, LocationInfo } from '../../models/booking.model';
 import { CarReservedDialogComponent } from '../../components/car-reserved-dialog/car-reserved-dialog.component';
 import { BookingSuccessDialogComponent } from '../../components/booking-success-dialog/booking-success-dialog.component';
+import { HttpClient } from '@angular/common/http';
+import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+
+interface LocationSuggestion {
+  displayName: string;
+  lat: number;
+  lon: number;
+}
 
 @Component({
   selector: 'app-car-booking',
@@ -15,6 +24,9 @@ import { BookingSuccessDialogComponent } from '../../components/booking-success-
   styleUrls: ['./car-booking.component.css'], 
   standalone: false
 })
+
+
+
 export class CarBookingComponent implements OnInit {
   bookingForm!: FormGroup;
   selectedCar!: CarDetails;
@@ -29,10 +41,36 @@ export class CarBookingComponent implements OnInit {
   dateTo!: Date;
   isCalendarOpen = false;
 
+   // Add location search properties
+   pickupSearchQuery = '';
+   dropoffSearchQuery = '';
+   pickupSuggestions: LocationSuggestion[] = [];
+   dropoffSuggestions: LocationSuggestion[] = [];
+   showPickupSuggestions = false;
+   showDropoffSuggestions = false;
+   isLoadingPickupSuggestions = false;
+   isLoadingDropoffSuggestions = false;
+   
+   // Add location modal state
+   showPickupModal = false;
+   showDropoffModal = false;
+
+   // Add search subjects for debouncing
+  private pickupSearchSubject = new Subject<string>();
+  private dropoffSearchSubject = new Subject<string>();
+  private searchSubscriptions: Subscription[] = [];
+  
+  // Add selected locations
+  selectedPickupLocation: string | null = null;
+  selectedPickupCoordinates: { lat: number; lon: number } | null = null;
+  selectedDropoffLocation: string | null = null;
+  selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
+
   constructor(
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private carBookingService: CarBookingService
+    private carBookingService: CarBookingService,
+    private http: HttpClient // Add HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -51,11 +89,204 @@ export class CarBookingComponent implements OnInit {
     
     // Calculate initial price
     this.calculateTotalPrice();
+
+    // Setup search debouncing for pickup location
+    this.setupLocationSearch();
+  }
+
+  onPickupSearchInput(): void {
+    this.showPickupSuggestions = true;
+    this.pickupSearchSubject.next(this.pickupSearchQuery);
+  }
+  
+  onDropoffSearchInput(): void {
+    this.showDropoffSuggestions = true;
+    this.dropoffSearchSubject.next(this.dropoffSearchQuery);
+  }
+  
+  selectPickupLocation(suggestion: LocationSuggestion): void {
+    this.selectedPickupLocation = suggestion.displayName;
+    this.selectedPickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
+    this.pickupSearchQuery = suggestion.displayName;
+    this.showPickupSuggestions = false;
+    this.showPickupModal = false;
+    
+    // Update form with new location
+    this.bookingForm.get('location')?.patchValue({
+      pickupLocation: suggestion.displayName
+    });
+  }
+  
+  selectDropoffLocation(suggestion: LocationSuggestion): void {
+    this.selectedDropoffLocation = suggestion.displayName;
+    this.selectedDropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
+    this.dropoffSearchQuery = suggestion.displayName;
+    this.showDropoffSuggestions = false;
+    this.showDropoffModal = false;
+    
+    // Update form with new location
+    this.bookingForm.get('location')?.patchValue({
+      dropoffLocation: suggestion.displayName
+    });
+  }
+  
+  useCurrentLocation(forPickup: boolean): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          };
+          
+          // Reverse geocode to get address
+          this.reverseGeocode(coords.lat, coords.lon).subscribe(
+            (address) => {
+              if (forPickup) {
+                this.selectedPickupLocation = address;
+                this.selectedPickupCoordinates = coords;
+                this.pickupSearchQuery = address;
+                this.showPickupModal = false;
+                
+                // Update form with new location
+                this.bookingForm.get('location')?.patchValue({
+                  pickupLocation: address
+                });
+              } else {
+                this.selectedDropoffLocation = address;
+                this.selectedDropoffCoordinates = coords;
+                this.dropoffSearchQuery = address;
+                this.showDropoffModal = false;
+                
+                // Update form with new location
+                this.bookingForm.get('location')?.patchValue({
+                  dropoffLocation: address
+                });
+              }
+            },
+            (error) => {
+              console.error('Error getting address:', error);
+              alert('Could not determine your address. Please enter it manually.');
+            }
+          );
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          alert('Could not access your location. Please check your browser permissions and try again.');
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser. Please enter your location manually.');
+    }
+  }
+  
+  reverseGeocode(lat: number, lon: number) {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+    
+    return this.http.get<any>(url).pipe(
+      map(result => {
+        if (result && result.display_name) {
+          return result.display_name.split(',').slice(0, 2).join(',');
+        }
+        return 'Current location';
+      }),
+      catchError(() => of('Current location'))
+    );
+  }
+  
+  openLocationModal(forPickup: boolean): void {
+    if (forPickup) {
+      this.showPickupModal = true;
+      this.showDropoffModal = false;
+      this.pickupSearchQuery = this.selectedPickupLocation || '';
+    } else {
+      this.showPickupModal = false;
+      this.showDropoffModal = true;
+      this.dropoffSearchQuery = this.selectedDropoffLocation || '';
+    }
+  }
+  
+  closeLocationModal(): void {
+    this.showPickupModal = false;
+    this.showDropoffModal = false;
   }
 
   toggleCalendar(): void {
     this.isCalendarOpen = !this.isCalendarOpen;
   }
+
+  // Setup location search with debouncing
+  setupLocationSearch(): void {
+    this.searchSubscriptions.push(
+      this.pickupSearchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(query => {
+          if (query.trim().length < 2) {
+            this.pickupSuggestions = [];
+            this.isLoadingPickupSuggestions = false;
+            return of([]);
+          }
+          
+          this.isLoadingPickupSuggestions = true;
+          return this.searchLocations(query).pipe(
+            catchError(() => {
+              this.isLoadingPickupSuggestions = false;
+              return of([]);
+            })
+          );
+        })
+      ).subscribe(results => {
+        this.pickupSuggestions = results;
+        this.isLoadingPickupSuggestions = false;
+      })
+    );
+    
+    this.searchSubscriptions.push(
+      this.dropoffSearchSubject.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(query => {
+          if (query.trim().length < 2) {
+            this.dropoffSuggestions = [];
+            this.isLoadingDropoffSuggestions = false;
+            return of([]);
+          }
+          
+          this.isLoadingDropoffSuggestions = true;
+          return this.searchLocations(query).pipe(
+            catchError(() => {
+              this.isLoadingDropoffSuggestions = false;
+              return of([]);
+            })
+          );
+        })
+      ).subscribe(results => {
+        this.dropoffSuggestions = results;
+        this.isLoadingDropoffSuggestions = false;
+      })
+    );
+  }
+
+  // Location search methods
+  searchLocations(query: string) {
+    // Using OpenStreetMap's Nominatim API for geocoding
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+    
+    return this.http.get<any[]>(url).pipe(
+      map(results => results.map(item => ({
+        displayName: item.display_name.split(',').slice(0, 2).join(','), // Simplify display name
+        lat: parseFloat(item.lat),
+        lon: parseFloat(item.lon)
+      })))
+    );
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this.searchSubscriptions.forEach(sub => sub.unsubscribe());
+  }
+
   getUserFromLocalStorage(): void {
     const storedUser = localStorage.getItem('currentUser');
     
