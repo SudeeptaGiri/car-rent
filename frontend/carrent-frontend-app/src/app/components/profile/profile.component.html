@@ -1,19 +1,23 @@
 <app-header></app-header>
 
-<main class="profile-container">
-    <aside class="profile-sidebar">
-        <ul>
-            <li><a routerLink="reviews" routerLinkActive="active">Reviews</a></li>
-            <li><a routerLink="personal-info" routerLinkActive="active">Personal Info</a></li>
-            <li><a routerLink="documents" routerLinkActive="active">Documents</a></li>
-            <li><a routerLink="change-password" routerLinkActive="active">Change Password</a></li>
-        </ul>
-    </aside>
-    
-    <section class="profile-content">
-        <!-- This router-outlet will display the child components -->
-        <router-outlet></router-outlet>
+<main>
+    <h1 class="heading1">My Profile</h1>
+    <section class="parent">
+        <aside class="profile-sidebar">
+            <ul>
+                <li><a routerLink="reviews" routerLinkActive="active">Reviews</a></li>
+                <li><a routerLink="personal-info" routerLinkActive="active">Personal Info</a></li>
+                <li><a routerLink="documents" routerLinkActive="active">Documents</a></li>
+                <li><a routerLink="change-password" routerLinkActive="active">Change Password</a></li>
+            </ul>
+        </aside>
+        
+        <section class="profile-content">
+            <router-outlet></router-outlet>
+        </section>
     </section>
+
+
 </main>
 
 <app-footer></app-footer>

@@ -1,0 +1,36 @@
+.parent{
+    display: flex;
+    flex-direction: row;
+    gap: 12rem;
+    background-color: #fffbf3;
+    
+}
+.profile-sidebar{
+    padding-top: 2rem;
+    padding-left: 4rem;
+    padding-bottom: 2rem;
+}
+
+.heading1{
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    background-color: #fffbf3;
+    padding-top: 2rem;
+    padding-left: 4rem;
+    padding-bottom: 2rem;
+
+}
+
+ul li a {
+    color: #cc1d1d;             /* Text color */
+    text-decoration: none;   /* Underline hatana ho toh */
+    font-weight: bold;       /* Bold text */
+    padding: 10px;           /* Inner spacing */
+    display: block;          /* Pura block clickable ho jaye */
+}
+
+ul li a:hover {
+    text-decoration: underline;
+
+}
