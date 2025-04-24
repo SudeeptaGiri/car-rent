@@ -112,8 +112,8 @@
   }
   
   .car-image img {
-    width: 100%;
-    height: 100%;
+    width: 400px;
+    height: auto;
     object-fit: cover;
   }
   
@@ -178,7 +178,7 @@
 
   @media (max-width: 878px) {
     .section-car-details-container, .car-details-container {
-      width: 300px;
+      width: 330px;
       height: auto;
       /* object-fit: cover; */
     }

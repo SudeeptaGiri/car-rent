@@ -2,15 +2,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CalendarComponent } from '../calendar/calendar.component';
 import { LocationDialogComponent } from '../../components/location-dialog/location-dialog.component';
 import { CarBookingService } from '../../services/car-booking.service';
-import { CarDetails, UserInfo, LocationInfo } from '../../models/booking.model';
+import { UserInfo, LocationInfo } from '../../models/booking.model';
+import { CarDetails } from '../../models/car.interface';
 import { CarReservedDialogComponent } from '../../components/car-reserved-dialog/car-reserved-dialog.component';
 import { BookingSuccessDialogComponent } from '../../components/booking-success-dialog/booking-success-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { CarService } from '../../services/car.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface LocationSuggestion {
   displayName: string;
@@ -28,11 +30,12 @@ interface LocationSuggestion {
 
 
 export class CarBookingComponent implements OnInit {
+  CarDetails = [];
   bookingForm!: FormGroup;
   selectedCar!: CarDetails;
   userInfo!: UserInfo;
   locationInfo!: LocationInfo;
-  isReserved = true;
+  isReserved = false;     // change this to display reserved dialog
   
   totalPrice = 0;
   depositAmount = 2000;
@@ -70,12 +73,51 @@ export class CarBookingComponent implements OnInit {
     private fb: FormBuilder,
     public dialog: MatDialog,
     private carBookingService: CarBookingService,
+    private carService: CarService,
+    private route: ActivatedRoute,
     private http: HttpClient // Add HttpClient
   ) {}
 
-  ngOnInit(): void {
-    // Get mock data
-    this.selectedCar = this.carBookingService.getMockCarDetails();
+ // In car-booking.component.ts
+ ngOnInit(): void {
+  // Get car ID and dates from route parameters
+  this.route.queryParams.subscribe(params => {
+    if (params['carId']) {
+      // Get car details using CarService
+      this.carService.getCarDetails(params['carId']).subscribe({
+        next: (car) => {
+          if (car) {
+            this.selectedCar = car;
+            
+            // If dates are provided in the URL, use them
+            if (params['startDate'] && params['endDate']) {
+              const startDate = new Date(`${params['startDate']} ${params['startTime']}`);
+              const endDate = new Date(`${params['endDate']} ${params['endTime']}`);
+              
+              this.dateFrom = startDate;
+              this.dateTo = endDate;
+              
+              // Update form with these dates
+              this.bookingForm.patchValue({
+                dates: {
+                  dateFrom: startDate.toISOString(),
+                  dateTo: endDate.toISOString()
+                }
+              });
+              
+              // Calculate total price
+              this.calculateTotalPrice();
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error loading car details:', error);
+        }
+      });
+    }
+
+    // Get mock user and location info
+    this.userInfo = this.carBookingService.getMockUserInfo();
     this.locationInfo = this.carBookingService.getMockLocationInfo();
     
     // First, initialize userInfo with default values to avoid null reference
@@ -329,7 +371,7 @@ export class CarBookingComponent implements OnInit {
         dropoffLocation: [this.locationInfo.dropoffLocation, Validators.required]
       }),
       dates: this.fb.group({
-        dateFrom: ['2023-11-11T10:00', Validators.required],
+        dateFrom: ['2023-11-12T10:00', Validators.required],
         dateTo: ['2023-11-16T16:00', Validators.required]
       })
     });
@@ -347,7 +389,7 @@ export class CarBookingComponent implements OnInit {
     const dateFromStr = this.bookingForm.get('dates.dateFrom')?.value;
     const dateToStr = this.bookingForm.get('dates.dateTo')?.value;
   
-    if (dateFromStr && dateToStr) {
+    if (dateFromStr && dateToStr && this.selectedCar) {
       // Create dates in IST timezone
       this.dateFrom = new Date(dateFromStr);
       this.dateTo = new Date(dateToStr);
@@ -355,7 +397,7 @@ export class CarBookingComponent implements OnInit {
       // Calculate difference in days (use UTC to avoid timezone issues)
       const diffTime = Math.abs(this.dateTo.getTime() - this.dateFrom.getTime());
       this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      this.totalPrice = this.numberOfDays * this.selectedCar.pricePerDay;
+      this.totalPrice = this.numberOfDays * this.selectedCar.price;
     }
   }
 
@@ -369,48 +411,44 @@ export class CarBookingComponent implements OnInit {
       });
       return;
     }
-    if (this.bookingForm.valid) {
+    if (this.bookingForm.valid && this.selectedCar) {
       const bookingData = {
-        dateFrom: this.bookingForm.get('dates.dateFrom')?.value,
-        dateTo: this.bookingForm.get('dates.dateTo')?.value,
-        clientId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479' // This would typically come from authentication
+        dateFrom: this.dateFrom.toISOString(), // Convert Date to ISO string
+        dateTo: this.dateTo.toISOString(),     // Convert Date to ISO string
+        clientId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
       };
       
       this.carBookingService.bookCar(bookingData).subscribe({
         next: (response) => {
           console.log('Booking confirmed:', response);
-          
-          // Show booking success dialog instead of alert
           this.showBookingSuccessDialog();
         },
         error: (error) => {
           console.error('Booking failed:', error);
-          // Handle error
           alert('Booking failed. Please try again.');
         }
       });
     }
-  }
-
-  // New method to show booking success dialog
-  showBookingSuccessDialog(): void {
-    // Generate a random order number (in a real app, this would come from the backend)
-    const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
-    
-    // Open the success dialog
-    this.dialog.open(BookingSuccessDialogComponent, {
-      width: '500px',
-      maxWidth: '95vw',
-      panelClass: 'success-dialog-container',
-      data: {
-        carName: this.selectedCar.name,
-        startDate: this.dateFrom,
-        endDate: this.dateTo,
-        orderNumber: orderNumber,
-        bookingDate: new Date() // Current date as booking date
-      }
-    });
-  }
+}
+  
+showBookingSuccessDialog(): void {
+  const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
+  
+  this.dialog.open(BookingSuccessDialogComponent, {
+    width: '500px',
+    maxWidth: '95vw',
+    panelClass: 'success-dialog-container',
+    data: {
+      carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,
+      startDate: this.dateFrom,
+      endDate: this.dateTo,
+      orderNumber: orderNumber,
+      bookingDate: new Date(),
+      totalPrice: this.totalPrice,
+      numberOfDays: this.numberOfDays
+    }
+  });
+}
 
   openLocationChange(): void {
     const dialogRef = this.dialog.open(LocationDialogComponent, {
@@ -500,4 +538,31 @@ export class CarBookingComponent implements OnInit {
       timeZone: 'Asia/Kolkata'
     });
   }
+
+  // In car-booking.component.ts
+onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
+  // Convert moment objects to Date objects
+  this.dateFrom = event.startDate.toDate();
+  this.dateTo = event.endDate.toDate();
+
+  // Update the form with the new dates
+  this.bookingForm.patchValue({
+    dates: {
+      dateFrom: this.dateFrom.toISOString(),
+      dateTo: this.dateTo.toISOString()
+    }
+  });
+
+  // Recalculate total price
+  this.calculateTotalPrice();
+}
+
+// Add a getter for formatted booked dates
+get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
+  // This would come from your car service in a real app
+  return this.selectedCar?.bookedDates?.map(date => ({
+    startDate: date.startDate,
+    endDate: date.endDate
+  })) || [];
+}
 }
