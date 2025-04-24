@@ -1,0 +1,107 @@
+main {
+    background-color: #fffbf3;
+}
+
+.heading1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    padding: 1.5rem 1.5rem 1rem;
+    margin: 0;
+}
+
+.parent {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    padding: 0 1.5rem 2rem;
+}
+
+.profile-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.profile-content {
+    flex: 1;
+    min-width: 0; /* Important to prevent overflow */
+}
+
+.profile-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-sidebar ul li {
+    margin-bottom: 1rem;
+}
+
+.profile-sidebar ul li a {
+    color: #cc1d1d;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.profile-sidebar ul li a:hover {
+    background-color: rgba(204, 29, 29, 0.1);
+}
+
+.profile-sidebar ul li a.active {
+    background-color: #cc1d1d;
+    color: white;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 992px) {
+    .parent {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .parent {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .heading1 {
+        padding: 1.2rem 1.2rem 0.8rem;
+        font-size: 1.8rem;
+    }
+    
+    .profile-sidebar {
+        width: 100%;
+        padding: 0;
+    }
+    
+    .profile-sidebar ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .profile-sidebar ul li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .profile-sidebar ul li a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .heading1 {
+        font-size: 1.5rem;
+        padding: 1rem 1rem 0.7rem;
+    }
+    
+    .parent {
+        padding: 0 1rem 1.5rem;
+    }
+}

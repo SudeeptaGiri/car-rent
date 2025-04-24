@@ -52,3 +52,15 @@ footer figure.logo {
 footer > * {
     flex-shrink: 1; /* Allow elements to shrink if needed */
 }
+
+.copyright {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    background-color: #fffbf3;
+    padding: 15px 0;
+    box-sizing: border-box;
+    border-top: 1px solid #eee;
+}

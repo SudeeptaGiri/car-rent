@@ -60,6 +60,11 @@ import { MyBookingsPageComponent } from './pages/my-bookings-page/my-bookings-pa
 import { BookingSuccessDialogComponent } from './components/booking-success-dialog/booking-success-dialog.component';
 import { EditBookingComponent } from './components/edit-booking/edit-booking.component';
 import { EditBookingPageComponent } from './pages/edit-booking-page/edit-booking-page.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ReviewsComponent } from './components/profile/reviews/reviews.component';
+import { PersonalInfoComponent } from './components/profile/personal-info/personal-info.component';
+import { DocumentsComponent } from './components/profile/documents/documents.component';
+import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 
 
 @NgModule({
@@ -94,6 +99,11 @@ import { EditBookingPageComponent } from './pages/edit-booking-page/edit-booking
     MyBookingsPageComponent,
     EditBookingComponent,
     EditBookingPageComponent,
+    ProfileComponent,
+    ReviewsComponent,
+    PersonalInfoComponent,
+    DocumentsComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
