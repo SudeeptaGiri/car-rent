@@ -22,7 +22,6 @@ export class RoleAssignmentService {
   // Get current role (for header display)
   getCurrentUserRole(): string {
     const userData = this.getCurrentUser();
-    console.log('Current user data:', userData);
     if (!userData) return 'Visitor';
     try {
       return userData?.role || 'Visitor';

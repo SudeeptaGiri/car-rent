@@ -65,7 +65,6 @@ export class CardsComponent implements OnInit {
     
     // Subscribe to filter changes
     this.filterSubscription = this.filterService.filters$.subscribe(filters => {
-      console.log('Received filter update:', filters);
       this.activeFilters = filters;
       this.applyFilters();
     });
@@ -354,7 +353,7 @@ export class CardsComponent implements OnInit {
         height: '90vh',
         maxWidth: '1200px', 
         maxHeight: '800px',
-        position: { top: '50px' },
+        position: { top: '45px' },
         panelClass: 'custom-dialog-container',
         data: { carId },
         autoFocus: false,

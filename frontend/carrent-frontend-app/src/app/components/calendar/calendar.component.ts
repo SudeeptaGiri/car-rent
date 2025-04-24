@@ -65,7 +65,6 @@ export class CalendarComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('Calendar received changes:', changes);
     
     if (changes['externalToggle'] && !changes['externalToggle'].firstChange) {
       this.isOpen = this.externalToggle;
