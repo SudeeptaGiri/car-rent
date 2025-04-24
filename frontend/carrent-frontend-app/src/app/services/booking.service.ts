@@ -83,18 +83,6 @@ addBooking(booking: Booking): Observable<any> {
     // Sample data
     this.bookings = [
       {
-        id: '3',
-        carId: '103',
-        carName: 'Porsche 911 2021',
-        carImage: 'assets/audi-a6.png',
-        orderNumber: '#2439',
-        pickupDate: pickup3,
-        dropoffDate: dropoff3,
-        status: BookingStatus.SERVICE_STARTED,
-        totalPrice:900,
-        numberOfDays:5
-      },
-      {
         id: '4',
         carId: '104',
         carName: 'Nissan Z 2024',
@@ -104,7 +92,9 @@ addBooking(booking: Booking): Observable<any> {
         dropoffDate: dropoff4,
         status: BookingStatus.CANCELLED,
         totalPrice:900,
-        numberOfDays:5
+        numberOfDays:5,
+        pickupLocation: 'Hyderabad',
+        dropoffLocation: 'Chennai'
       },
       {
         id: '5',
@@ -116,7 +106,9 @@ addBooking(booking: Booking): Observable<any> {
         dropoffDate: dropoff5,
         status: BookingStatus.SERVICE_PROVIDED,
         totalPrice:900,
-        numberOfDays:5
+        numberOfDays:5,
+        pickupLocation: 'Hyderabad',
+        dropoffLocation: 'Chennai'
       },
       {
         id: '6',
@@ -133,7 +125,9 @@ addBooking(booking: Booking): Observable<any> {
           submittedAt: feedbackDate
         },
         totalPrice:900,
-        numberOfDays:5
+        numberOfDays:5,
+        pickupLocation: 'Hyderabad',
+        dropoffLocation: 'Chennai'
       }
     ];
     

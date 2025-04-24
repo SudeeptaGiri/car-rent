@@ -49,5 +49,7 @@ export interface BookingParams {
     feedback?: Feedback;
     reservedBy?: string;
     totalPrice: number;    // Add this
-  numberOfDays: number;  // Add this
+    numberOfDays: number;  // Add this
+    pickupLocation: string;
+    dropoffLocation: string;
   }

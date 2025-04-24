@@ -449,7 +449,9 @@ export class CarBookingComponent implements OnInit {
           dropoffDate: this.dateTo,
           status: BookingStatus.RESERVED,
           totalPrice: this.totalPrice,
-          numberOfDays: this.numberOfDays
+          numberOfDays: this.numberOfDays,
+          pickupLocation: this.bookingForm.get('location.pickupLocation')?.value,
+          dropoffLocation: this.bookingForm.get('location.dropoffLocation')?.value,
         };
   
       // Fix the service name
