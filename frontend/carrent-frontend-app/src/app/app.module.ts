@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { CarDetailsPopupComponent } from './components/car-details-popup/car-details-popup.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -65,7 +66,7 @@ import { ReviewsComponent } from './components/profile/reviews/reviews.component
 import { PersonalInfoComponent } from './components/profile/personal-info/personal-info.component';
 import { DocumentsComponent } from './components/profile/documents/documents.component';
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
-
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,9 @@ import { ChangePasswordComponent } from './components/profile/change-password/ch
     ReviewsComponent,
     PersonalInfoComponent,
     DocumentsComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    TruncatePipe,
+  
   ],
   imports: [
     BrowserModule,

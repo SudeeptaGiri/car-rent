@@ -80,7 +80,7 @@
       </div>
       
       <div class="car-details">
-        <h3>{{ booking.carName }}</h3>
+        <h3>{{ booking.carName | truncate: 22 }}</h3>
         <p>Order: {{ booking.orderNumber }}</p>
       </div>
       
