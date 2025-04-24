@@ -10,6 +10,7 @@
     border: 1px solid #dcdcdd;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     font-family: Arial, sans-serif;
+    border-radius: 11px;
   }
   
 
@@ -26,6 +27,7 @@
     min-width: 250px;
     border-right: 1px solid #dcdcdd;
     background-color: #fff;
+    border-radius: 11px;
   }
   
   .locations-scroll {
@@ -55,7 +57,8 @@
   /* Location item styling */
   .location-item {
     padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 2px;
+    border: 1px solid #eee;
     cursor: pointer;
     transition: all 0.2s ease;
     border-radius: 10px;
@@ -89,6 +92,8 @@
     flex-grow: 1;
     position: relative;
     background-color: #f0f0f0;
+    border-radius: 11px;
+    overflow: hidden;
   }
   
   .map-iframe {

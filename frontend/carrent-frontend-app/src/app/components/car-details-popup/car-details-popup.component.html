@@ -1,5 +1,5 @@
 <dialog
-  class="relative bg-[#FFFBF3] p-4 w-full h-full max-w-6xl mx-auto shadow-md flex flex-col lg:flex-row overflow-y-auto max-h-screen rounded-sm car-details"
+  class="relative bg-[#FFFBF3] p-4 w-full h-full mx-auto shadow-md flex flex-col lg:flex-row overflow-y-auto max-h-screen rounded-sm car-details"
   role="dialog" aria-labelledby="car-details-title" aria-modal="true" *ngIf="carDetails">
 
   <!-- Notification -->
@@ -7,9 +7,6 @@
     <app-notification [show]="showLoginNotification" (cancel)="hideLoginNotification()" (login)="handleLogin()"
       class="absolute top-10 left-0 md:left-[18%] lg:left-[30%]"></app-notification>
   </div>
-
-
-
 
   <!-- Close Button -->
   <button (click)="close()" aria-label="Close dialog" type="button"
@@ -28,7 +25,7 @@
         class="thumbnail-list flex flex-row lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:h-[350px] h-[100px] w-full lg:w-[10%]"
         aria-label="Image thumbnails">
         <button *ngFor="let image of carDetails.images; let i = index"
-          class="min-w-[100px] h-full rounded-md cursor-pointer border-2 transition flex-shrink-0 lg:flex-shrink"
+          class="min-w-[100px] min-h-[60px] rounded-md cursor-pointer border-2 transition flex-shrink-0 lg:flex-shrink"
           [ngClass]="{'border-red-500': image.isPrimary,'border-gray-200': !image.isPrimary}"
           (click)="selectImage(image)" [attr.aria-label]="'View car image ' + (i + 1)"
           [attr.aria-pressed]="image.isPrimary">
@@ -120,8 +117,7 @@
         <!-- Booking Button -->
         <button
           class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-          (click)="bookCar()" [disabled]="!dateRange"
-          aria-label="Book the car for dollars per day">
+          (click)="bookCar()" [disabled]="!dateRange" aria-label="Book the car for dollars per day">
           Book the car - ${{ carDetails.price }}/day
         </button>
       </section>
@@ -140,15 +136,15 @@
           <button type="button" (click)="toggleDropdown()" aria-haspopup="true" [attr.aria-expanded]="isDropdownOpen"
             class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 focus:outline-none">
             <span>Sort by: {{ selectedSort }}</span>
-            <mat-icon class="feedback-dropdown text-base transition-transform duration-200" [class.feedback-dropdown-rotate-180]="isDropdownOpen"
-              aria-hidden="true">
+            <mat-icon class="feedback-dropdown text-base transition-transform duration-200"
+              [class.feedback-dropdown-rotate-180]="isDropdownOpen" aria-hidden="true">
               {{ isDropdownOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
             </mat-icon>
           </button>
 
           <!-- Dropdown Menu -->
-          <ul *ngIf="isDropdownOpen" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10"
-            role="menu">
+          <ul *ngIf="isDropdownOpen"
+            class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10" role="menu">
             <li *ngFor="let option of sortOptions" role="menuitem">
               <button (click)="selectSort(option.value)"
                 class="w-full px-4 py-2 text-sm text-left hover:bg-gray-100 focus:outline-none"

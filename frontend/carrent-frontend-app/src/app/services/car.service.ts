@@ -20,19 +20,6 @@ export class CarService {
 
   constructor(private http: HttpClient) {}
 
-  getAllCars(page: number = 0): Observable<CarListResponse> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const allCars = response.cars;
-        return {
-          content: allCars,
-          totalPages: 1,
-          currentPage: 0,
-          totalElements: allCars.length
-        };
-      })
-    );
-  }
 
   getCarDetailsWithNavigation(carId: string): Observable<{
     car: CarDetails | undefined,
@@ -73,11 +60,6 @@ export class CarService {
       })
     );
   }
-  getCarDetails(carId: string): Observable<CarDetails | undefined> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => response.cars.find(car => car.id === carId))
-    );
-  }
 
   getCarBookedDates(carId: string): Observable<BookedDate[]> {
     return this.http.get<CarsResponse>(this.jsonUrl).pipe(
@@ -94,12 +76,6 @@ export class CarService {
         const car = response.cars.find(c => c.id === carId);
         return car ? car.reviews : { content: [], totalPages: 0, currentPage: 0, totalElements: 0 };
       })
-    );
-  }
-
-  getPopularCars(): Observable<CarDetails[]> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => response.cars.filter(car => car.popularity.isPopular))
     );
   }
 
@@ -121,21 +97,6 @@ export class CarService {
           });
         }
         return bookingRequest;
-      })
-    );
-  }
-
-  // Method to check if dates are available
-  isDateRangeAvailable(carId: string, startDate: string, endDate: string): Observable<boolean> {
-    return this.getCarBookedDates(carId).pipe(
-      map(bookedDates => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        return !bookedDates.some(booking => {
-          const bookingStart = new Date(booking.startDate);
-          const bookingEnd = new Date(booking.endDate);
-          return (start <= bookingEnd && end >= bookingStart);
-        });
       })
     );
   }
