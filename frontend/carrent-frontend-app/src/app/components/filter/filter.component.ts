@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators';
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -89,7 +89,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
     priceMin: 50,
     priceMax: 2000
   };
-  
+
   // Filter data object
   private defaultFilters: FilterData = {
     pickupLocation: null,
@@ -204,27 +204,27 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   private onTouchMove(e: TouchEvent): void {
     if (!this.isDraggingMin && !this.isDraggingMax) return;
-    
+
     const touch = e.touches[0];
     const sliderRect = this.rangeSliderElement.nativeElement.getBoundingClientRect();
     const sliderWidth = sliderRect.width;
-    
+
     // Calculate position as percentage within slider
     let position = (touch.clientX - sliderRect.left) / sliderWidth;
     position = Math.max(0, Math.min(1, position)); // Clamp to [0,1]
-    
+
     // Same logic as onMouseMove
     const minBasePrice = this.minPrice;
     const maxBasePrice = this.maxPrice;
     const priceSpan = maxBasePrice - minBasePrice;
-    
+
     if (this.isDraggingMin) {
       // Ensure min handle doesn't exceed max handle
       const maxPerc = (this.currentMaxPrice - minBasePrice) / priceSpan;
       if (position > maxPerc - 0.05) {
         position = maxPerc - 0.05;
       }
-      
+
       const newPrice = Math.round(minBasePrice + (position * priceSpan));
       this.currentMinPrice = newPrice;
       this.filterData.priceMin = newPrice;
@@ -234,12 +234,12 @@ export class FilterComponent implements OnInit, AfterViewInit {
       if (position < minPerc + 0.05) {
         position = minPerc + 0.05;
       }
-      
+
       const newPrice = Math.round(minBasePrice + (position * priceSpan));
       this.currentMaxPrice = newPrice;
       this.filterData.priceMax = newPrice;
     }
-    
+
     this.updateSliderPositions();
   }
 
@@ -266,47 +266,47 @@ export class FilterComponent implements OnInit, AfterViewInit {
   // Fix the price calculation in the onMouseMove method
 
   private onMouseMove(e: MouseEvent): void {
-  if (!this.isDraggingMin && !this.isDraggingMax) return;
-  
-  const sliderRect = this.rangeSliderElement.nativeElement.getBoundingClientRect();
-  const sliderWidth = sliderRect.width;
-  
-  // Calculate position as percentage within slider
-  let position = (e.clientX - sliderRect.left) / sliderWidth;
-  position = Math.max(0, Math.min(1, position)); // Clamp to [0,1]
-  
-  const minBasePrice = this.minPrice;
-  const maxBasePrice = this.maxPrice;
-  const priceSpan = maxBasePrice - minBasePrice;
-  
-  if (this.isDraggingMin) {
-    // Ensure min handle doesn't exceed max handle
-    const maxPerc = (this.currentMaxPrice - minBasePrice) / priceSpan;
-    if (position > maxPerc - 0.05) {
-      position = maxPerc - 0.05;
+    if (!this.isDraggingMin && !this.isDraggingMax) return;
+
+    const sliderRect = this.rangeSliderElement.nativeElement.getBoundingClientRect();
+    const sliderWidth = sliderRect.width;
+
+    // Calculate position as percentage within slider
+    let position = (e.clientX - sliderRect.left) / sliderWidth;
+    position = Math.max(0, Math.min(1, position)); // Clamp to [0,1]
+
+    const minBasePrice = this.minPrice;
+    const maxBasePrice = this.maxPrice;
+    const priceSpan = maxBasePrice - minBasePrice;
+
+    if (this.isDraggingMin) {
+      // Ensure min handle doesn't exceed max handle
+      const maxPerc = (this.currentMaxPrice - minBasePrice) / priceSpan;
+      if (position > maxPerc - 0.05) {
+        position = maxPerc - 0.05;
+      }
+
+      const newPrice = Math.round(minBasePrice + (position * priceSpan));
+      this.currentMinPrice = newPrice;
+      this.filterData.priceMin = newPrice;
+
+      console.log(`Min price set to: $${newPrice}`);
+    } else if (this.isDraggingMax) {
+      // Ensure max handle doesn't go below min handle
+      const minPerc = (this.currentMinPrice - minBasePrice) / priceSpan;
+      if (position < minPerc + 0.05) {
+        position = minPerc + 0.05;
+      }
+
+      const newPrice = Math.round(minBasePrice + (position * priceSpan));
+      this.currentMaxPrice = newPrice;
+      this.filterData.priceMax = newPrice;
+
+      console.log(`Max price set to: $${newPrice}`);
     }
-    
-    const newPrice = Math.round(minBasePrice + (position * priceSpan));
-    this.currentMinPrice = newPrice;
-    this.filterData.priceMin = newPrice;
-    
-    console.log(`Min price set to: $${newPrice}`);
-  } else if (this.isDraggingMax) {
-    // Ensure max handle doesn't go below min handle
-    const minPerc = (this.currentMinPrice - minBasePrice) / priceSpan;
-    if (position < minPerc + 0.05) {
-      position = minPerc + 0.05;
-    }
-    
-    const newPrice = Math.round(minBasePrice + (position * priceSpan));
-    this.currentMaxPrice = newPrice;
-    this.filterData.priceMax = newPrice;
-    
-    console.log(`Max price set to: $${newPrice}`);
+
+    this.updateSliderPositions();
   }
-  
-  this.updateSliderPositions();
-}
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
@@ -483,10 +483,30 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   updateSliderDimensions(): void {
+    if (!this.rangeSliderElement) return;
+
     const slider = this.rangeSliderElement.nativeElement;
     const rect = slider.getBoundingClientRect();
     this.sliderWidth = rect.width;
     this.sliderLeft = rect.left;
+
+    // Ensure handles stay within bounds
+    const minHandle = slider.querySelector('.min-handle');
+    const maxHandle = slider.querySelector('.max-handle');
+
+    if (minHandle && maxHandle) {
+      const priceRange = this.maxPrice - this.minPrice;
+
+      // Calculate positions based on current prices
+      const minPercentage = (this.currentMinPrice - this.minPrice) / priceRange;
+      const maxPercentage = (this.currentMaxPrice - this.minPrice) / priceRange;
+
+      // Update handle positions
+      minHandle.style.left = `${minPercentage * this.sliderWidth}px`;
+      maxHandle.style.left = `${maxPercentage * this.sliderWidth}px`;
+
+      this.updateTrackFill();
+    }
   }
 
   startDragMin(e: MouseEvent | Touch): void {
@@ -558,45 +578,45 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   private updateTrackFill(): void {
     if (!this.rangeSliderElement) return;
-    
+
     const sliderTrack = this.rangeSliderElement.nativeElement.querySelector('.slider-track');
     if (!sliderTrack) return;
-    
+
     const minBasePrice = this.minPrice;
     const maxBasePrice = this.maxPrice;
-    
+
     const minPerc = ((this.currentMinPrice - minBasePrice) / (maxBasePrice - minBasePrice)) * 100;
     const maxPerc = ((this.currentMaxPrice - minBasePrice) / (maxBasePrice - minBasePrice)) * 100;
-    
-    sliderTrack.style.background = 
+
+    sliderTrack.style.background =
       `linear-gradient(to right, #e5e5e5 0%, #e5e5e5 ${minPerc}%, #d32f2f ${minPerc}%, #d32f2f ${maxPerc}%, #e5e5e5 ${maxPerc}%, #e5e5e5 100%)`;
   }
 
   // Method to programmatically update slider positions
   updateSliderPositions(): void {
     if (!this.rangeSliderElement) return;
-    
+
     const sliderElement = this.rangeSliderElement.nativeElement;
     const minHandle = sliderElement.querySelector('.min-handle');
     const maxHandle = sliderElement.querySelector('.max-handle');
-    
+
     if (!minHandle || !maxHandle) return;
-    
+
     const sliderWidth = sliderElement.offsetWidth;
-    
+
     const minBasePrice = this.minPrice;
     const maxBasePrice = this.maxPrice;
     const priceRange = maxBasePrice - minBasePrice;
-    
+
     const minPercentage = (this.currentMinPrice - minBasePrice) / priceRange;
     const maxPercentage = (this.currentMaxPrice - minBasePrice) / priceRange;
-    
+
     const minPosition = minPercentage * sliderWidth;
     const maxPosition = maxPercentage * sliderWidth;
-    
+
     minHandle.style.left = `${minPosition}px`;
     maxHandle.style.left = `${maxPosition}px`;
-    
+
     this.updateTrackFill();
   }
 
@@ -623,8 +643,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   clearFilters(): void {
     // Reset filter values
     this.filterData = {
@@ -632,13 +650,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
       pickupCoordinates: null,
       dropoffLocation: null,
       dropoffCoordinates: null,
-      pickupDate: 'October 29',
-      dropoffDate: 'October 31',
+      pickupDate: '',
+      dropoffDate: '',
       carCategory: '',  // Changed to empty string
       gearbox: '',      // Changed to empty string
       engineType: '',   // Changed to empty string
-      priceMin: this.minPrice,
-      priceMax: this.maxPrice
+      priceMin: 0,
+      priceMax: 0
     };
 
     // Reset UI state
@@ -668,16 +686,25 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   findCars(): void {
     console.log('Finding cars with filters:', this.filterData);
-    
+
     // Make sure price range is correctly set
     this.filterData = {
       ...this.filterData,
       priceMin: this.currentMinPrice,
       priceMax: this.currentMaxPrice
     };
-    
+
     // Update the filter service
-    this.filterService.updateFilters({...this.filterData});
+    this.filterService.updateFilters({ ...this.filterData });
+  }
+  // Add to your component class
+  @HostListener('window:resize')
+  onResize() {
+    // Update slider dimensions and positions when window is resized
+    setTimeout(() => {
+      this.updateSliderDimensions();
+      this.updateSliderPositions();
+    }, 0);
   }
 }
 
