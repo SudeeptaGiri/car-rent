@@ -78,12 +78,26 @@ export class CarBookingComponent implements OnInit {
     private carBookingService: CarBookingService,
     private carService: CarService,
     private route: ActivatedRoute,
-    private http: HttpClient // Add HttpClient
+    private http: HttpClient, // Add HttpClient
     private router: Router
   ) {}
 
  // In car-booking.component.ts
  ngOnInit(): void {
+
+  // Get mock user and location info
+  this.userInfo = this.carBookingService.getMockUserInfo();
+  this.locationInfo = this.carBookingService.getMockLocationInfo();
+  
+  // Then get user data from localStorage
+  this.getUserFromLocalStorage();
+  
+  // Initialize form first
+  this.initForm();
+  
+  // Setup search debouncing for pickup location
+  this.setupLocationSearch();
+
   // Get car ID and dates from route parameters
   this.route.queryParams.subscribe(params => {
     if (params['carId']) {
@@ -119,6 +133,7 @@ export class CarBookingComponent implements OnInit {
         }
       });
     }
+  });
 
     // Get mock user and location info
     this.userInfo = this.carBookingService.getMockUserInfo();
