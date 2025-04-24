@@ -4,11 +4,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { LocationDialogComponent } from '../../components/location-dialog/location-dialog.component';
 import { CarBookingService } from '../../services/car-booking.service';
-import { UserInfo, LocationInfo } from '../../models/booking.model';
+import { UserInfo, LocationInfo, Booking } from '../../models/booking.model';
 import { CarDetails } from '../../models/car.interface';
 import { CarReservedDialogComponent } from '../../components/car-reserved-dialog/car-reserved-dialog.component';
 import { BookingSuccessDialogComponent } from '../../components/booking-success-dialog/booking-success-dialog.component';
 import { ActivatedRoute } from '@angular/router';
+import { BookingStatus } from '../../models/booking.model';
+import { CarImage } from '../../models/car.interface';
+import { Router } from '@angular/router';
 import { CarService } from '../../services/car.service';
 
 @Component({
@@ -38,6 +41,7 @@ export class CarBookingComponent implements OnInit {
     private carBookingService: CarBookingService,
     private carService: CarService,
     private route: ActivatedRoute,
+    private router: Router
   ) {}
 
  // In car-booking.component.ts
@@ -178,18 +182,35 @@ export class CarBookingComponent implements OnInit {
       return;
     }
     if (this.bookingForm.valid && this.selectedCar) {
-      const bookingData = {
-        dateFrom: this.dateFrom.toISOString(), // Convert Date to ISO string
-        dateTo: this.dateTo.toISOString(),     // Convert Date to ISO string
-        clientId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479'
-      };
-      
-      this.carBookingService.bookCar(bookingData).subscribe({
-        next: (response) => {
+      const bookingId = `booking-${Date.now()}`;
+      const orderNumber = `#${Math.floor(1000 + Math.random() * 9000)}`;
+  
+      // Get the image URL string
+      const carImageUrl = typeof this.selectedCar.images[0] === 'string' 
+        ? this.selectedCar.images[0] 
+        : (this.selectedCar.images[0] as CarImage).url;
+
+        const newBooking: Booking = {
+          id: bookingId,
+          carId: this.selectedCar.id,
+          carName: `${this.selectedCar.brand} ${this.selectedCar.model} ${this.selectedCar.year}`,
+          carImage: carImageUrl,
+          orderNumber: orderNumber,
+          pickupDate: this.dateFrom,
+          dropoffDate: this.dateTo,
+          status: BookingStatus.RESERVED,
+          totalPrice: this.totalPrice,
+          numberOfDays: this.numberOfDays
+        };
+  
+      // Fix the service name
+      this.carBookingService.addBooking(newBooking).subscribe({
+        next: (response: any) => {
           console.log('Booking confirmed:', response);
           this.showBookingSuccessDialog();
+          this.router.navigate(['/my-bookings']);
         },
-        error: (error) => {
+        error: (error: Error) => {
           console.error('Booking failed:', error);
           alert('Booking failed. Please try again.');
         }
