@@ -37,24 +37,23 @@
         </div>
     
         <!-- Dates & Time Section -->
-        <div class="section">
-          <h2>Dates & Time</h2>
-          <div class="dates-card" formGroupName="dates">
-            <div class="form-field">
-              <label>Pick-up date & Time</label>
-              <div class="date-value">
-                {{ dateFrom ? (formatDate(dateFrom) + ' | ' + formatTime(dateFrom)) : 'Select date and time' }}
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Drop-off date & Time</label>
-              <div class="date-value">
-                {{ dateTo ? (formatDate(dateTo) + ' | ' + formatTime(dateTo)) : 'Select date and time' }}
-              </div>
-            </div>
-            <button type="button" class="change-btn" (click)="openDateChange()">Change</button>
-          </div>
-        </div>
+        <!-- Replace the existing Dates & Time Section with this -->
+<div class="section">
+  <h2>Dates & Time</h2>
+  <div class="dates-card" formGroupName="dates">
+    <div class="w-full pb-8">
+      <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
+    </div>
+    <calendar 
+      class="booking-calendar" 
+      [externalToggle]="isCalendarOpen"
+      [initialStartDate]="dateFrom"
+      [initialEndDate]="dateTo"
+      [bookedDates]="bookedDatesFormatted"
+      (dateRangeSelected)="onDateRangeSelected($event)">
+    </calendar>
+  </div>
+</div>
       </form>
     
       <!-- Car Details and Save Section -->

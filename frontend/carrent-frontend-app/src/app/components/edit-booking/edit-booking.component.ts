@@ -22,6 +22,14 @@ export class EditBookingComponent implements OnInit {
   numberOfDays = 0;
   dateFrom!: Date;
   dateTo!: Date;
+
+  isCalendarOpen = false;
+  
+  // Add this getter for formatted booked dates
+  get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
+    // You can get booked dates from your service or pass them as input
+    return [];
+  }
   
   constructor(
     private fb: FormBuilder,
@@ -39,6 +47,27 @@ export class EditBookingComponent implements OnInit {
         this.loadBooking(bookingId);
       }
     });
+  }
+
+  toggleCalendar(): void {
+    this.isCalendarOpen = !this.isCalendarOpen;
+  }
+
+  onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
+    // Convert moment objects to Date objects
+    this.dateFrom = event.startDate.toDate();
+    this.dateTo = event.endDate.toDate();
+
+    // Update the form with the new dates
+    this.bookingForm.patchValue({
+      dates: {
+        dateFrom: this.dateFrom.toISOString(),
+        dateTo: this.dateTo.toISOString()
+      }
+    });
+
+    // Recalculate total price
+    this.calculateTotalPrice();
   }
 
   loadBooking(bookingId: string): void {
