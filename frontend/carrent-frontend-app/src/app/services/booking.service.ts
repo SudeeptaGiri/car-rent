@@ -21,6 +21,17 @@ export class BookingService {
     interval(1000).subscribe(() => this.updateBookingStatuses());
   }
 
+  cancelBooking(bookingId: string): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+      // Save to localStorage after updating status
+      this.saveBookingsToStorage();
+      // Emit updated bookings
+      this.bookingsSubject.next([...this.bookings]);
+    }
+  }
+
   private loadBookingsFromStorage(): void {
     const storedBookings = localStorage.getItem(this.STORAGE_KEY);
     if (storedBookings) {
@@ -194,13 +205,6 @@ addBooking(booking: Booking): Observable<any> {
     );
   }
   
-  cancelBooking(bookingId: string): void {
-    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
-    if (bookingIndex !== -1) {
-      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-      this.bookingsSubject.next([...this.bookings]);
-    }
-  }
   
   submitFeedback(bookingId: string, rating: number, comment: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
