@@ -117,7 +117,7 @@
         <!-- Booking Button -->
         <button
           class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-          (click)="bookCar()" [disabled]="!dateRange" aria-label="Book the car for dollars per day">
+          (click)="bookCar()" [disabled]="(carDetails.status.toLocaleLowerCase()!=='available' || !dateRange)" aria-label="Book the car for dollars per day">
           Book the car - ${{ carDetails.price }}/day
         </button>
       </section>
