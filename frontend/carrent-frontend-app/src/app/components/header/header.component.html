@@ -8,9 +8,27 @@
   <div class="center-nav">
     <nav class="nav-bar">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Cars</a></li>
-        <li *ngIf="user"><a href="#">My Bookings</a></li>
+        <li>
+          <a 
+            routerLink="/" 
+            [ngClass]="{ 'active-tab': selectedTab === 'home' }"
+            (click)="setActiveTab('home')"
+          >Home</a>
+        </li>
+        <li>
+          <a 
+            href="#" 
+            [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
+            (click)="setActiveTab('cars')"
+          >Cars</a>
+        </li>
+        <li *ngIf="user">
+          <a 
+            routerLink="/my-bookings" 
+            [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
+            (click)="setActiveTab('bookings')"
+          >My Bookings</a>
+        </li>
       </ul>
     </nav>
   </div>

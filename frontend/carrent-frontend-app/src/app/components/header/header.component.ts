@@ -13,6 +13,8 @@ export class HeaderComponent implements OnInit {
   menuOpen = false;
   user: User | null = null;
   dropdownOpen = false;
+  selectedTab: string = 'home';
+
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -44,4 +46,9 @@ export class HeaderComponent implements OnInit {
       this.menuOpen = false;
     }
   }
+
+setActiveTab(tab: string) {
+  this.selectedTab = tab;
+}
+
 }
