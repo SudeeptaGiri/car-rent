@@ -25,14 +25,13 @@
             <div class="filter-group">
                 <label for="carCategory">Car category</label>
                 <div class="select-wrapper">
-                    <select id="carCategory" 
-                            name="carCategory"
-                            (change)="onSelectChange('carCategory', $event)"
-                            aria-label="Select car category">
-                        <option value="">Passenger car</option>
-                        <option value="sports">Sports car</option>
-                        <option value="luxury">Luxury car</option>
-                        <option value="offroad">Off-road car</option>
+                    <select id="carCategory" name="carCategory" (change)="onSelectChange('carCategory', $event)"
+                        aria-label="Select car category">
+                        <option value="">All categories</option>
+                        <option value="Passenger car">Passenger car</option>
+                        <option value="Sports car">Sports car</option>
+                        <option value="Luxury car">Luxury car</option>
+                        <option value="Off-road car">Off-road car</option>
                     </select>
                 </div>
             </div>
@@ -40,12 +39,11 @@
             <div class="filter-group">
                 <label for="gearbox">Gearbox</label>
                 <div class="select-wrapper">
-                    <select id="gearbox" 
-                            name="gearbox"
-                            (change)="onSelectChange('gearbox', $event)"
-                            aria-label="Select gearbox type">
-                        <option value="automatic">Automatic</option>
-                        <option value="manual">Manual</option>
+                    <select id="gearbox" name="gearbox" (change)="onSelectChange('gearbox', $event)"
+                        aria-label="Select gearbox type">
+                        <option value="">All types</option>
+                        <option value="Automatic">Automatic</option>
+                        <option value="Manual">Manual</option>
                     </select>
                 </div>
             </div>
@@ -53,14 +51,13 @@
             <div class="filter-group">
                 <label for="engineType">Type of engine</label>
                 <div class="select-wrapper">
-                    <select id="engineType" 
-                            name="engineType"
-                            (change)="onSelectChange('engineType', $event)"
-                            aria-label="Select engine type">
-                        <option value="gasoline">Gasoline</option>
-                        <option value="diesel">Diesel</option>
-                        <option value="electric">Electric</option>
-                        <option value="hybrid">Hybrid</option>
+                    <select id="engineType" name="engineType" (change)="onSelectChange('engineType', $event)"
+                        aria-label="Select engine type">
+                        <option value="">All types</option>
+                        <option value="GASOLINE">Gasoline</option>
+                        <option value="DIESEL">Diesel</option>
+                        <option value="ELECTRIC">Electric</option>
+                        <option value="HYBRID">Hybrid</option>
                     </select>
                 </div>
             </div>
@@ -72,77 +69,51 @@
                         ${{currentMinPrice}} - ${{currentMaxPrice}}
                     </span>
                 </div>
-                <div class="price-range" 
-                     role="group" 
-                     aria-labelledby="priceRangeLabel">
-                    <div #rangeSlider 
-                         class="range-slider"
-                         aria-label="Price range slider">
+                <div class="price-range" role="group" aria-labelledby="priceRangeLabel">
+                    <div #rangeSlider class="range-slider" aria-label="Price range slider">
                         <div class="slider-track"></div>
-                        <div class="min-handle" 
-                             role="slider" 
-                             aria-label="Minimum price"
-                             [attr.aria-valuemin]="minPrice"
-                             [attr.aria-valuemax]="maxPrice"
-                             [attr.aria-valuenow]="currentMinPrice"></div>
-                        <div class="max-handle" 
-                             role="slider" 
-                             aria-label="Maximum price"
-                             [attr.aria-valuemin]="minPrice"
-                             [attr.aria-valuemax]="maxPrice"
-                             [attr.aria-valuenow]="currentMaxPrice"></div>
+                        <div class="min-handle" role="slider" aria-label="Minimum price" [attr.aria-valuemin]="minPrice"
+                            [attr.aria-valuemax]="maxPrice" [attr.aria-valuenow]="currentMinPrice"></div>
+                        <div class="max-handle" role="slider" aria-label="Maximum price" [attr.aria-valuemin]="minPrice"
+                            [attr.aria-valuemax]="maxPrice" [attr.aria-valuenow]="currentMaxPrice"></div>
                     </div>
                 </div>
             </div>
 
             <div class="filter-group button-group">
-                <button class="find-car-btn" 
-                        (click)="findCars()"
-                        aria-label="Find available cars">
+                <button class="find-car-btn" (click)="findCars()" aria-label="Find available cars">
                     Find a car
                 </button>
             </div>
         </div>
-        <button class="clear-button" 
-                (click)="clearFilters()"
-                aria-label="Clear all filter selections">
+        <button class="clear-button" (click)="clearFilters()" aria-label="Clear all filter selections">
             Clear all filters
         </button>
     </div>
 </section>
 
 <!-- Pickup Location Modal -->
-<div class="location-modal" 
-     *ngIf="showPickupModal"
-     role="dialog"
-     aria-labelledby="pickupModalTitle">
+<div class="location-modal" *ngIf="showPickupModal" role="dialog" aria-labelledby="pickupModalTitle">
     <div class="location-modal-content">
         <div class="location-modal-header">
             <h3 id="pickupModalTitle">Choose pick-up location</h3>
-            <button class="close-modal" 
-                    (click)="closeLocationModal()"
-                    aria-label="Close pickup location modal">
+            <button class="close-modal" (click)="closeLocationModal()" aria-label="Close pickup location modal">
                 &times;
             </button>
         </div>
 
         <div class="location-modal-body">
-            <button class="use-current-location" 
-                    (click)="useCurrentLocation(true)"
-                    aria-label="Use current location for pickup">
+            <button class="use-current-location" (click)="useCurrentLocation(true)"
+                aria-label="Use current location for pickup">
                 <span class="location-icon" aria-hidden="true">📍</span>
                 Use current location
             </button>
 
             <div class="location-search-container">
                 <label for="pickupSearch" class="sr-only">Search pickup location</label>
-                <input type="text" 
-                       id="pickupSearch"
-                       placeholder="Search for a city or address" 
-                       [(ngModel)]="pickupSearchQuery"
-                       (input)="onPickupSearchInput()" 
-                       class="location-search-input"
-                       aria-label="Search for pickup location">
+                <input type="text" id="pickupSearch" placeholder="Search for a city or address"
+                    [(ngModel)]="pickupSearchQuery" (input)="onPickupSearchInput()" class="location-search-input"
+                    aria-label="Search for pickup location">
                 <!-- Rest of pickup modal content -->
             </div>
         </div>
@@ -150,73 +121,52 @@
 </div>
 
 <!-- Dropoff Location Modal -->
-<div class="location-modal" 
-     *ngIf="showDropoffModal"
-     role="dialog"
-     aria-labelledby="dropoffModalTitle"
-     aria-modal="true">
+<div class="location-modal" *ngIf="showDropoffModal" role="dialog" aria-labelledby="dropoffModalTitle"
+    aria-modal="true">
     <div class="location-modal-content">
         <div class="location-modal-header">
             <h3 id="dropoffModalTitle">Choose drop-off location</h3>
-            <button class="close-modal" 
-                    (click)="closeLocationModal()"
-                    aria-label="Close drop-off location modal">
+            <button class="close-modal" (click)="closeLocationModal()" aria-label="Close drop-off location modal">
                 &times;
             </button>
         </div>
 
         <div class="location-modal-body">
-            <button class="use-current-location" 
-                    (click)="useCurrentLocation(false)"
-                    aria-label="Use current location for drop-off">
+            <button class="use-current-location" (click)="useCurrentLocation(false)"
+                aria-label="Use current location for drop-off">
                 <span class="location-icon" aria-hidden="true">📍</span>
                 <span>Use current location</span>
             </button>
 
             <div class="location-search-container">
                 <label for="dropoffSearch" class="sr-only">Search drop-off location</label>
-                <input type="text" 
-                       id="dropoffSearch"
-                       name="dropoffSearch"
-                       placeholder="Search for a city or address" 
-                       [(ngModel)]="dropoffSearchQuery"
-                       (input)="onDropoffSearchInput()" 
-                       class="location-search-input"
-                       aria-label="Search for drop-off location"
-                       aria-describedby="dropoffSearchHint">
-                
+                <input type="text" id="dropoffSearch" name="dropoffSearch" placeholder="Search for a city or address"
+                    [(ngModel)]="dropoffSearchQuery" (input)="onDropoffSearchInput()" class="location-search-input"
+                    aria-label="Search for drop-off location" aria-describedby="dropoffSearchHint">
+
                 <div id="dropoffSearchHint" class="sr-only">
                     Type to search for available drop-off locations
                 </div>
 
-                <div class="location-suggestions" 
-                     *ngIf="showDropoffSuggestions"
-                     role="listbox"
-                     aria-label="Drop-off location suggestions">
-                    
-                    <div class="loading-suggestions" 
-                         *ngIf="isLoadingDropoffSuggestions"
-                         role="status"
-                         aria-live="polite">
+                <div class="location-suggestions" *ngIf="showDropoffSuggestions" role="listbox"
+                    aria-label="Drop-off location suggestions">
+
+                    <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions" role="status"
+                        aria-live="polite">
                         Searching...
                     </div>
 
                     <div class="no-suggestions"
-                         *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1"
-                         role="status"
-                         aria-live="polite">
+                        *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1"
+                        role="status" aria-live="polite">
                         No locations found
                     </div>
 
-                    <div class="suggestion-item" 
-                         *ngFor="let suggestion of dropoffSuggestions; let i = index"
-                         (click)="selectDropoffLocation(suggestion)"
-                         role="option"
-                         [attr.aria-selected]="false"
-                         [attr.id]="'dropoff-suggestion-' + i"
-                         tabindex="0"
-                         (keydown.enter)="selectDropoffLocation(suggestion)"
-                         (keydown.space)="selectDropoffLocation(suggestion)">
+                    <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions; let i = index"
+                        (click)="selectDropoffLocation(suggestion)" role="option" [attr.aria-selected]="false"
+                        [attr.id]="'dropoff-suggestion-' + i" tabindex="0"
+                        (keydown.enter)="selectDropoffLocation(suggestion)"
+                        (keydown.space)="selectDropoffLocation(suggestion)">
                         <span class="suggestion-icon" aria-hidden="true">📍</span>
                         <span class="suggestion-text">{{ suggestion.displayName }}</span>
                     </div>
