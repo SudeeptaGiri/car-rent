@@ -71,6 +71,13 @@ export class CardsComponent implements OnInit {
     
     // Fetch cars data
     this.fetchCars();
+    // this.filterService.filters$.subscribe(filters => {
+    //   if (filters) {
+    //     this.filteredCars = this.filterService.filterCars(this.cars, filters);
+    //   } else {
+    //     this.filteredCars = this.cars;
+    //   }
+    // });
   }
 
   ngOnDestroy(): void {
