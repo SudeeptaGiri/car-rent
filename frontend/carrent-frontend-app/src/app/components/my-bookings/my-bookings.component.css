@@ -1,7 +1,4 @@
-@media (min-width: 1600px){}
-  .my-bookings-container {
-    height: 85vh;
-  }
+
 
 
 body {
@@ -13,7 +10,7 @@ body {
 }
 
 .my-bookings-container {
-    max-width: 1200px;
+    min-height: 70vh;
     margin: 0 auto;
     padding: 20px;
   }
