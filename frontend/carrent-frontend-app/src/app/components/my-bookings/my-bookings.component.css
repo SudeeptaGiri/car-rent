@@ -1,16 +1,12 @@
 
-
-
-body {
-  background-color: #FFFBF3;
-}
-
 .booking-card {
   background-color: #f0f0f0;
 }
 
 .my-bookings-container {
+    max-width: 1300px;
     min-height: 90vh;
+    background-color: #FFFBF3;
     margin: 0 auto;
     padding: 20px;
   }
