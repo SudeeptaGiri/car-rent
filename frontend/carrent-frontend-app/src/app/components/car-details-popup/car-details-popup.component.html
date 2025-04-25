@@ -1,13 +1,9 @@
+<!-- Notification -->
+<app-notification [show]="showLoginNotification" (cancel)="hideLoginNotification()" (login)="handleLogin()"
+  class="absolute top-0 left-0 md:left-[18%] lg:left-[30%] z-10"></app-notification>
 <dialog
   class="relative bg-[#FFFBF3] p-4 w-full h-full mx-auto shadow-md flex flex-col lg:flex-row overflow-y-auto max-h-screen rounded-sm car-details"
   role="dialog" aria-labelledby="car-details-title" aria-modal="true" *ngIf="carDetails">
-
-  <!-- Notification -->
-  <div class="w-full h-full z-10">
-    <app-notification [show]="showLoginNotification" (cancel)="hideLoginNotification()" (login)="handleLogin()"
-      class="absolute top-10 left-0 md:left-[18%] lg:left-[30%]"></app-notification>
-  </div>
-
   <!-- Close Button -->
   <button (click)="close()" aria-label="Close dialog" type="button"
     class="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl pb-2">
@@ -117,7 +113,8 @@
         <!-- Booking Button -->
         <button
           class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-          (click)="bookCar()" [disabled]="(carDetails.status.toLocaleLowerCase()!=='available' || !dateRange)" aria-label="Book the car for dollars per day">
+          (click)="bookCar()" [disabled]="(carDetails.status.toLocaleLowerCase()!=='available' || !dateRange)"
+          aria-label="Book the car for dollars per day">
           Book the car - ${{ carDetails.price }}/day
         </button>
       </section>
