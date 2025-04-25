@@ -39,7 +39,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription.add(
       this.bookingService.getBookings().subscribe(bookings => {
-        console.log('Loaded bookings:', bookings); // Debug log
+        console.log('Loaded user bookings:', bookings);
         this.bookings = bookings;
         this.filterBookings();
       })
@@ -52,7 +52,6 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     } else {
       this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
     }
-    console.log('Filtered bookings:', this.filteredBookings); // Debug log
   }
   
   ngOnDestroy(): void {
