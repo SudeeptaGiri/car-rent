@@ -1,3 +1,11 @@
+@media(min-width: 1600px) {
+  body{
+    height: 91vh;
+  }
+}
+body{
+  background-color: #FFFBF3;
+}
 .booking-section{
     display:flex;
     flex-wrap: wrap;

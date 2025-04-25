@@ -130,22 +130,28 @@ export class EditBookingComponent implements OnInit {
     });
   }
 
-  loadBooking(bookingId: string): void {
-    this.bookingService.getBookings().subscribe(bookings => {
-      const booking = bookings.find(b => b.id === bookingId);
-      if (booking) {
-        this.booking = booking;
-        this.selectedPickupLocation = booking.pickupLocation;
-        this.selectedDropoffLocation = booking.dropoffLocation;
-        this.dateFrom = new Date(booking.pickupDate);
-        this.dateTo = new Date(booking.dropoffDate);
-        this.initForm();
-        this.calculateTotalPrice();
-      } else {
-        this.router.navigate(['/my-bookings']);
-      }
-    });
-  }
+  carPricePerDay: number = 0;
+
+loadBooking(bookingId: string): void {
+  this.bookingService.getBookings().subscribe(bookings => {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (booking) {
+      this.booking = booking;
+      this.selectedPickupLocation = booking.pickupLocation;
+      this.selectedDropoffLocation = booking.dropoffLocation;
+      this.dateFrom = new Date(booking.pickupDate);
+      this.dateTo = new Date(booking.dropoffDate);
+      
+      // Get the car price per day by dividing total price by number of days
+      this.carPricePerDay = booking.totalPrice / booking.numberOfDays;
+      
+      this.initForm();
+      this.calculateTotalPrice();
+    } else {
+      this.router.navigate(['/my-bookings']);
+    }
+  });
+}
 
   initForm(): void {
     if (!this.booking) return;
@@ -317,7 +323,7 @@ export class EditBookingComponent implements OnInit {
       // Calculate difference in days
       const diffTime = Math.abs(this.dateTo.getTime() - this.dateFrom.getTime());
       this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      this.totalPrice = this.numberOfDays * 180; // Assuming $180 per day
+      this.totalPrice = this.numberOfDays * this.carPricePerDay; // Use actual car price instead of 180
     }
   }
 
@@ -347,6 +353,9 @@ export class EditBookingComponent implements OnInit {
 
   saveBooking(): void {
     if (this.bookingForm.valid) {
+      // Get the form values
+      const formValues = this.bookingForm.value;
+  
       // Update booking with new dates
       this.bookingService.updateBookingDates(
         this.booking.id,
@@ -354,12 +363,13 @@ export class EditBookingComponent implements OnInit {
         this.dateTo
       ).subscribe({
         next: () => {
+          // Show success message (optional)
           // Navigate back to my-bookings page
           this.router.navigate(['/my-bookings']);
         },
         error: (error) => {
           console.error('Error updating booking:', error);
-          // Handle error
+          alert('Failed to update booking. Please try again.');
         }
       });
     }
