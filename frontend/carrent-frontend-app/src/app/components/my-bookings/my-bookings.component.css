@@ -10,8 +10,7 @@ body {
 }
 
 .my-bookings-container {
-    max-width: 1200px;
-    min-height: 70vh;
+    min-height: 90vh;
     margin: 0 auto;
     padding: 20px;
   }

@@ -217,7 +217,7 @@ export class CarDetailsPopupComponent {
       data: bookingRequest
     });
 
-    this.route.navigate(['/cars'], {
+    this.route.navigate(['/cars-booking'], {
       queryParams: {
         carId: this.carDetails.id,
         startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
