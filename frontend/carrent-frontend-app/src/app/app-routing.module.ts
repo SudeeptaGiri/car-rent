@@ -12,6 +12,7 @@ import { PersonalInfoComponent } from './components/profile/personal-info/person
 import { DocumentsComponent } from './components/profile/documents/documents.component';
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 import { authGuard } from './guards/auth.guard';
+import { CarsComponent } from './pages/cars/cars.component';
 
 
 const routes: Routes = [
@@ -30,13 +31,16 @@ const routes: Routes = [
   },
   {path: 'main', component: MainComponent, pathMatch: 'full'},
   {path: '', redirectTo: 'main', pathMatch: 'full'},
-  { path: 'cars', component: CarBookingPageComponent, pathMatch: 'full', canActivate: [authGuard] }, 
+  { path: 'cars-booking', component: CarBookingPageComponent, pathMatch: 'full', canActivate: [authGuard] }, 
   {
     path: 'my-bookings',
     component: MyBookingsPageComponent,
     canActivate: [authGuard]
   }, 
   { path: 'edit-booking/:id', component: EditBookingPageComponent , canActivate: [authGuard] },
+  { path: 'my-bookings', component: MyBookingsPageComponent, pathMatch: 'full' }, 
+  { path: 'edit-booking/:id', component: EditBookingPageComponent },
+  { path: 'cars', component: CarsComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
