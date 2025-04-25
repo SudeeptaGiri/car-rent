@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'r
 import { catchError, switchMap } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { FilterService } from '../../services/filter.service';
-
+import { CarService } from '../../services/car.service';
 
 
 interface LocationSuggestion {
@@ -109,7 +109,12 @@ export class FilterComponent implements OnInit, AfterViewInit {
     priceMax: 2000
   };
 
-  constructor(private http: HttpClient, private filterService: FilterService) { }
+  constructor(
+    private http: HttpClient,
+    private filterService: FilterService,
+    private carService: CarService  // Add this line
+  ) { }
+
   ngOnInit(): void {
     // Setup search debouncing for pickup location
     this.searchSubscriptions.push(
@@ -135,6 +140,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.pickupSuggestions = results;
         this.isLoadingPickupSuggestions = false;
       })
+
+      
     );
 
     // Setup search debouncing for dropoff location
@@ -162,6 +169,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.isLoadingDropoffSuggestions = false;
       })
     );
+
+    this.carService.getAllCars().subscribe(response => {
+      this.filterService.analyzeEngineTypes(response.content); // Use the content property which contains the car array
+    });
   }
 
   ngAfterViewInit(): void {
@@ -661,6 +672,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
   // Form handling methods
   onSelectChange(field: string, event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
+    console.log(`Filter changed: ${field} = ${value}`);
 
     switch (field) {
       case 'pickupDate':
@@ -676,9 +688,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.filterData.gearbox = value;
         break;
       case 'engineType':
+        // Store the exact value without converting to lowercase
         this.filterData.engineType = value;
+        console.log(`Set engine type filter to: ${value}`);
         break;
     }
+
+ // Call findCars to apply the filter
   }
 
   clearFilters(): void {
@@ -723,18 +739,20 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   findCars(): void {
-    console.log('Finding cars with filters:', this.filterData);
-
-    // Make sure price range is correctly set
+    // Keep the original case for engineType instead of forcing lowercase
     this.filterData = {
       ...this.filterData,
       priceMin: this.currentMinPrice,
-      priceMax: this.currentMaxPrice
+      priceMax: this.currentMaxPrice,
+      carCategory: this.filterData.carCategory?.trim() || '',
+      gearbox: this.filterData.gearbox?.trim() || '',
+      engineType: this.filterData.engineType, // Don't modify the case
     };
-
-    // Update the filter service
+  
+    console.log('Applying filters:', this.filterData);
     this.filterService.updateFilters({ ...this.filterData });
   }
+
   // Add to your component class
   @HostListener('window:resize')
   onResize() {
@@ -745,5 +763,3 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 }
-
-// Add the missing 'map' operator
