@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/users';
 import { RoleAssignmentService } from './role-assignment.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private roleService: RoleAssignmentService
+    private roleService: RoleAssignmentService,
+    private router: Router
   ) {
     const storedUsers = localStorage.getItem('registeredUsers');
     if (storedUsers) {
@@ -86,5 +88,6 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     sessionStorage.removeItem('currentUser');
+    this.router.navigate(['/main']);
   }
 }

@@ -10,21 +10,18 @@
       <ul>
         <li>
           <a 
-            routerLink="/" 
             [ngClass]="{ 'active-tab': selectedTab === 'home' }"
             (click)="setActiveTab('home')"
           >Home</a>
         </li>
         <li>
           <a 
-            href="#" 
             [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
             (click)="setActiveTab('cars')"
           >Cars</a>
         </li>
         <li *ngIf="user">
-          <a 
-            routerLink="/my-bookings" 
+          <a  
             [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
             (click)="setActiveTab('bookings')"
           >My Bookings</a>
