@@ -41,6 +41,7 @@ export class CalendarComponent {
   // Add getters and setters for time values with validation
   private _pickupTime = this.defaultPickupTime;
   private _dropoffTime = this.defaultDropoffTime;
+  timeValidationError: string | null = null;
 
 
   get pickupTime(): string {
@@ -84,10 +85,13 @@ export class CalendarComponent {
   onTimeChange(event: Event, isPickup: boolean) {
     const input = event.target as HTMLInputElement;
     const value = input.value;
-
+  
     if (!this.isValidTime(value)) {
       input.value = isPickup ? this.defaultPickupTime : this.defaultDropoffTime;
     }
+    
+    // Clear validation error when user changes input
+    this.timeValidationError = null;
   }
   ngOnInit(): void {
     if (this.initialStartDate) {
@@ -237,6 +241,16 @@ export class CalendarComponent {
     if (this.selectedPickup && this.selectedDropoff && 
         this.isValidTime(this.pickupTime) && this.isValidTime(this.dropoffTime)) {
       
+      // Validate the time range
+      const validation = this.validateTimeRange();
+      if (!validation.valid) {
+        this.timeValidationError = validation.error || null;
+        return;
+      }
+      
+      // Clear any previous validation errors
+      this.timeValidationError = null;
+      
       const pickup = new Date(this.selectedPickup);
       const dropoff = new Date(this.selectedDropoff);
       
@@ -313,5 +327,27 @@ export class CalendarComponent {
       return `${this.formatDate(this.selectedPickup)} - Select end date`;
     }
     return `${this.formatDate(this.selectedPickup)} - ${this.formatDate(this.selectedDropoff)}`;
+  }
+
+  private validateTimeRange(): { valid: boolean, error?: string } {
+    // Only validate if both dates are the same day
+    if (this.selectedPickup && this.selectedDropoff && 
+        this.selectedPickup.toDateString() === this.selectedDropoff.toDateString()) {
+      
+      const [pickupHours, pickupMinutes] = this.pickupTime.split(':').map(Number);
+      const [dropoffHours, dropoffMinutes] = this.dropoffTime.split(':').map(Number);
+      
+      const pickupMinutesTotal = pickupHours * 60 + pickupMinutes;
+      const dropoffMinutesTotal = dropoffHours * 60 + dropoffMinutes;
+      
+      if (dropoffMinutesTotal <= pickupMinutesTotal) {
+        return { 
+          valid: false, 
+          error: 'Drop-off time must be after pick-up time on the same day' 
+        };
+      }
+    }
+    
+    return { valid: true };
   }
 }
