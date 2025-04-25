@@ -52,6 +52,31 @@ export class FilterService {
     });
   }
 
+  // Add this method to your FilterService
+analyzeEngineTypes(cars: any[]): void {
+  console.log('Analyzing engine types in car data...');
+  
+  const engineTypes = new Set();
+  let missingEngineCount = 0;
+  
+  cars.forEach(car => {
+    // Extract and log engine information
+    if (car.specifications?.engine) {
+      engineTypes.add(car.specifications.engine);
+    } else if (car.specifications?.fuelType) {
+      engineTypes.add(car.specifications.fuelType);
+    } else {
+      missingEngineCount++;
+    }
+  });
+  
+  console.log('Engine types found in data:', Array.from(engineTypes));
+  
+  if (missingEngineCount > 0) {
+    console.warn(`${missingEngineCount} cars missing engine information`);
+  }
+}
+
   updateFilters(filters: FilterData): void {
     this.filterSubject.next(filters);
   }

@@ -1,24 +1,53 @@
 .feedback-container {
-    width: 100%;
-    max-width: 100%;
-    padding: 20px 40px;
-    position: relative;
-    box-sizing: border-box;
-  }
+  width: 100%;
+  max-width: 1200px; /* Limit maximum width */
+  margin: 0 auto;
+  padding: 30px 40px;
+  position: relative;
+  box-sizing: border-box;
+}
   
   
   /* Scrollable container */
   .scrollable-container {
     width: 100%;
     position: relative;
-    overflow: hidden;
+    overflow-x: auto; /* Always allow horizontal scrolling */
+    scrollbar-width: none; /* Hide default scrollbar */
+    -ms-overflow-style: none; /* IE and Edge */
+    -webkit-overflow-scrolling: touch;
+    margin: 0 auto;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Enable drag scrolling */
+  .scrollable-container {
+    cursor: grab;
+  }
+  
+  .scrollable-container:active {
+    cursor: grabbing;
+  }
+
+  @media (pointer: fine) {
+    .scrollable-container:hover {
+      overflow-x: auto; /* Enable scrolling on hover for desktop with pointer */
+    }
   }
   
   /* Mobile scrolling */
   .scrollable-container.mobile {
-    overflow-x: auto;
+    overflow-x: auto; /* Allow horizontal scrolling on mobile */
+    overflow-y: hidden; /* Prevent vertical scrolling */
     scrollbar-width: thin;
     scrollbar-color: #d32f2f #f1f1f1;
+    cursor: grab; /* Show grab cursor for scrollable content */
+    touch-action: pan-x; /* Optimize for horizontal touch actions */
   }
   
   .scrollable-container.mobile::-webkit-scrollbar {
@@ -41,22 +70,24 @@
     transition: transform 0.3s ease-in-out;
     width: fit-content;
     padding: 10px 5px;
-}
+    margin: 0 auto; /* Center the cards */
+  }
 
 /* Individual review card */
 .review-card {
-    flex: 0 0 calc(33.333% - 20px);
-    border: 1px solid black;
-    min-width: 300px;
-    max-width: calc(33.333% - 20px); /* Ensure cards don't get too wide */
-    height: 300px; /* Fixed height for all cards */
-    padding: 20px;
-    background: #fffbf3;
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-  }
+  flex: 0 0 calc(33.33% - 20px);
+  min-width: 300px;
+  max-width: 350px; /* Control maximum width */
+  height: 300px;
+  padding: 20px;
+  background: #fffbf3;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0; /* Lighter border */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
   
   .review-card:hover {
     transform: translateY(-5px);
@@ -72,15 +103,15 @@
   }
   
   .car-image {
-    width: 80px;
-    height: 80px;
+    width: 100px; /* Larger image */
+    height: 100px;
     border-radius: 8px;
     object-fit: cover;
   }
   
   .car-info h3 {
-    margin: 0 0 5px 0;
-    font-size: 18px;
+    margin: 0 0 8px 0;
+    font-size: 20px;
     color: #333;
   }
   
@@ -220,6 +251,7 @@
     position: absolute;
     top: 40px;
     right: 63px;
+    
   }
   
   .nav-button.next {
@@ -231,17 +263,26 @@
   /* Responsive styles */
   @media (max-width: 992px) {
     .review-card {
-      flex: 0 0 calc(50% - 20px);
+      flex: 0 0 350px;
+      min-width: 350px;
     }
   }
   
   @media (max-width: 768px) {
     .review-card {
-      flex: 0 0 calc(100% - 20px);
+      flex: 0 0 300px;
+      min-width: 300px;
+      height: 320px;
     }
     
     .navigation-buttons {
       display: none;
+    }
+  }
+
+  @media (max-width: 1240px) {
+    .feedback-container {
+      padding: 20px;
     }
   }
   
@@ -251,8 +292,10 @@
     }
     
     .review-card {
-      padding: 15px;
+      flex: 0 0 260px;
       min-width: 260px;
+      height: 300px;
+      padding: 15px;
     }
     
     .car-image {

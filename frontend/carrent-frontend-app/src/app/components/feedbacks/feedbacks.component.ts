@@ -58,16 +58,23 @@ export class FeedbackComponent implements OnInit {
     console.log('FeedbackComponent initialized, cars input:', this.cars);
     this.checkScreenSize();
     
-    // Add data watch with timeout to wait for Input binding
     setTimeout(() => {
       console.log('Cars data after timeout:', this.cars?.length || 0, 'cars');
       if (this.cars && this.cars.length > 0) {
         console.log('First car sample:', this.cars[0].brand, this.cars[0].model);
-        console.log('First car has images:', this.cars[0].images?.length || 0);
-      } else {
-        console.warn('No cars data received in feedback component');
       }
       this.updateDisplayCars();
+      
+      // Add scroll event listener
+      const container = document.querySelector('.scrollable-container');
+      if (container) {
+        container.addEventListener('scroll', () => {
+          this.checkScrollPosition();
+        });
+        
+        // Initial check
+        this.checkScrollPosition();
+      }
     }, 500);
   }
   
@@ -84,26 +91,48 @@ export class FeedbackComponent implements OnInit {
       return;
     }
     
-    const cardsToShow = this.isMobile ? 1 : 3;
-    const startIdx = this.currentIndex;
-    const endIdx = Math.min(startIdx + cardsToShow, this.cars.length);
-    this.displayCars = this.cars.slice(startIdx, endIdx);
-    console.log(`Displaying cars ${startIdx+1}-${endIdx} of ${this.cars.length}`);
+    this.displayCars = this.cars;
+  console.log(`Displaying all ${this.cars.length} cars for scrolling`);
+  }
+
+  // Add this new method to check scroll position for enabling/disabling nav buttons
+  checkScrollPosition(): void {
+    const container = document.querySelector('.scrollable-container');
+    if (container) {
+      // Get the leftmost visible card index
+      const scrollLeft = container.scrollLeft;
+      const cardWidth = 440; // card width + gap
+      
+      // Enable/disable navigation buttons based on scroll position
+      const prevButton = document.querySelector('.nav-button.prev') as HTMLButtonElement;
+      const nextButton = document.querySelector('.nav-button.next') as HTMLButtonElement;
+      
+      if (prevButton) {
+        prevButton.disabled = scrollLeft <= 0;
+      }
+      
+      if (nextButton) {
+        const maxScroll = container.scrollWidth - container.clientWidth;
+        nextButton.disabled = scrollLeft >= maxScroll - 10; // 10px tolerance
+      }
+    }
   }
   
   nextCars(): void {
-    const step = this.isMobile ? 1 : 3;
-    if (this.currentIndex + step < this.cars.length) {
-      this.currentIndex += step;
-      this.updateDisplayCars();
+    // Calculate scroll amount based on card width + gap (400px + 40px)
+    const scrollAmount = 440; 
+    const container = document.querySelector('.scrollable-container');
+    if (container) {
+      container.scrollLeft += scrollAmount;
     }
   }
   
   previousCars(): void {
-    const step = this.isMobile ? 1 : 3;
-    if (this.currentIndex - step >= 0) {
-      this.currentIndex -= step;
-      this.updateDisplayCars();
+    // Calculate scroll amount based on card width + gap (400px + 40px)
+    const scrollAmount = 440;
+    const container = document.querySelector('.scrollable-container');
+    if (container) {
+      container.scrollLeft -= scrollAmount;
     }
   }
   
