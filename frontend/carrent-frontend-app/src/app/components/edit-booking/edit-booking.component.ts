@@ -293,9 +293,7 @@ loadBooking(bookingId: string): void {
 
   ngOnDestroy(): void {
     this.searchSubscriptions.forEach(sub => sub.unsubscribe());
-  }
-
-  
+  }  
 
   toggleCalendar(): void {
     this.isCalendarOpen = !this.isCalendarOpen;
