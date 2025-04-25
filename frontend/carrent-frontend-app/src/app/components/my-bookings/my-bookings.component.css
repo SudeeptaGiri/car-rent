@@ -1,3 +1,17 @@
+@media (min-width: 1600px){}
+  .my-bookings-container {
+    height: 85vh;
+  }
+
+
+body {
+  background-color: #FFFBF3;
+}
+
+.booking-card {
+  background-color: #f0f0f0;
+}
+
 .my-bookings-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -35,6 +49,12 @@
     color: #333;
   }
   
+  .question{
+    font-size: 85%;
+  }
+  .btn-support{
+    font-size: 95%;
+  }
   .bookings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -50,7 +70,8 @@
   
   .car-image-container {
     position: relative;
-    height: 180px;
+    height: 160px;
+    padding: 10px 10px 0px 10px;
     width: 100%;
     overflow: hidden;
   }

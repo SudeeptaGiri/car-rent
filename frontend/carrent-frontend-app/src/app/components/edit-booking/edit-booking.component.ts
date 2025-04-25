@@ -353,6 +353,9 @@ loadBooking(bookingId: string): void {
 
   saveBooking(): void {
     if (this.bookingForm.valid) {
+      // Get the form values
+      const formValues = this.bookingForm.value;
+  
       // Update booking with new dates
       this.bookingService.updateBookingDates(
         this.booking.id,
@@ -360,12 +363,13 @@ loadBooking(bookingId: string): void {
         this.dateTo
       ).subscribe({
         next: () => {
+          // Show success message (optional)
           // Navigate back to my-bookings page
           this.router.navigate(['/my-bookings']);
         },
         error: (error) => {
           console.error('Error updating booking:', error);
-          // Handle error
+          alert('Failed to update booking. Please try again.');
         }
       });
     }

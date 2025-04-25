@@ -2,6 +2,58 @@
   display:flex;
   flex-wrap: wrap;
 }
+@media (min-width: 1600px) {
+  .car-booking-container{
+    height: 91vh;
+  }
+}
+
+body{
+  background-color: #FFFBF3;
+}
+
+.invalid-location {
+  border: 2px solid #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.confirm-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.invalid-location {
+  border: 2px solid #dc3545 !important;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.confirm-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .booking-section form {
   flex: 1;
   min-width: 350px; /* Important for flexbox to allow shrinking below content size */

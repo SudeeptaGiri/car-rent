@@ -40,9 +40,13 @@ export class BookingService {
       this.bookings = this.bookings.map(booking => ({
         ...booking,
         pickupDate: new Date(booking.pickupDate),
-        dropoffDate: new Date(booking.dropoffDate)
+        dropoffDate: new Date(booking.dropoffDate),
+        feedback: booking.feedback ? {
+          ...booking.feedback,
+          submittedAt: new Date(booking.feedback.submittedAt)
+        } : undefined
       }));
-      this.bookingsSubject.next(this.bookings);
+      this.bookingsSubject.next([...this.bookings]);
     }
   }
 
@@ -228,14 +232,24 @@ addBooking(booking: Booking): Observable<any> {
   updateBookingDates(bookingId: string, pickupDate: Date, dropoffDate: Date): Observable<any> {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
-      // Update the booking dates
-      this.bookings[bookingIndex].pickupDate = pickupDate;
-      this.bookings[bookingIndex].dropoffDate = dropoffDate;
+      // Calculate new number of days and total price
+      const diffTime = Math.abs(dropoffDate.getTime() - pickupDate.getTime());
+      const numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const pricePerDay = this.bookings[bookingIndex].totalPrice / this.bookings[bookingIndex].numberOfDays;
       
-      // Reset the status if needed based on the new dates
-      this.updateBookingStatuses();
+      // Update the booking
+      this.bookings[bookingIndex] = {
+        ...this.bookings[bookingIndex],
+        pickupDate: pickupDate,
+        dropoffDate: dropoffDate,
+        numberOfDays: numberOfDays,
+        totalPrice: numberOfDays * pricePerDay
+      };
       
-      // Emit the updated bookings
+      // Save to localStorage
+      this.saveBookingsToStorage();
+      
+      // Emit updated bookings
       this.bookingsSubject.next([...this.bookings]);
       
       // Return an observable that completes immediately

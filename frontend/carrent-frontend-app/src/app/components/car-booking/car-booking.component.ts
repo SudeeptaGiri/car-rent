@@ -154,6 +154,17 @@ export class CarBookingComponent implements OnInit {
     // Setup search debouncing for pickup location
     this.setupLocationSearch();
   }
+  // Add these new methods
+  isLocationInvalid(controlName: string): boolean {
+    const control = this.bookingForm.get(`location.${controlName}`);
+    return control ? (control.invalid && (control.dirty || control.touched)) : false;
+  }
+
+  isFormValid(): boolean {
+    const pickupLocation = this.bookingForm.get('location.pickupLocation')?.value;
+    const dropoffLocation = this.bookingForm.get('location.dropoffLocation')?.value;
+    return this.bookingForm.valid && !!pickupLocation && !!dropoffLocation;
+  }
 
   onPickupSearchInput(): void {
     this.showPickupSuggestions = true;
@@ -167,28 +178,28 @@ export class CarBookingComponent implements OnInit {
   
   selectPickupLocation(suggestion: LocationSuggestion): void {
     this.selectedPickupLocation = suggestion.displayName;
-    this.selectedPickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.pickupSearchQuery = suggestion.displayName;
     this.showPickupSuggestions = false;
     this.showPickupModal = false;
-    
-    // Update form with new location
-    this.bookingForm.get('location')?.patchValue({
-      pickupLocation: suggestion.displayName
+    this.bookingForm.patchValue({
+      location: {
+        pickupLocation: suggestion.displayName
+      }
     });
+    this.bookingForm.get('location.pickupLocation')?.markAsTouched();
   }
   
   selectDropoffLocation(suggestion: LocationSuggestion): void {
     this.selectedDropoffLocation = suggestion.displayName;
-    this.selectedDropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.dropoffSearchQuery = suggestion.displayName;
     this.showDropoffSuggestions = false;
     this.showDropoffModal = false;
-    
-    // Update form with new location
-    this.bookingForm.get('location')?.patchValue({
-      dropoffLocation: suggestion.displayName
+    this.bookingForm.patchValue({
+      location: {
+        dropoffLocation: suggestion.displayName
+      }
     });
+    this.bookingForm.get('location.dropoffLocation')?.markAsTouched();
   }
   
   useCurrentLocation(forPickup: boolean): void {
