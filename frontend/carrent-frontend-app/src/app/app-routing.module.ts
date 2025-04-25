@@ -30,7 +30,7 @@ const routes: Routes = [
   },
   {path: 'main', component: MainComponent, pathMatch: 'full'},
   {path: '', redirectTo: 'main', pathMatch: 'full'},
-  { path: 'cars', component: CarBookingPageComponent, pathMatch: 'full' }, 
+  { path: 'cars', component: CarBookingPageComponent, pathMatch: 'full', canActivate: [authGuard] }, 
   {
     path: 'my-bookings',
     component: MyBookingsPageComponent,

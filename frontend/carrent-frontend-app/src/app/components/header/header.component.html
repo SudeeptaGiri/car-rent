@@ -1,7 +1,7 @@
 <header>
   <!-- Logo -->
   <figure class="logo">
-    <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
+    <img src="assets/Logo.svg" alt="Page Logo" class="logo" routerLink="/" />
   </figure>
 
   <!-- Centered nav for tablet/desktop -->
@@ -39,9 +39,9 @@
   <div class="mobile-menu" [class.active]="menuOpen">
     <nav class="nav-bar">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Cars</a></li>
-        <li *ngIf="user"><a href="#">My Bookings</a></li>
+        <li><a routerLink="/">Home</a></li>
+        <li><a href="/cars">Cars</a></li>
+        <li *ngIf="user"><a routerLink="/my-bookings">My Bookings</a></li>
       </ul>
     </nav>
     <div class="login-side" *ngIf="user; else mobileGuest">
