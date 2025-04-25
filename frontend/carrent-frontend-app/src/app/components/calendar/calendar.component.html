@@ -1,4 +1,3 @@
-
 <div class="date-picker-container relative w-full">
     <div class="handle-buttons flex gap-4 mb-4 items-center text-xs md:text-base">
         <!-- Start Date Input -->
@@ -71,12 +70,18 @@
                 <div class="flex gap-4 w-full justify-between">
                     <div class="w-1/2">
                         <label class="block font-medium">Pick-up Time</label>
-                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden" [(ngModel)]="pickupTime" (input)="onTimeChange($event, true)" required>
+                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden"
+                            [(ngModel)]="pickupTime" (input)="onTimeChange($event, true)" required>
                     </div>
                     <div class="w-1/2">
                         <label class="block font-medium">Drop-off Time</label>
-                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden" [(ngModel)]="dropoffTime" (input)="onTimeChange($event, false)" required>
+                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden"
+                            [(ngModel)]="dropoffTime" (input)="onTimeChange($event, false)" required>
                     </div>
+                </div>
+                <!-- Validation error message -->
+                <div *ngIf="timeValidationError" class="validation text-red-500 text-sm mt-2">
+                    {{ timeValidationError }}
                 </div>
             </div>
 
