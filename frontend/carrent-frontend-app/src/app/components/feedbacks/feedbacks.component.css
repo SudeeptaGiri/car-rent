@@ -1,24 +1,38 @@
 .feedback-container {
-    width: 100%;
-    max-width: 100%;
-    padding: 20px 40px;
-    position: relative;
-    box-sizing: border-box;
-  }
+  width: 100%;
+  max-width: 100%; /* Remove max-width constraint */
+  margin: 0;
+  padding: 30px 40px; /* Increase padding */
+  position: relative;
+  box-sizing: border-box;
+}
   
   
   /* Scrollable container */
   .scrollable-container {
     width: 100%;
     position: relative;
-    overflow: hidden;
+    overflow-x: auto; /* Always allow horizontal scrolling */
+    -webkit-overflow-scrolling: touch;
+    margin: 0 auto;
+    padding: 10px 0;
+    scroll-behavior: smooth; /* Add smooth scrolling */
+  }
+
+  @media (pointer: fine) {
+    .scrollable-container:hover {
+      overflow-x: auto; /* Enable scrolling on hover for desktop with pointer */
+    }
   }
   
   /* Mobile scrolling */
   .scrollable-container.mobile {
-    overflow-x: auto;
+    overflow-x: auto; /* Allow horizontal scrolling on mobile */
+    overflow-y: hidden; /* Prevent vertical scrolling */
     scrollbar-width: thin;
     scrollbar-color: #d32f2f #f1f1f1;
+    cursor: grab; /* Show grab cursor for scrollable content */
+    touch-action: pan-x; /* Optimize for horizontal touch actions */
   }
   
   .scrollable-container.mobile::-webkit-scrollbar {
@@ -41,7 +55,8 @@
     transition: transform 0.3s ease-in-out;
     width: fit-content;
     padding: 10px 5px;
-}
+    margin: 0 auto; /* Center the cards */
+  }
 
 /* Individual review card */
 .review-card {
@@ -242,6 +257,12 @@
     
     .navigation-buttons {
       display: none;
+    }
+  }
+
+  @media (max-width: 1240px) {
+    .feedback-container {
+      padding: 20px;
     }
   }
   
