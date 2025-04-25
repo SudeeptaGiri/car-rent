@@ -75,7 +75,14 @@
   <ng-container *ngIf="user; else desktopGuestLinks">
     <div class="login-side">
       <div class="user-dropdown" style="display: contents; justify-content: center;">
-        <img src="assets/profile-icon.svg" alt="Profile" class="profile-icon" />
+        <div class="profile-avatar">
+          <ng-container *ngIf="user?.image; else nameInitial">
+            <img [src]="user.image" alt="Profile" class="profile-icon" />
+          </ng-container>
+          <ng-template #nameInitial>
+            <div class="initial-avatar">{{ user.firstName.charAt(0) }}</div>
+          </ng-template>
+        </div>
         <span (click)="toggleDropdown()" class="user-name">
           Hello, {{ user.firstName }} ({{ user.role }})
         </span>
@@ -91,6 +98,7 @@
       </select>
     </div>
   </ng-container>
+  
 
   <ng-template #desktopGuestLinks>
     <div class="login-side">
