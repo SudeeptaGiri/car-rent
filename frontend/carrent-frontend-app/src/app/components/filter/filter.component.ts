@@ -44,6 +44,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
   currentMinPrice: number = 50; // Changed from 52
   currentMaxPrice: number = 2000; // Changed from 400
 
+  //For location buffer
+  isLoadingCurrentPickupLocation = false;
+  isLoadingCurrentDropoffLocation = false;
+
 
   // Track slider state
   private isDraggingMin = false;
@@ -362,6 +366,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   useCurrentLocation(forPickup: boolean): void {
+
+    if (forPickup) {
+      this.isLoadingCurrentPickupLocation = true;
+    } else {
+      this.isLoadingCurrentDropoffLocation = true;
+    }
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -376,18 +387,18 @@ export class FilterComponent implements OnInit, AfterViewInit {
               if (forPickup) {
                 this.selectedPickupLocation = address;
                 this.selectedPickupCoordinates = coords;
-                this.pickupSearchQuery = address;
                 this.showPickupModal = false;
-
+                this.isLoadingCurrentPickupLocation = false; // Reset loading state
+  
                 // Update filter data
                 this.filterData.pickupLocation = address;
                 this.filterData.pickupCoordinates = coords;
               } else {
                 this.selectedDropoffLocation = address;
                 this.selectedDropoffCoordinates = coords;
-                this.dropoffSearchQuery = address;
                 this.showDropoffModal = false;
-
+                this.isLoadingCurrentDropoffLocation = false; // Reset loading state
+  
                 // Update filter data
                 this.filterData.dropoffLocation = address;
                 this.filterData.dropoffCoordinates = coords;
@@ -396,16 +407,31 @@ export class FilterComponent implements OnInit, AfterViewInit {
             (error) => {
               console.error('Error getting address:', error);
               alert('Could not determine your address. Please enter it manually.');
+              if (forPickup) {
+                this.isLoadingCurrentPickupLocation = false;
+              } else {
+                this.isLoadingCurrentDropoffLocation = false;
+              }
             }
           );
         },
         (error) => {
           console.error('Geolocation error:', error);
           alert('Could not access your location. Please check your browser permissions and try again.');
+          if (forPickup) {
+            this.isLoadingCurrentPickupLocation = false;
+          } else {
+            this.isLoadingCurrentDropoffLocation = false;
+          }
         }
       );
     } else {
       alert('Geolocation is not supported by your browser. Please enter your location manually.');
+      if (forPickup) {
+        this.isLoadingCurrentPickupLocation = false;
+      } else {
+        this.isLoadingCurrentDropoffLocation = false;
+      }
     }
   }
 
@@ -425,11 +451,23 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   openLocationModal(forPickup: boolean): void {
     if (forPickup) {
+      // Reset pickup modal state while preserving selected location
       this.showPickupModal = true;
       this.showDropoffModal = false;
+      this.pickupSearchQuery = ''; // Clear search input
+      this.showPickupSuggestions = false; // Hide suggestions
+      this.pickupSuggestions = []; // Clear suggestions
+      this.isLoadingPickupSuggestions = false; // Reset loading state
+      this.isLoadingCurrentPickupLocation = false; // Reset current location loading state
     } else {
+      // Reset dropoff modal state while preserving selected location
       this.showPickupModal = false;
       this.showDropoffModal = true;
+      this.dropoffSearchQuery = ''; // Clear search input
+      this.showDropoffSuggestions = false; // Hide suggestions
+      this.dropoffSuggestions = []; // Clear suggestions
+      this.isLoadingDropoffSuggestions = false; // Reset loading state
+      this.isLoadingCurrentDropoffLocation = false; // Reset current location loading state
     }
   }
 
