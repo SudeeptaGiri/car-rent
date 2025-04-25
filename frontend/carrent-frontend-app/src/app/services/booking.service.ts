@@ -21,6 +21,34 @@ export class BookingService {
     interval(1000).subscribe(() => this.updateBookingStatuses());
   }
 
+  // Add method to get current user id
+  private getCurrentUserId(): string {
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+    return currentUser.id || '';
+  }
+
+  // Modify getBookings to filter by current user
+  getBookings(): Observable<Booking[]> {
+    const currentUserId = this.getCurrentUserId();
+    return this.bookingsSubject.pipe(
+      map(bookings => bookings.filter(booking => booking.reservedBy === currentUserId))
+    );
+  }
+
+  addBooking(booking: Booking): Observable<any> {
+    const currentUserId = this.getCurrentUserId();
+    const bookingWithUser = {
+      ...booking,
+      reservedBy: currentUserId
+    };
+    
+    this.bookings.push(bookingWithUser);
+    this.saveBookingsToStorage();
+    this.bookingsSubject.next([...this.bookings]);
+    
+    return of({ success: true, booking: bookingWithUser });
+  }
+
   cancelBooking(bookingId: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
@@ -35,9 +63,8 @@ export class BookingService {
   private loadBookingsFromStorage(): void {
     const storedBookings = localStorage.getItem(this.STORAGE_KEY);
     if (storedBookings) {
-      this.bookings = JSON.parse(storedBookings);
-      // Convert string dates back to Date objects
-      this.bookings = this.bookings.map(booking => ({
+      const allBookings = JSON.parse(storedBookings);
+      this.bookings = allBookings.map((booking: Booking) => ({
         ...booking,
         pickupDate: new Date(booking.pickupDate),
         dropoffDate: new Date(booking.dropoffDate),
@@ -53,18 +80,6 @@ export class BookingService {
   private saveBookingsToStorage(): void {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.bookings));
   }
-  
-  // Add this method to BookingService
-addBooking(booking: Booking): Observable<any> {
-  // Add the new booking to the array
-  this.bookings.push(booking);
-  
-  // Emit the updated bookings
-  this.bookingsSubject.next([...this.bookings]);
-  
-  // Return success observable
-  return of({ success: true, booking });
-}
 
   private loadSampleBookings(): void {
     // Set specific fixed dates for the bookings
@@ -199,9 +214,6 @@ addBooking(booking: Booking): Observable<any> {
     }
   }
   
-  getBookings(): Observable<Booking[]> {
-    return this.bookingsSubject.asObservable();
-  }
   
   getBookingsByStatus(status: BookingStatus | 'ALL'): Observable<Booking[]> {
     return this.getBookings().pipe(

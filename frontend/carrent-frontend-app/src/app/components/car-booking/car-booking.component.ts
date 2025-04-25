@@ -156,14 +156,27 @@ export class CarBookingComponent implements OnInit {
   }
   // Add these new methods
   isLocationInvalid(controlName: string): boolean {
-    const control = this.bookingForm.get(`location.${controlName}`);
-    return control ? (control.invalid && (control.dirty || control.touched)) : false;
+    const location = controlName === 'pickupLocation' ? 
+      this.selectedPickupLocation : this.selectedDropoffLocation;
+    return !location || location === 'Choose location';
   }
+  
+  isDuplicateLocations(): boolean {
+    if (!this.selectedPickupLocation || !this.selectedDropoffLocation) {
+        return false;
+    }
+    return this.selectedPickupLocation === this.selectedDropoffLocation;
+}
 
   isFormValid(): boolean {
-    const pickupLocation = this.bookingForm.get('location.pickupLocation')?.value;
-    const dropoffLocation = this.bookingForm.get('location.dropoffLocation')?.value;
-    return this.bookingForm.valid && !!pickupLocation && !!dropoffLocation;
+    return (
+      this.bookingForm.valid && 
+      !!this.selectedPickupLocation && 
+      !!this.selectedDropoffLocation &&
+      this.selectedPickupLocation !== 'Choose location' &&
+      this.selectedDropoffLocation !== 'Choose location' &&
+      !this.isDuplicateLocations()
+    );
   }
 
   onPickupSearchInput(): void {
@@ -186,7 +199,6 @@ export class CarBookingComponent implements OnInit {
         pickupLocation: suggestion.displayName
       }
     });
-    this.bookingForm.get('location.pickupLocation')?.markAsTouched();
   }
   
   selectDropoffLocation(suggestion: LocationSuggestion): void {
@@ -199,7 +211,6 @@ export class CarBookingComponent implements OnInit {
         dropoffLocation: suggestion.displayName
       }
     });
-    this.bookingForm.get('location.dropoffLocation')?.markAsTouched();
   }
   
   useCurrentLocation(forPickup: boolean): void {

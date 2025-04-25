@@ -67,7 +67,7 @@ body {
   
   .car-image-container {
     position: relative;
-    height: 160px;
+    height: 190px;
     padding: 10px 10px 0px 10px;
     width: 100%;
     overflow: hidden;
@@ -136,8 +136,11 @@ body {
     flex: 1;
     padding: 8px 16px;
     border-radius: 55px;
-    font-size: 14px;
     cursor: pointer;
+  }
+
+  .btn-cancel, .btn-edit {
+    font-size: 110%;
   }
   
   .booking-actions .btn-cancel {
@@ -177,7 +180,7 @@ body {
     
     width:auto; /* Allow the card to take its natural width */
     max-width: 375px; /* Set a max width for the card */
-    min-height: 370px; /* Ensures the container takes at least full viewport height */
+    min-height: 385px; /* Ensures the container takes at least full viewport height */
     padding-bottom: 0px; /* Add padding to prevent content from being hidden behind fixed component */
   }
   .support-chat {
