@@ -25,8 +25,6 @@ export class CalendarComponent {
   calendarMonths: Date[] = [];
   selectedPickup: Date | null = null;
   selectedDropoff: Date | null = null;
-  pickupTime = '07:00';
-  dropoffTime = '10:30';
   today = new Date();
   currentMonthIndex = 0;
   isOpen = false;
@@ -34,7 +32,63 @@ export class CalendarComponent {
   selectedPickupDate: Date | null = null;
   selectedDropoffDate: Date | null = null;
 
+  // Add minimum and maximum time constraints
+  private minTime = '00:00';
+  private maxTime = '23:59';
+  private defaultPickupTime = '07:00';
+  private defaultDropoffTime = '10:30';
 
+  // Add getters and setters for time values with validation
+  private _pickupTime = this.defaultPickupTime;
+  private _dropoffTime = this.defaultDropoffTime;
+
+
+  get pickupTime(): string {
+    return this._pickupTime;
+  }
+
+  set pickupTime(value: string) {
+    if (this.isValidTime(value)) {
+      this._pickupTime = value;
+    } else {
+      this._pickupTime = this.defaultPickupTime;
+    }
+  }
+
+  get dropoffTime(): string {
+    return this._dropoffTime;
+  }
+
+  set dropoffTime(value: string) {
+    if (this.isValidTime(value)) {
+      this._dropoffTime = value;
+    } else {
+      this._dropoffTime = this.defaultDropoffTime;
+    }
+  }
+
+  // Time validation method
+  private isValidTime(time: string): boolean {
+    if (!time) return false;
+    
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(time)) return false;
+
+    const [hours, minutes] = time.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return false;
+    
+    return true;
+  }
+
+  // Handle time input changes
+  onTimeChange(event: Event, isPickup: boolean) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (!this.isValidTime(value)) {
+      input.value = isPickup ? this.defaultPickupTime : this.defaultDropoffTime;
+    }
+  }
   ngOnInit(): void {
     if (this.initialStartDate) {
       this.selectedPickup = this.initialStartDate;
@@ -55,17 +109,15 @@ export class CalendarComponent {
   resetCalendar(): void {
     this.selectedPickup = null;
     this.selectedDropoff = null;
-    this.selectedPickupDate = null; 
+    this.selectedPickupDate = null;
     this.selectedDropoffDate = null;
-    // Reset to default times if needed
-    this.pickupTime = '07:00'; 
-    this.dropoffTime = '10:30';
+    this.pickupTime = this.defaultPickupTime;
+    this.dropoffTime = this.defaultDropoffTime;
     this.isOpen = false;
     this.closed.emit(true);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('Calendar received changes:', changes);
     
     if (changes['externalToggle'] && !changes['externalToggle'].firstChange) {
       this.isOpen = this.externalToggle;
@@ -102,7 +154,6 @@ export class CalendarComponent {
     this.currentMonthIndex--;
     this.updateCalendarMonths();
   }
-
 
   getDaysInMonth(month: Date): Date[] {
     const year = month.getFullYear();
@@ -183,29 +234,40 @@ export class CalendarComponent {
   }
 
   emitSelected(): void {
-    if (this.selectedPickup && this.selectedDropoff) {
+    if (this.selectedPickup && this.selectedDropoff && 
+        this.isValidTime(this.pickupTime) && this.isValidTime(this.dropoffTime)) {
+      
       const pickup = new Date(this.selectedPickup);
       const dropoff = new Date(this.selectedDropoff);
-      const [ph, pm] = this.pickupTime.split(':').map(Number);
-      const [dh, dm] = this.dropoffTime.split(':').map(Number);
       
-      pickup.setHours(ph, pm);
-      dropoff.setHours(dh, dm);
-
-      // Just emit the selected dates without any login check
-      this.dateRangeSelected.emit({
-        startDate: moment(pickup),
-        endDate: moment(dropoff)
-      });
-      this.isOpen = false;
+      try {
+        const [ph, pm] = this.pickupTime.split(':').map(Number);
+        const [dh, dm] = this.dropoffTime.split(':').map(Number);
+        
+        if (isNaN(ph) || isNaN(pm) || isNaN(dh) || isNaN(dm)) {
+          throw new Error('Invalid time format');
+        }
+        
+        pickup.setHours(ph, pm);
+        dropoff.setHours(dh, dm);
+  
+        this.dateRangeSelected.emit({
+          startDate: moment(pickup),
+          endDate: moment(dropoff)
+        });
+        this.isOpen = false;
+      } catch (error) {
+        console.error('Error processing time:', error);
+        // Reset to default times
+        this.pickupTime = this.defaultPickupTime;
+        this.dropoffTime = this.defaultDropoffTime;
+      }
     }
   }
-
 
   closePicker(): void {
     this.isOpen = false;
   }
-
 
   formatStartDate(): string {
     if (!this.selectedPickup) {

@@ -127,8 +127,7 @@ describe('CarService', () => {
             startTime: '10:00',
             endDate: '2023-01-02',
             endTime: '10:00',
-            userId: 'user1',
-            totalPrice: 100
+            userId: 'user1'
         };
 
         service.createBooking(bookingRequest).subscribe(result => {

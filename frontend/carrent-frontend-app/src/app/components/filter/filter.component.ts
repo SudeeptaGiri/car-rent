@@ -641,6 +641,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.filterData.engineType = value;
         break;
     }
+
+    this.findCars(); // Call findCars to apply the filter
   }
 
   clearFilters(): void {
@@ -685,16 +687,17 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   findCars(): void {
-    console.log('Finding cars with filters:', this.filterData);
-
-    // Make sure price range is correctly set
+    // Make sure all filter values are in the correct case and format
     this.filterData = {
       ...this.filterData,
       priceMin: this.currentMinPrice,
-      priceMax: this.currentMaxPrice
+      priceMax: this.currentMaxPrice,
+      carCategory: this.filterData.carCategory.trim(),
+      gearbox: this.filterData.gearbox.trim(),
+      engineType: this.filterData.engineType.toLowerCase(),
     };
-
-    // Update the filter service
+  
+    console.log('Applying filters:', this.filterData);
     this.filterService.updateFilters({ ...this.filterData });
   }
   // Add to your component class
@@ -707,5 +710,3 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 }
-
-// Add the missing 'map' operator
