@@ -4,6 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/users';
 import { RoleAssignmentService } from './role-assignment.service';
 import { Router } from '@angular/router';
+import { BookingService } from './booking.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private roleService: RoleAssignmentService,
-    private router: Router
+    private router: Router,
+    private bookingService: BookingService
   ) {
     const storedUsers = localStorage.getItem('registeredUsers');
     if (storedUsers) {
@@ -32,6 +34,14 @@ export class AuthService {
       ];
       this.saveUsersToStorage();
     }
+  }
+
+  logout(): void {
+    this.bookingService.clearUserBookings(); // Clear user-specific bookings
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
+    this.router.navigate(['/main']);
   }
 
   private saveUsersToStorage() {
@@ -81,13 +91,5 @@ export class AuthService {
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
-  }
-
-  // Logout user
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
-    sessionStorage.removeItem('currentUser');
-    this.router.navigate(['/main']);
   }
 }

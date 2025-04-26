@@ -2,7 +2,7 @@
 <div mat-dialog-content>
   <p>You are about to cancel your booking for {{ data.booking.carName }}. Are you sure you want to proceed?</p>
 </div>
-<div mat-dialog-actions>
+<div mat-dialog-actions class="cancel-resume-actions">
   <button mat-button (click)="onYesClick()" class="cancel-booking">Cancel Booking</button>
   <button mat-button (click)="onNoClick()" class="resume-booking">Resume Booking</button>
 </div>

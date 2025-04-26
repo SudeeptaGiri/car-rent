@@ -3,6 +3,11 @@
     margin-bottom: 16px;
   }
   
+  .cancel-resume-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .mat-dialog-content p {
     margin-bottom: 20px;
   }
@@ -28,6 +33,13 @@
     padding: 23px;
     color: white !important;
     background-color: #CC1D1D;
+  }
+  @media (max-width: 500px) {
+    .cancel-booking, .resume-booking {
+      /* width: 100%; */
+      font-size: 13px;
+      padding: 12px;
+    }
   }
   .resume-booking:hover {
     background-color: #d11212 !important;
