@@ -10,61 +10,28 @@ import { HttpClient } from '@angular/common/http';
 export class BookingService {
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  private readonly STORAGE_KEY = 'bookings';
+  private readonly BASE_STORAGE_KEY = 'bookings';
 
   constructor(private http: HttpClient) {
-    // Initialize with sample data
-    this.loadSampleBookings();
-    this.loadBookingsFromStorage();
-    
-    // Check booking statuses every second to update status automatically
+    this.loadBookingsForCurrentUser();
+    this.loadSampleBookings(); // Load sample bookings for testing
+    // Check booking statuses every second
     interval(1000).subscribe(() => this.updateBookingStatuses());
   }
 
-  // Add method to get current user id
-  private getCurrentUserId(): string {
+  private getStorageKeyForUser(): string {
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-    return currentUser.id || '';
+    const userEmail = currentUser.email;
+    return userEmail ? `${this.BASE_STORAGE_KEY}_${userEmail}` : this.BASE_STORAGE_KEY;
   }
 
-  // Modify getBookings to filter by current user
-  getBookings(): Observable<Booking[]> {
-    const currentUserId = this.getCurrentUserId();
-    return this.bookingsSubject.pipe(
-      map(bookings => bookings.filter(booking => booking.reservedBy === currentUserId))
-    );
-  }
-
-  addBooking(booking: Booking): Observable<any> {
-    const currentUserId = this.getCurrentUserId();
-    const bookingWithUser = {
-      ...booking,
-      reservedBy: currentUserId
-    };
+  // Load bookings for current user
+  private loadBookingsForCurrentUser(): void {
+    const storageKey = this.getStorageKeyForUser();
+    const storedBookings = localStorage.getItem(storageKey);
     
-    this.bookings.push(bookingWithUser);
-    this.saveBookingsToStorage();
-    this.bookingsSubject.next([...this.bookings]);
-    
-    return of({ success: true, booking: bookingWithUser });
-  }
-
-  cancelBooking(bookingId: string): void {
-    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
-    if (bookingIndex !== -1) {
-      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-      // Save to localStorage after updating status
-      this.saveBookingsToStorage();
-      // Emit updated bookings
-      this.bookingsSubject.next([...this.bookings]);
-    }
-  }
-
-  private loadBookingsFromStorage(): void {
-    const storedBookings = localStorage.getItem(this.STORAGE_KEY);
     if (storedBookings) {
-      const allBookings = JSON.parse(storedBookings);
-      this.bookings = allBookings.map((booking: Booking) => ({
+      this.bookings = JSON.parse(storedBookings).map((booking: Booking) => ({
         ...booking,
         pickupDate: new Date(booking.pickupDate),
         dropoffDate: new Date(booking.dropoffDate),
@@ -73,13 +40,50 @@ export class BookingService {
           submittedAt: new Date(booking.feedback.submittedAt)
         } : undefined
       }));
+    } else {
+      this.bookings = [];
+    }
+    
+    this.bookingsSubject.next([...this.bookings]);
+  }
+
+  // Save bookings for current user
+  private saveBookingsToStorage(): void {
+    const storageKey = this.getStorageKeyForUser();
+    localStorage.setItem(storageKey, JSON.stringify(this.bookings));
+  }
+
+  // Get bookings for current user
+  getBookings(): Observable<Booking[]> {
+    return this.bookingsSubject.asObservable();
+  }
+
+  // Add new booking
+  addBooking(booking: Booking): Observable<any> {
+    this.bookings.push(booking);
+    this.saveBookingsToStorage();
+    this.bookingsSubject.next([...this.bookings]);
+    return of({ success: true, booking });
+  }
+
+  // Cancel booking
+  cancelBooking(bookingId: string): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+      this.saveBookingsToStorage();
       this.bookingsSubject.next([...this.bookings]);
     }
   }
 
-  private saveBookingsToStorage(): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.bookings));
+  // Clear all bookings for current user when logging out
+  clearUserBookings(): void {
+    const storageKey = this.getStorageKeyForUser();
+    localStorage.removeItem(storageKey);
+    this.bookings = [];
+    this.bookingsSubject.next([]);
   }
+  
 
   private loadSampleBookings(): void {
     // Set specific fixed dates for the bookings
