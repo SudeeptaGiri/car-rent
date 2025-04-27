@@ -14,6 +14,11 @@ body{
     flex: 1;
     min-width: 350px; /* Important for flexbox to allow shrinking below content size */
   }
+  .booking-calendar ::ng-deep .handle-buttons,
+.booking-calendar ::ng-deep .button1,
+.booking-calendar ::ng-deep .flex-1 {
+  display: none;
+}
   .car-booking-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -31,9 +36,7 @@ body{
       text-decoration: none;
     }
     
-    .breadcrumb a:hover {
-      text-decoration: underline;
-    }
+    
     
     h1 {
       font-size: 32px;
@@ -97,9 +100,7 @@ body{
       font-weight: bold;
     }
     
-    .change-btn:hover {
-      text-decoration: underline;
-    }
+    
     
     /* Car details section */
     .car-details-container {

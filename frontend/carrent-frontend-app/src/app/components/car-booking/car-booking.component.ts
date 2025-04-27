@@ -154,6 +154,7 @@ export class CarBookingComponent implements OnInit {
     // Setup search debouncing for pickup location
     this.setupLocationSearch();
   }
+  
   // Add these new methods
   isLocationInvalid(controlName: string): boolean {
     const location = controlName === 'pickupLocation' ? 
