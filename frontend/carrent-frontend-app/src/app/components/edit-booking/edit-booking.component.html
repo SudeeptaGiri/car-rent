@@ -118,13 +118,29 @@
       <div class="section">
         <h2>Dates & Time</h2>
         <div class="dates-card" formGroupName="dates">
-          <div class="w-full pb-8">
+          <div class="w-full">
+            <div class="text-[15px] text-gray-500">Pick-up date & Time</div>
             <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
           </div>
           <calendar class="booking-calendar" [externalToggle]="isCalendarOpen" [initialStartDate]="dateFrom"
-            [initialEndDate]="dateTo" [bookedDates]="bookedDatesFormatted"
-            (dateRangeSelected)="onDateRangeSelected($event)">
+          [initialEndDate]="dateTo" [bookedDates]="bookedDatesFormatted"
+          (dateRangeSelected)="onDateRangeSelected($event)">
           </calendar>
+          <!-- In car-booking.component.html -->
+         
+          <div class="time-display" *ngIf="dateFrom && dateTo">
+            <div class="time-slot mb-2">
+              <span class="time-value">
+                {{ dateFrom | date:'MMM dd' }} | {{ dateFrom | date:'HH:mm' }}
+              </span>
+            </div>
+            <span class="time-label text-[15px] text-gray-500">Drop-off date & Time</span>
+            <div class="time-slot">
+              <span class="time-value">
+                {{ dateTo | date:'MMM dd' }} | {{ dateTo | date:'HH:mm' }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </form>
