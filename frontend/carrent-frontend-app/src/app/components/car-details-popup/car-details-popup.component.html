@@ -6,7 +6,7 @@
   role="dialog" aria-labelledby="car-details-title" aria-modal="true" *ngIf="carDetails">
   <!-- Close Button -->
   <button (click)="close()" aria-label="Close dialog" type="button"
-    class="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl pb-2">
+    class="absolute top-4 right-4 text-gray-600 hover:text-red-500 text-xl pb-2 hover:cursor-pointer">
     <mat-icon aria-hidden="true">close</mat-icon>
   </button>
 
@@ -112,7 +112,7 @@
 
         <!-- Booking Button -->
         <button
-          class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed hover:cursor-pointer"
           (click)="bookCar()" [disabled]="(carDetails.status.toLocaleLowerCase()!=='available' || !dateRange)"
           aria-label="Book the car for dollars per day">
           Book the car - ${{ carDetails.price }}/day
