@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, map } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
+import { BookedDate, CarDetails } from '../../models/car.interface';
 // import { LocationDialogComponent } from '../location-dialog/location-dialog.component';
 
 interface LocationSuggestion {
@@ -44,7 +45,7 @@ export class EditBookingComponent implements OnInit {
   name!:string;
   email!:string;
   phone!:string;
-
+  selectedCar!: CarDetails;
 
   bookingForm!: FormGroup;
   booking!: Booking;
@@ -59,7 +60,10 @@ export class EditBookingComponent implements OnInit {
   // Add this getter for formatted booked dates
   get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
     // You can get booked dates from your service or pass them as input
-    return [];
+    return this.selectedCar?.bookedDates?.map(date => ({
+      startDate: date.startDate,
+      endDate: date.endDate
+    })) || [];
   }
   
   constructor(
@@ -330,7 +334,6 @@ loadBooking(bookingId: string): void {
       this.totalPrice = this.numberOfDays * this.carPricePerDay; // Use actual car price instead of 180
     }
   }
-
 
   getDefaultEndDate(): Date {
     const endDate = new Date();
