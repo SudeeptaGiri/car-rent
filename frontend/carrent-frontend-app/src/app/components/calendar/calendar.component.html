@@ -2,6 +2,9 @@
     <div class="handle-buttons flex gap-4 mb-4 items-center text-xs md:text-base">
         <!-- Start Date Input -->
         <div class="button1 flex-1 relative">
+            <div class="label">
+                <label class="text-sm text-gray-500 label">Pick-Up Date</label>
+            </div>
             <button (click)="togglePicker()"
                 class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
                 <span class="text-gray-700">
@@ -13,6 +16,9 @@
 
         <!-- End Date Input -->
         <div class="flex-1 relative">
+            <div class="label">
+                <label class="text-sm text-gray-500 label">Drop-off Date</label>
+            </div>
             <button (click)="togglePicker()"
                 class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
                 <span class="text-gray-700">
