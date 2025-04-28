@@ -498,6 +498,7 @@ showBookingSuccessDialog(): void {
   this.dialog.open(BookingSuccessDialogComponent, {
     width: '500px',
     maxWidth: '95vw',
+    position: { top: '70px' },
     panelClass: 'success-dialog-container',
     data: {
       carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,
