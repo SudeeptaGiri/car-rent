@@ -26,7 +26,7 @@ interface LocationSuggestion {
 @Component({
   selector: 'app-car-booking',
   templateUrl: './car-booking.component.html',
-  styleUrls: ['./car-booking.component.css'], 
+  styleUrls: ['./car-booking.component.css'],
   standalone: false
 })
 
@@ -39,7 +39,7 @@ export class CarBookingComponent implements OnInit {
   userInfo!: UserInfo;
   locationInfo!: LocationInfo;
   isReserved = false;     // change this to display reserved dialog
-  
+
   totalPrice = 0;
   depositAmount = 2000;
   numberOfDays = 0;
@@ -47,25 +47,25 @@ export class CarBookingComponent implements OnInit {
   dateTo!: Date;
   isCalendarOpen = false;
 
-   // Add location search properties
-   pickupSearchQuery = '';
-   dropoffSearchQuery = '';
-   pickupSuggestions: LocationSuggestion[] = [];
-   dropoffSuggestions: LocationSuggestion[] = [];
-   showPickupSuggestions = false;
-   showDropoffSuggestions = false;
-   isLoadingPickupSuggestions = false;
-   isLoadingDropoffSuggestions = false;
-   
-   // Add location modal state
-   showPickupModal = false;
-   showDropoffModal = false;
+  // Add location search properties
+  pickupSearchQuery = '';
+  dropoffSearchQuery = '';
+  pickupSuggestions: LocationSuggestion[] = [];
+  dropoffSuggestions: LocationSuggestion[] = [];
+  showPickupSuggestions = false;
+  showDropoffSuggestions = false;
+  isLoadingPickupSuggestions = false;
+  isLoadingDropoffSuggestions = false;
 
-   // Add search subjects for debouncing
+  // Add location modal state
+  showPickupModal = false;
+  showDropoffModal = false;
+
+  // Add search subjects for debouncing
   private pickupSearchSubject = new Subject<string>();
   private dropoffSearchSubject = new Subject<string>();
   private searchSubscriptions: Subscription[] = [];
-  
+
   // Add selected locations
   selectedPickupLocation: string | null = null;
   selectedPickupCoordinates: { lat: number; lon: number } | null = null;
@@ -80,99 +80,99 @@ export class CarBookingComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient, // Add HttpClient
     private router: Router
-  ) {}
+  ) { }
 
- // In car-booking.component.ts
- ngOnInit(): void {
-
-  // Get mock user and location info
-  this.userInfo = this.carBookingService.getMockUserInfo();
-  this.locationInfo = this.carBookingService.getMockLocationInfo();
-  
-  // Then get user data from localStorage
-  this.getUserFromLocalStorage();
-  
-  // Initialize form first
-  this.initForm();
-  
-  // Setup search debouncing for pickup location
-  this.setupLocationSearch();
-
-  // Get car ID and dates from route parameters
-  this.route.queryParams.subscribe(params => {
-    if (params['carId']) {
-      // Get car details using CarService
-      this.carService.getCarDetails(params['carId']).subscribe({
-        next: (car) => {
-          if (car) {
-            this.selectedCar = car;
-            
-            // If dates are provided in the URL, use them
-            if (params['startDate'] && params['endDate']) {
-              const startDate = new Date(`${params['startDate']} ${params['startTime']}`);
-              const endDate = new Date(`${params['endDate']} ${params['endTime']}`);
-              
-              this.dateFrom = startDate;
-              this.dateTo = endDate;
-              
-              // Update form with these dates
-              this.bookingForm.patchValue({
-                dates: {
-                  dateFrom: startDate.toISOString(),
-                  dateTo: endDate.toISOString()
-                }
-              });
-              
-              // Calculate total price
-              this.calculateTotalPrice();
-            }
-          }
-        },
-        error: (error) => {
-          console.error('Error loading car details:', error);
-        }
-      });
-    }
-  });
+  // In car-booking.component.ts
+  ngOnInit(): void {
 
     // Get mock user and location info
     this.userInfo = this.carBookingService.getMockUserInfo();
     this.locationInfo = this.carBookingService.getMockLocationInfo();
-    
-    // First, initialize userInfo with default values to avoid null reference
-    this.userInfo = this.carBookingService.getMockUserInfo();
-    
+
     // Then get user data from localStorage
     this.getUserFromLocalStorage();
-    
+
+    // Initialize form first
+    this.initForm();
+
+    // Setup search debouncing for pickup location
+    this.setupLocationSearch();
+
+    // Get car ID and dates from route parameters
+    this.route.queryParams.subscribe(params => {
+      if (params['carId']) {
+        // Get car details using CarService
+        this.carService.getCarDetails(params['carId']).subscribe({
+          next: (car) => {
+            if (car) {
+              this.selectedCar = car;
+
+              // If dates are provided in the URL, use them
+              if (params['startDate'] && params['endDate']) {
+                const startDate = new Date(`${params['startDate']} ${params['startTime']}`);
+                const endDate = new Date(`${params['endDate']} ${params['endTime']}`);
+
+                this.dateFrom = startDate;
+                this.dateTo = endDate;
+
+                // Update form with these dates
+                this.bookingForm.patchValue({
+                  dates: {
+                    dateFrom: startDate.toISOString(),
+                    dateTo: endDate.toISOString()
+                  }
+                });
+
+                // Calculate total price
+                this.calculateTotalPrice();
+              }
+            }
+          },
+          error: (error) => {
+            console.error('Error loading car details:', error);
+          }
+        });
+      }
+    });
+
+    // Get mock user and location info
+    this.userInfo = this.carBookingService.getMockUserInfo();
+    this.locationInfo = this.carBookingService.getMockLocationInfo();
+
+    // First, initialize userInfo with default values to avoid null reference
+    this.userInfo = this.carBookingService.getMockUserInfo();
+
+    // Then get user data from localStorage
+    this.getUserFromLocalStorage();
+
     // After user data is loaded, initialize form
     this.initForm();
-    
+
     // Calculate initial price
     this.calculateTotalPrice();
 
     // Setup search debouncing for pickup location
     this.setupLocationSearch();
   }
-  
+
   // Add these new methods
   isLocationInvalid(controlName: string): boolean {
-    const location = controlName === 'pickupLocation' ? 
+    const location = controlName === 'pickupLocation' ?
       this.selectedPickupLocation : this.selectedDropoffLocation;
     return !location || location === 'Choose location';
   }
-  
+
   isDuplicateLocations(): boolean {
     if (!this.selectedPickupLocation || !this.selectedDropoffLocation) {
-        return false;
+      return false;
     }
     return this.selectedPickupLocation === this.selectedDropoffLocation;
-}
+  }
 
   isFormValid(): boolean {
     return (
-      this.bookingForm.valid && 
-      !!this.selectedPickupLocation && 
+      this.bookingForm.valid &&
+      !!this.selectedPickupLocation &&
       !!this.selectedDropoffLocation &&
       this.selectedPickupLocation !== 'Choose location' &&
       this.selectedDropoffLocation !== 'Choose location' &&
@@ -184,12 +184,12 @@ export class CarBookingComponent implements OnInit {
     this.showPickupSuggestions = true;
     this.pickupSearchSubject.next(this.pickupSearchQuery);
   }
-  
+
   onDropoffSearchInput(): void {
     this.showDropoffSuggestions = true;
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
-  
+
   selectPickupLocation(suggestion: LocationSuggestion): void {
     this.selectedPickupLocation = suggestion.displayName;
     this.pickupSearchQuery = suggestion.displayName;
@@ -201,7 +201,7 @@ export class CarBookingComponent implements OnInit {
       }
     });
   }
-  
+
   selectDropoffLocation(suggestion: LocationSuggestion): void {
     this.selectedDropoffLocation = suggestion.displayName;
     this.dropoffSearchQuery = suggestion.displayName;
@@ -213,7 +213,7 @@ export class CarBookingComponent implements OnInit {
       }
     });
   }
-  
+
   useCurrentLocation(forPickup: boolean): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -222,7 +222,7 @@ export class CarBookingComponent implements OnInit {
             lat: position.coords.latitude,
             lon: position.coords.longitude
           };
-          
+
           // Reverse geocode to get address
           this.reverseGeocode(coords.lat, coords.lon).subscribe(
             (address) => {
@@ -231,7 +231,7 @@ export class CarBookingComponent implements OnInit {
                 this.selectedPickupCoordinates = coords;
                 this.pickupSearchQuery = address;
                 this.showPickupModal = false;
-                
+
                 // Update form with new location
                 this.bookingForm.get('location')?.patchValue({
                   pickupLocation: address
@@ -241,7 +241,7 @@ export class CarBookingComponent implements OnInit {
                 this.selectedDropoffCoordinates = coords;
                 this.dropoffSearchQuery = address;
                 this.showDropoffModal = false;
-                
+
                 // Update form with new location
                 this.bookingForm.get('location')?.patchValue({
                   dropoffLocation: address
@@ -263,10 +263,10 @@ export class CarBookingComponent implements OnInit {
       alert('Geolocation is not supported by your browser. Please enter your location manually.');
     }
   }
-  
+
   reverseGeocode(lat: number, lon: number) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    
+
     return this.http.get<any>(url).pipe(
       map(result => {
         if (result && result.display_name) {
@@ -277,7 +277,7 @@ export class CarBookingComponent implements OnInit {
       catchError(() => of('Current location'))
     );
   }
-  
+
   openLocationModal(forPickup: boolean): void {
     if (forPickup) {
       this.showPickupModal = true;
@@ -289,7 +289,7 @@ export class CarBookingComponent implements OnInit {
       this.dropoffSearchQuery = this.selectedDropoffLocation || '';
     }
   }
-  
+
   closeLocationModal(): void {
     this.showPickupModal = false;
     this.showDropoffModal = false;
@@ -311,7 +311,7 @@ export class CarBookingComponent implements OnInit {
             this.isLoadingPickupSuggestions = false;
             return of([]);
           }
-          
+
           this.isLoadingPickupSuggestions = true;
           return this.searchLocations(query).pipe(
             catchError(() => {
@@ -325,7 +325,7 @@ export class CarBookingComponent implements OnInit {
         this.isLoadingPickupSuggestions = false;
       })
     );
-    
+
     this.searchSubscriptions.push(
       this.dropoffSearchSubject.pipe(
         debounceTime(300),
@@ -336,7 +336,7 @@ export class CarBookingComponent implements OnInit {
             this.isLoadingDropoffSuggestions = false;
             return of([]);
           }
-          
+
           this.isLoadingDropoffSuggestions = true;
           return this.searchLocations(query).pipe(
             catchError(() => {
@@ -356,7 +356,7 @@ export class CarBookingComponent implements OnInit {
   searchLocations(query: string) {
     // Using OpenStreetMap's Nominatim API for geocoding
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
-    
+
     return this.http.get<any[]>(url).pipe(
       map(results => results.map(item => ({
         displayName: item.display_name.split(',').slice(0, 2).join(','), // Simplify display name
@@ -373,13 +373,13 @@ export class CarBookingComponent implements OnInit {
 
   getUserFromLocalStorage(): void {
     const storedUser = localStorage.getItem('currentUser');
-    
+
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         this.userInfo = {
-          fullName: user.firstName && user.lastName ? 
-            `${user.firstName} ${user.lastName}` : 
+          fullName: user.firstName && user.lastName ?
+            `${user.firstName} ${user.lastName}` :
             (user.fullName || user.name || 'User'),
           email: user.email || '',
           phone: user.phone || this.carBookingService.getMockUserInfo().phone
@@ -400,7 +400,7 @@ export class CarBookingComponent implements OnInit {
     if (!this.userInfo) {
       this.userInfo = this.carBookingService.getMockUserInfo();
     }
-  
+
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
         fullName: [this.userInfo.fullName, Validators.required],
@@ -417,11 +417,11 @@ export class CarBookingComponent implements OnInit {
         dateTo: ['2023-11-16T16:00', Validators.required]
       })
     });
-  
+
     // Rest of the method remains the same
     this.dateFrom = new Date(this.bookingForm.get('dates.dateFrom')?.value);
     this.dateTo = new Date(this.bookingForm.get('dates.dateTo')?.value);
-  
+
     this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
     });
@@ -430,12 +430,12 @@ export class CarBookingComponent implements OnInit {
   calculateTotalPrice(): void {
     const dateFromStr = this.bookingForm.get('dates.dateFrom')?.value;
     const dateToStr = this.bookingForm.get('dates.dateTo')?.value;
-  
+
     if (dateFromStr && dateToStr && this.selectedCar) {
       // Create dates in IST timezone
       this.dateFrom = new Date(dateFromStr);
       this.dateTo = new Date(dateToStr);
-  
+
       // Calculate difference in days (use UTC to avoid timezone issues)
       const diffTime = Math.abs(this.dateTo.getTime() - this.dateFrom.getTime());
       this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -444,7 +444,7 @@ export class CarBookingComponent implements OnInit {
   }
 
   confirmReservation(): void {
-    if(this.isReserved) {
+    if (this.isReserved) {
       this.dialog.open(CarReservedDialogComponent, {
         width: '400px',
         panelClass: 'car-reserved-dialog',
@@ -456,27 +456,27 @@ export class CarBookingComponent implements OnInit {
     if (this.bookingForm.valid && this.selectedCar) {
       const bookingId = `booking-${Date.now()}`;
       const orderNumber = `#${Math.floor(1000 + Math.random() * 9000)}`;
-  
+
       // Get the image URL string
-      const carImageUrl = typeof this.selectedCar.images[0] === 'string' 
-        ? this.selectedCar.images[0] 
+      const carImageUrl = typeof this.selectedCar.images[0] === 'string'
+        ? this.selectedCar.images[0]
         : (this.selectedCar.images[0] as CarImage).url;
 
-        const newBooking: Booking = {
-          id: bookingId,
-          carId: this.selectedCar.id,
-          carName: `${this.selectedCar.brand} ${this.selectedCar.model} ${this.selectedCar.year}`,
-          carImage: carImageUrl,
-          orderNumber: orderNumber,
-          pickupDate: this.dateFrom,
-          dropoffDate: this.dateTo,
-          status: BookingStatus.RESERVED,
-          totalPrice: this.totalPrice,
-          numberOfDays: this.numberOfDays,
-          pickupLocation: this.bookingForm.get('location.pickupLocation')?.value,
-          dropoffLocation: this.bookingForm.get('location.dropoffLocation')?.value,
-        };
-  
+      const newBooking: Booking = {
+        id: bookingId,
+        carId: this.selectedCar.id,
+        carName: `${this.selectedCar.brand} ${this.selectedCar.model} ${this.selectedCar.year}`,
+        carImage: carImageUrl,
+        orderNumber: orderNumber,
+        pickupDate: this.dateFrom,
+        dropoffDate: this.dateTo,
+        status: BookingStatus.RESERVED,
+        totalPrice: this.totalPrice,
+        numberOfDays: this.numberOfDays,
+        pickupLocation: this.bookingForm.get('location.pickupLocation')?.value,
+        dropoffLocation: this.bookingForm.get('location.dropoffLocation')?.value,
+      };
+
       // Fix the service name
       this.carBookingService.addBooking(newBooking).subscribe({
         next: (response: any) => {
@@ -490,27 +490,27 @@ export class CarBookingComponent implements OnInit {
         }
       });
     }
-}
-  
-showBookingSuccessDialog(): void {
-  const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
-  
-  this.dialog.open(BookingSuccessDialogComponent, {
-    width: '500px',
-    maxWidth: '95vw',
-    position: { top: '70px' },
-    panelClass: 'success-dialog-container',
-    data: {
-      carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,
-      startDate: this.dateFrom,
-      endDate: this.dateTo,
-      orderNumber: orderNumber,
-      bookingDate: new Date(),
-      totalPrice: this.totalPrice,
-      numberOfDays: this.numberOfDays
-    }
-  });
-}
+  }
+
+  showBookingSuccessDialog(): void {
+    const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
+
+    this.dialog.open(BookingSuccessDialogComponent, {
+      width: '500px',
+      maxWidth: '95vw',
+      position: { top: '70px' },
+      panelClass: 'success-dialog-container',
+      data: {
+        carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,
+        startDate: this.dateFrom,
+        endDate: this.dateTo,
+        orderNumber: orderNumber,
+        bookingDate: new Date(),
+        totalPrice: this.totalPrice,
+        numberOfDays: this.numberOfDays
+      }
+    });
+  }
 
   openLocationChange(): void {
     const dialogRef = this.dialog.open(LocationDialogComponent, {
@@ -521,7 +521,7 @@ showBookingSuccessDialog(): void {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: {pickupLocation: string, dropoffLocation: string} | undefined) => {
+    dialogRef.afterClosed().subscribe((result: { pickupLocation: string, dropoffLocation: string } | undefined) => {
       if (result) {
         this.bookingForm.get('location')?.patchValue({
           pickupLocation: result.pickupLocation,
@@ -532,49 +532,49 @@ showBookingSuccessDialog(): void {
   }
 
   // Update in car-booking.component.ts
-// openDateChange(): void {
-//   const dialogRef = this.dialog.open(CalendarComponent, {
-//     width: '700px',
-//     maxWidth: '95vw',
-//     data: {
-//       bookedDates: [] // Pass any booked dates here
-//     },
-//     panelClass: 'date-picker-dialog',
-//     autoFocus: false // Add this to prevent focus stealing
-//   });
+  // openDateChange(): void {
+  //   const dialogRef = this.dialog.open(CalendarComponent, {
+  //     width: '700px',
+  //     maxWidth: '95vw',
+  //     data: {
+  //       bookedDates: [] // Pass any booked dates here
+  //     },
+  //     panelClass: 'date-picker-dialog',
+  //     autoFocus: false // Add this to prevent focus stealing
+  //   });
 
-//   // Set isOpen to true directly after dialog is opened
-//   const calendarInstance = dialogRef.componentInstance;
-//   calendarInstance.isOpen = true;
-  
-//   // Subscribe to dateRangeSelected event
-//   const subscription = calendarInstance.dateRangeSelected.subscribe(result => {
-//     if (result) {
-//       // Convert moment objects to Date objects
-//       this.dateFrom = result.startDate.toDate();
-//       this.dateTo = result.endDate.toDate();
+  //   // Set isOpen to true directly after dialog is opened
+  //   const calendarInstance = dialogRef.componentInstance;
+  //   calendarInstance.isOpen = true;
 
-//       // Update the form with the new dates
-//       this.bookingForm.patchValue({
-//         dates: {
-//           dateFrom: this.dateFrom.toISOString(),
-//           dateTo: this.dateTo.toISOString()
-//         }
-//       });
+  //   // Subscribe to dateRangeSelected event
+  //   const subscription = calendarInstance.dateRangeSelected.subscribe(result => {
+  //     if (result) {
+  //       // Convert moment objects to Date objects
+  //       this.dateFrom = result.startDate.toDate();
+  //       this.dateTo = result.endDate.toDate();
 
-//       // Recalculate total price
-//       this.calculateTotalPrice();
-      
-//       // Close the dialog
-//       dialogRef.close();
-//     }
-//   });
+  //       // Update the form with the new dates
+  //       this.bookingForm.patchValue({
+  //         dates: {
+  //           dateFrom: this.dateFrom.toISOString(),
+  //           dateTo: this.dateTo.toISOString()
+  //         }
+  //       });
 
-//   // Clean up subscription when dialog closes
-//   dialogRef.afterClosed().subscribe(() => {
-//     subscription.unsubscribe();
-//   });
-// }
+  //       // Recalculate total price
+  //       this.calculateTotalPrice();
+
+  //       // Close the dialog
+  //       dialogRef.close();
+  //     }
+  //   });
+
+  //   // Clean up subscription when dialog closes
+  //   dialogRef.afterClosed().subscribe(() => {
+  //     subscription.unsubscribe();
+  //   });
+  // }
 
   getDefaultEndDate(): Date {
     const endDate = new Date();
@@ -584,47 +584,47 @@ showBookingSuccessDialog(): void {
 
   formatDate(date: Date | null): string {
     if (!date) return '';
-    return date.toLocaleDateString('en-IN', { 
-      month: 'long', 
+    return date.toLocaleDateString('en-IN', {
+      month: 'long',
       day: 'numeric',
       timeZone: 'Asia/Kolkata'
     });
   }
-  
+
   formatTime(date: Date | null): string {
     if (!date) return '';
-    return date.toLocaleTimeString('en-IN', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
+    return date.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
       timeZone: 'Asia/Kolkata'
     });
   }
 
   // In car-booking.component.ts
-onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
-  // Convert moment objects to Date objects
-  this.dateFrom = event.startDate.toDate();
-  this.dateTo = event.endDate.toDate();
+  onDateRangeSelected(event: { startDate: moment.Moment, endDate: moment.Moment }): void {
+    // Convert moment objects to Date objects
+    this.dateFrom = event.startDate.toDate();
+    this.dateTo = event.endDate.toDate();
 
-  // Update the form with the new dates
-  this.bookingForm.patchValue({
-    dates: {
-      dateFrom: this.dateFrom.toISOString(),
-      dateTo: this.dateTo.toISOString()
-    }
-  });
+    // Update the form with the new dates
+    this.bookingForm.patchValue({
+      dates: {
+        dateFrom: this.dateFrom.toISOString(),
+        dateTo: this.dateTo.toISOString()
+      }
+    });
 
-  // Recalculate total price
-  this.calculateTotalPrice();
-}
+    // Recalculate total price
+    this.calculateTotalPrice();
+  }
 
-// Add a getter for formatted booked dates
-get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
-  // This would come from your car service in a real app
-  return this.selectedCar?.bookedDates?.map(date => ({
-    startDate: date.startDate,
-    endDate: date.endDate
-  })) || [];
-}
+  // Add a getter for formatted booked dates
+  get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
+    // This would come from your car service in a real app
+    return this.selectedCar?.bookedDates?.map(date => ({
+      startDate: date.startDate,
+      endDate: date.endDate
+    })) || [];
+  }
 }
