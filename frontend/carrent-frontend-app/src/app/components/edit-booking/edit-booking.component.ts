@@ -297,6 +297,12 @@ loadBooking(bookingId: string): void {
 
   toggleCalendar(): void {
     this.isCalendarOpen = !this.isCalendarOpen;
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    // this.isCalendarOpen = !this.isCalendarOpen;
+    console.log('Calendar toggled:', this.isCalendarOpen);
   }
 
   onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
