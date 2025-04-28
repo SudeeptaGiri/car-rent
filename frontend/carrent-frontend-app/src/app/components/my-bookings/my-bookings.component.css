@@ -139,8 +139,8 @@
   }
   
   .booking-actions .btn-cancel {
-    background-color: white;
-    border: 1px solid #e0e0e0;
+    background-color: #f0f0f0;
+    border: 1px solid #000000;
   }
   
   .booking-actions .btn-edit {
@@ -165,8 +165,8 @@
   }
   
   .booking-actions .btn-view-feedback {
-    background-color: white;
-    border: 1px solid #e0e0e0;
+    background-color: #f0f0f0;
+    border: 1px solid #000000;
     width: 100%;
   }
   
