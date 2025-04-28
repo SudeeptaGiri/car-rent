@@ -40,7 +40,7 @@ export class CarDetailsPopupComponent {
   selectedSort = 'The newest';
   sortOptions: SortOption[] = [
     { label: 'The newest', value: 'newest' },
-    { label: 'The latest', value: 'latest' },
+    { label: 'The oldest', value: 'oldest' },
     { label: 'Rating: low to high', value: 'low to high' },
     { label: 'Rating: high to low', value: 'high to low' }
   ];
@@ -65,7 +65,7 @@ export class CarDetailsPopupComponent {
     if (this.data.carId) {
       this.loadCarDetailsWithNavigation(this.data.carId);
     }
-    this.isLoggedIn = this.authService.isAuthenticated(); 
+    this.isLoggedIn = this.authService.isAuthenticated();
   }
 
   private loadCarDetailsWithNavigation(carId: string): void {
@@ -156,14 +156,20 @@ export class CarDetailsPopupComponent {
 
     switch (sortValue) {
       case 'newest':
-        this.reviews.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+        // Sort by date descending (most recent first)
+        this.reviews.sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA; // Newest first (descending)
+        });
         break;
-      case 'latest':
-        this.reviews.sort((a, b) =>
-          new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
+      case 'oldest':
+        // Sort by date ascending (oldest first)
+        this.reviews.sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateA - dateB; // Oldest first (ascending)
+        });
         break;
       case 'low to high':
         this.reviews.sort((a, b) => a.rating - b.rating);
@@ -217,7 +223,7 @@ export class CarDetailsPopupComponent {
       data: bookingRequest
     });
 
-    this.route.navigate(['/cars'], {
+    this.route.navigate(['/cars-booking'], {
       queryParams: {
         carId: this.carDetails.id,
         startDate: this.dateRange.startDate.format('YYYY-MM-DD'),
@@ -226,7 +232,7 @@ export class CarDetailsPopupComponent {
         endTime: this.dateRange.endDate.format('HH:mm'),
       }
     });
-  } 
+  }
 
   handleLogin(): void {
     if (this.dateRange && this.carDetails) {

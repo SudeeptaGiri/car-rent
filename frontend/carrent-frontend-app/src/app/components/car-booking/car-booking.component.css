@@ -2,6 +2,62 @@
   display:flex;
   flex-wrap: wrap;
 }
+@media (min-width: 1600px) {
+  .car-booking-container{
+    height: 91vh;
+  }
+}
+
+body{
+  background-color: #FFFBF3;
+}
+
+.duplicate-location {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  color: #856404;
+}
+
+
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.confirm-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+.confirm-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .booking-section form {
   flex: 1;
   min-width: 350px; /* Important for flexbox to allow shrinking below content size */
@@ -42,17 +98,16 @@
   .section {
     margin-bottom: 30px;
   }
+  .drop-off {
+    margin-top: 15px;
+  }
   
   .personal-info-card, .location-card, .dates-card {
     border: 1px solid black;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
     position: relative;
     background-color: white;
-  }
-  
-  .form-field {
-    margin-bottom: 15px;
   }
   
   .form-field label {
@@ -80,7 +135,7 @@
   
   .change-btn {
     position: absolute;
-    top: 20px;
+    top: 13px;
     right: 20px;
     background: none;
     border: none;
@@ -88,7 +143,11 @@
     cursor: pointer;
     font-weight: bold;
   }
-  
+  .booking-calendar ::ng-deep .handle-buttons,
+.booking-calendar ::ng-deep .button1,
+.booking-calendar ::ng-deep .flex-1 {
+  display: none !important;
+}
   .change-btn:hover {
     text-decoration: underline;
   }
@@ -204,9 +263,7 @@
 .booking-calendar ::ng-deep .button1,
 .booking-calendar ::ng-deep .flex-1 {
   width: 100% !important;
-  margin-bottom: 10px;
 }
-
 
 
 /* Location modal styling */
@@ -361,5 +418,5 @@
 .select-wrapper {
   position: relative;
   cursor: pointer;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }

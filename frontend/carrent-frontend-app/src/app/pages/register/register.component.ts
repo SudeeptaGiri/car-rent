@@ -112,6 +112,9 @@ export class RegisterComponent {
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
+  onCancel(){
+    this.router.navigate(['/main']);
+  }
 
   get f() {
     return this.registrationForm.controls;

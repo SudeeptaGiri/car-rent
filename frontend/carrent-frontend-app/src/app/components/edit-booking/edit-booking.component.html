@@ -1,173 +1,172 @@
 <!-- src/app/components/edit-booking/edit-booking.component.html -->
 <div class="car-booking-container">
-    <div class="breadcrumb">
-      <a routerLink="/my-bookings">My bookings</a> &gt; Booking modification
-    </div>
-  
-    <h1>Booking modification</h1>
-    
-    <section class="booking-section" *ngIf="booking">
-      <form [formGroup]="bookingForm">
-        <!-- Personal Info Section -->
-        <!-- Replace the existing Personal Info and Location sections with this -->
-<!-- Personal Info Section -->
-<div class="section">
-  <h2>Personal info</h2>
-  <div class="personal-info-card" formGroupName="personalInfo">
-    <div class="form-field">
-      <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
-      <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
-      <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
-    </div>
+  <div class="breadcrumb">
+    <a routerLink="/my-bookings">My bookings</a> &gt; Booking modification
   </div>
-</div>
 
-<!-- Location Section -->
-<div class="section">
-  <h2>Location</h2>
-  <div class="location-card" formGroupName="location">
-    <div class="form-field">
-      <label>Pick-up location</label>
-      <div class="select-wrapper" (click)="openLocationModal(true)">
-        <div class="location-display">
-          {{ selectedPickupLocation || bookingForm.get('location.pickupLocation')?.value }}
-        </div>
-      </div>
-    </div>
-    <div class="form-field">
-      <label>Drop-off location</label>
-      <div class="select-wrapper" (click)="openLocationModal(false)">
-        <div class="location-display">
-          {{ selectedDropoffLocation || bookingForm.get('location.dropoffLocation')?.value }}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  <h1>Booking modification</h1>
 
-<!-- Add the location modal at the bottom of the template -->
-<div class="location-modal" *ngIf="showPickupModal">
-  <div class="location-modal-content">
-    <div class="location-modal-header">
-      <h3>Choose pick-up location</h3>
-      <button class="close-modal" (click)="closeLocationModal()">&times;</button>
-    </div>
-    
-    <div class="location-modal-body">
-      <button class="use-current-location" (click)="useCurrentLocation(true)">
-        <span class="location-icon">📍</span>
-        Use current location
-      </button>
-      
-      <div class="location-search-container">
-        <input 
-          type="text" 
-          placeholder="Search for a city or address" 
-          [(ngModel)]="pickupSearchQuery"
-          (input)="onPickupSearchInput()"
-          class="location-search-input"
-        >
-        
-        <div class="location-suggestions" *ngIf="showPickupSuggestions">
-          <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
-            Searching...
-          </div>
-          <div 
-            class="suggestion-item" 
-            *ngFor="let suggestion of pickupSuggestions"
-            (click)="selectPickupLocation(suggestion)"
-          >
-            <span class="suggestion-icon">📍</span>
-            <span class="suggestion-text">{{ suggestion.displayName }}</span>
+  <section class="booking-section" *ngIf="booking">
+    <form [formGroup]="bookingForm">
+      <!-- Personal Info Section -->
+      <!-- Replace the existing Personal Info and Location sections with this -->
+      <!-- Personal Info Section -->
+      <div class="section">
+        <h2>Personal info</h2>
+        <div class="personal-info-card" formGroupName="personalInfo">
+          <div class="form-field">
+            <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
+            <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
+            <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<div class="location-modal" *ngIf="showDropoffModal">
-  <div class="location-modal-content">
-    <div class="location-modal-header">
-      <h3>Choose drop-off location</h3>
-      <button class="close-modal" (click)="closeLocationModal()">&times;</button>
-    </div>
-    
-    <div class="location-modal-body">
-      <button class="use-current-location" (click)="useCurrentLocation(false)">
-        <span class="location-icon">📍</span>
-        Use current location
-      </button>
-      
-      <div class="location-search-container">
-        <input 
-          type="text" 
-          placeholder="Search for a city or address" 
-          [(ngModel)]="dropoffSearchQuery"
-          (input)="onDropoffSearchInput()"
-          class="location-search-input"
-        >
-        
-        <div class="location-suggestions" *ngIf="showDropoffSuggestions">
-          <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions">
-            Searching...
-          </div>
-          <div 
-            class="suggestion-item" 
-            *ngFor="let suggestion of dropoffSuggestions"
-            (click)="selectDropoffLocation(suggestion)"
-          >
-            <span class="suggestion-icon">📍</span>
-            <span class="suggestion-text">{{ suggestion.displayName }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-    
-        <!-- Dates & Time Section -->
-        <!-- Replace the existing Dates & Time Section with this -->
-<div class="section">
-  <h2>Dates & Time</h2>
-  <div class="dates-card" formGroupName="dates">
-    <div class="w-full pb-8">
-      <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
-    </div>
-    <calendar 
-      class="booking-calendar" 
-      [externalToggle]="isCalendarOpen"
-      [initialStartDate]="dateFrom"
-      [initialEndDate]="dateTo"
-      [bookedDates]="bookedDatesFormatted"
-      (dateRangeSelected)="onDateRangeSelected($event)">
-    </calendar>
-  </div>
-</div>
-      </form>
-    
-      <!-- Car Details and Save Section -->
-      <div class="section-car-details-section">
-        <div class="car-details-container">
-          <div class="car-image">
-            <img [src]="booking.carImage" [alt]="booking.carName" class="image-car">
-          </div>
-          <div class="car-info">
-            <h3>{{ booking.carName }}</h3>
-            <p class="location">Ukraine, Kyiv</p>
-            
-            <div class="pricing-info">
-              <div class="total-section">
-                <div class="total-label">Total</div>
-                <div class="total-price">${{ totalPrice }}</div>
+      <!-- Location Section -->
+      <div class="section">
+        <h2>Location</h2>
+        <div class="location-card" formGroupName="location">
+          <div class="form-field">
+            <label>Pick-up location</label>
+            <div class="select-wrapper" (click)="openLocationModal(true)">
+              <div class="location-display">
+                {{ selectedPickupLocation || bookingForm.get('location.pickupLocation')?.value }}
               </div>
-              <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
-              <button type="button" class="confirm-btn" (click)="saveBooking()">
-                Save
-              </button>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Drop-off location</label>
+            <div class="select-wrapper" (click)="openLocationModal(false)">
+              <div class="location-display">
+                {{ selectedDropoffLocation || bookingForm.get('location.dropoffLocation')?.value }}
+              </div>
+            </div>
+          </div>
+          <div class="w-full pb-4">
+            <button type="button" class="change-btn" (click)="openLocationModal(true)">Change</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add the location modal at the bottom of the template -->
+      <div class="location-modal" *ngIf="showPickupModal">
+        <div class="location-modal-content">
+          <div class="location-modal-header">
+            <h3>Choose pick-up location</h3>
+            <button class="close-modal" (click)="closeLocationModal()">&times;</button>
+          </div>
+
+          <div class="location-modal-body">
+            <button class="use-current-location" (click)="useCurrentLocation(true)">
+              <span class="location-icon">📍</span>
+              Use current location
+            </button>
+
+            <div class="location-search-container">
+              <input type="text" placeholder="Search for a city or address" [(ngModel)]="pickupSearchQuery"
+                (input)="onPickupSearchInput()" class="location-search-input">
+
+              <div class="location-suggestions" *ngIf="showPickupSuggestions">
+                <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
+                  Searching...
+                </div>
+                <div class="suggestion-item" *ngFor="let suggestion of pickupSuggestions"
+                  (click)="selectPickupLocation(suggestion)">
+                  <span class="suggestion-icon">📍</span>
+                  <span class="suggestion-text">{{ suggestion.displayName }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+
+      <div class="location-modal" *ngIf="showDropoffModal">
+        <div class="location-modal-content">
+          <div class="location-modal-header">
+            <h3>Choose drop-off location</h3>
+            <button class="close-modal" (click)="closeLocationModal()">&times;</button>
+          </div>
+
+          <div class="location-modal-body">
+            <button class="use-current-location" (click)="useCurrentLocation(false)">
+              <span class="location-icon">📍</span>
+              Use current location
+            </button>
+
+            <div class="location-search-container">
+              <input type="text" placeholder="Search for a city or address" [(ngModel)]="dropoffSearchQuery"
+                (input)="onDropoffSearchInput()" class="location-search-input">
+
+              <div class="location-suggestions" *ngIf="showDropoffSuggestions">
+                <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions">
+                  Searching...
+                </div>
+                <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions"
+                  (click)="selectDropoffLocation(suggestion)">
+                  <span class="suggestion-icon">📍</span>
+                  <span class="suggestion-text">{{ suggestion.displayName }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates & Time Section -->
+      <!-- Replace the existing Dates & Time Section with this -->
+      <div class="section">
+        <h2>Dates & Time</h2>
+        <div class="dates-card" formGroupName="dates">
+          <div class="w-full">
+            <div class="text-[15px] text-gray-500">Pick-up date & Time</div>
+            <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
+          </div>
+          <calendar class="booking-calendar" [externalToggle]="isCalendarOpen" [initialStartDate]="dateFrom"
+          [initialEndDate]="dateTo" [bookedDates]="bookedDatesFormatted"
+          (dateRangeSelected)="onDateRangeSelected($event)">
+          </calendar>
+          <!-- In car-booking.component.html -->
+         
+          <div class="time-display" *ngIf="dateFrom && dateTo">
+            <div class="time-slot mb-2">
+              <span class="time-value">
+                {{ dateFrom | date:'MMM dd' }} | {{ dateFrom | date:'HH:mm' }}
+              </span>
+            </div>
+            <span class="time-label text-[15px] text-gray-500">Drop-off date & Time</span>
+            <div class="time-slot">
+              <span class="time-value">
+                {{ dateTo | date:'MMM dd' }} | {{ dateTo | date:'HH:mm' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Car Details and Save Section -->
+    <div class="section-car-details-section">
+      <div class="car-details-container">
+        <div class="car-image">
+          <img [src]="booking.carImage" [alt]="booking.carName" class="image-car">
+        </div>
+        <div class="car-info">
+          <h3>{{ booking.carName }}</h3>
+          <p class="location">Ukraine, Kyiv</p>
+
+          <div class="pricing-info">
+            <div class="total-section">
+              <div class="total-label">Total</div>
+              <div class="total-price">${{ totalPrice }}</div>
+            </div>
+            <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
+            <button type="button" class="confirm-btn" (click)="saveBooking()">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/users';
 
@@ -13,7 +14,7 @@ export class HeaderComponent implements OnInit {
   menuOpen = false;
   user: User | null = null;
   dropdownOpen = false;
-  selectedTab: string = 'home';
+  selectedTab!: string;
 
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -21,7 +22,46 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     const userData = sessionStorage.getItem('currentUser');
     this.user = userData ? JSON.parse(userData) : null;
+  
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.updateSelectedTab(event.urlAfterRedirects);
+      });
+  
+    // Set initially based on current URL
+    this.updateSelectedTab(this.router.url);
   }
+  
+  updateSelectedTab(url: string) {
+    if (url === '/' || url === '/main') {
+      this.selectedTab = 'home';
+    } else if (url.startsWith('/cars')) {
+      this.selectedTab = 'cars';
+    } else if (url.startsWith('/my-bookings')) {
+      this.selectedTab = 'bookings';
+    } else {
+      this.selectedTab = '';
+    }
+  }
+  
+  setActiveTab(tab: string) {
+    this.selectedTab = tab;
+    switch (tab) {
+      case 'home':
+        this.router.navigate(['/main']);
+        break;
+      case 'cars':
+        this.router.navigate(['/cars']);
+        break;
+      case 'bookings':
+        this.router.navigate(['/my-bookings']);
+        break;
+      default:
+        this.router.navigate(['/']);
+    }
+  }
+  
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -47,8 +87,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-setActiveTab(tab: string) {
-  this.selectedTab = tab;
-}
+
 
 }

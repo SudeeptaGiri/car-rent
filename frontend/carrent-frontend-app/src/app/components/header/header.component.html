@@ -1,7 +1,7 @@
 <header>
   <!-- Logo -->
   <figure class="logo">
-    <img src="assets/Logo.svg" alt="Page Logo" class="logo" />
+    <img src="assets/Logo.svg" alt="Page Logo" class="logo" routerLink="/" />
   </figure>
 
   <!-- Centered nav for tablet/desktop -->
@@ -10,21 +10,18 @@
       <ul>
         <li>
           <a 
-            routerLink="/" 
             [ngClass]="{ 'active-tab': selectedTab === 'home' }"
             (click)="setActiveTab('home')"
           >Home</a>
         </li>
         <li>
           <a 
-            href="#" 
             [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
             (click)="setActiveTab('cars')"
           >Cars</a>
         </li>
         <li *ngIf="user">
-          <a 
-            routerLink="/my-bookings" 
+          <a  
             [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
             (click)="setActiveTab('bookings')"
           >My Bookings</a>
@@ -42,9 +39,9 @@
   <div class="mobile-menu" [class.active]="menuOpen">
     <nav class="nav-bar">
       <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Cars</a></li>
-        <li *ngIf="user"><a href="#">My Bookings</a></li>
+        <li><a routerLink="/">Home</a></li>
+        <li><a href="/car">Cars</a></li>
+        <li *ngIf="user"><a routerLink="/my-bookings">My Bookings</a></li>
       </ul>
     </nav>
     <div class="login-side" *ngIf="user; else mobileGuest">
@@ -78,7 +75,14 @@
   <ng-container *ngIf="user; else desktopGuestLinks">
     <div class="login-side">
       <div class="user-dropdown" style="display: contents; justify-content: center;">
-        <img src="assets/profile-icon.svg" alt="Profile" class="profile-icon" />
+        <div class="profile-avatar">
+          <ng-container *ngIf="user?.image; else nameInitial">
+            <img [src]="user.image" alt="Profile" class="profile-icon" />
+          </ng-container>
+          <ng-template #nameInitial>
+            <div class="initial-avatar">{{ user.firstName.charAt(0) }}</div>
+          </ng-template>
+        </div>
         <span (click)="toggleDropdown()" class="user-name">
           Hello, {{ user.firstName }} ({{ user.role }})
         </span>
@@ -94,6 +98,7 @@
       </select>
     </div>
   </ng-container>
+  
 
   <ng-template #desktopGuestLinks>
     <div class="login-side">

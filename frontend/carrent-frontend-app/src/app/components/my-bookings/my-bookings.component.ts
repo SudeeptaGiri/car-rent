@@ -39,7 +39,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscription.add(
       this.bookingService.getBookings().subscribe(bookings => {
-        console.log('Loaded bookings:', bookings); // Debug log
+        console.log('Loaded user bookings:', bookings);
         this.bookings = bookings;
         this.filterBookings();
       })
@@ -52,7 +52,6 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     } else {
       this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
     }
-    console.log('Filtered bookings:', this.filteredBookings); // Debug log
   }
   
   ngOnDestroy(): void {
@@ -89,6 +88,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   openCancelDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(CancelBookingDialogComponent, {
       width: '400px',
+      position: { top: '40vh', right: '0px' },
       data: { booking }
     });
     
@@ -96,7 +96,8 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
       if (result) {
         this.bookingService.cancelBooking(booking.id);
         this.dialog.open(BookingCancelledDialogComponent, {
-          width: '400px'
+          width: '400px',
+          position: { top: '40vh', right: '0px' },
         });
       }
     });
@@ -105,6 +106,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   openFeedbackDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(FeedbackDialogComponent, {
       width: '400px',
+      position: { top: '40vh', right: '0px' },
       data: { booking }
     });
     
@@ -119,6 +121,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     if (booking.feedback) {
       this.dialog.open(ViewFeedbackDialogComponent, {
         width: '400px',
+        position: { top: '40vh', right: '0px' },
         data: { feedback: booking.feedback }
       });
     }

@@ -1,4 +1,3 @@
-
 <div class="date-picker-container relative w-full">
     <div class="handle-buttons flex gap-4 mb-4 items-center text-xs md:text-base">
         <!-- Start Date Input -->
@@ -7,7 +6,7 @@
                 <label class="text-sm text-gray-500 label">Pick-Up Date</label>
             </div>
             <button (click)="togglePicker()"
-                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center">
+                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
                 <span class="text-gray-700">
                     {{ formatStartDate() }}
                 </span>
@@ -21,7 +20,7 @@
                 <label class="text-sm text-gray-500 label">Drop-off Date</label>
             </div>
             <button (click)="togglePicker()"
-                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center">
+                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
                 <span class="text-gray-700">
                     {{ formatEndDate() }}
                 </span>
@@ -77,24 +76,30 @@
                 <div class="flex gap-4 w-full justify-between">
                     <div class="w-1/2">
                         <label class="block font-medium">Pick-up Time</label>
-                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden" [(ngModel)]="pickupTime" (input)="onTimeChange($event, true)" required>
+                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden"
+                            [(ngModel)]="pickupTime" (input)="onTimeChange($event, true)" required>
                     </div>
                     <div class="w-1/2">
                         <label class="block font-medium">Drop-off Time</label>
-                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden" [(ngModel)]="dropoffTime" (input)="onTimeChange($event, false)" required>
+                        <input title="date" type="time" class="border w-full p-2 rounded-md overflow-hidden"
+                            [(ngModel)]="dropoffTime" (input)="onTimeChange($event, false)" required>
                     </div>
+                </div>
+                <!-- Validation error message -->
+                <div *ngIf="timeValidationError" class="validation text-red-500 text-sm mt-2">
+                    {{ timeValidationError }}
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex items-center justify-end m-2 gap-4">
                 <button
-                    class="w-24 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    class="w-24 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200 hover:cursor-pointer"
                     type="button" (click)="closePicker()">
                     Cancel
                 </button>
                 <button
-                    class="w-24 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+                    class="w-24 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 hover:cursor-pointer"
                     type="button" (click)="emitSelected()">
                     Update
                 </button>

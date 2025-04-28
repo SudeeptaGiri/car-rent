@@ -154,6 +154,31 @@ export class CarBookingComponent implements OnInit {
     // Setup search debouncing for pickup location
     this.setupLocationSearch();
   }
+  
+  // Add these new methods
+  isLocationInvalid(controlName: string): boolean {
+    const location = controlName === 'pickupLocation' ? 
+      this.selectedPickupLocation : this.selectedDropoffLocation;
+    return !location || location === 'Choose location';
+  }
+  
+  isDuplicateLocations(): boolean {
+    if (!this.selectedPickupLocation || !this.selectedDropoffLocation) {
+        return false;
+    }
+    return this.selectedPickupLocation === this.selectedDropoffLocation;
+}
+
+  isFormValid(): boolean {
+    return (
+      this.bookingForm.valid && 
+      !!this.selectedPickupLocation && 
+      !!this.selectedDropoffLocation &&
+      this.selectedPickupLocation !== 'Choose location' &&
+      this.selectedDropoffLocation !== 'Choose location' &&
+      !this.isDuplicateLocations()
+    );
+  }
 
   onPickupSearchInput(): void {
     this.showPickupSuggestions = true;
@@ -167,27 +192,25 @@ export class CarBookingComponent implements OnInit {
   
   selectPickupLocation(suggestion: LocationSuggestion): void {
     this.selectedPickupLocation = suggestion.displayName;
-    this.selectedPickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.pickupSearchQuery = suggestion.displayName;
     this.showPickupSuggestions = false;
     this.showPickupModal = false;
-    
-    // Update form with new location
-    this.bookingForm.get('location')?.patchValue({
-      pickupLocation: suggestion.displayName
+    this.bookingForm.patchValue({
+      location: {
+        pickupLocation: suggestion.displayName
+      }
     });
   }
   
   selectDropoffLocation(suggestion: LocationSuggestion): void {
     this.selectedDropoffLocation = suggestion.displayName;
-    this.selectedDropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
     this.dropoffSearchQuery = suggestion.displayName;
     this.showDropoffSuggestions = false;
     this.showDropoffModal = false;
-    
-    // Update form with new location
-    this.bookingForm.get('location')?.patchValue({
-      dropoffLocation: suggestion.displayName
+    this.bookingForm.patchValue({
+      location: {
+        dropoffLocation: suggestion.displayName
+      }
     });
   }
   
@@ -475,6 +498,7 @@ showBookingSuccessDialog(): void {
   this.dialog.open(BookingSuccessDialogComponent, {
     width: '500px',
     maxWidth: '95vw',
+    position: { top: '70px' },
     panelClass: 'success-dialog-container',
     data: {
       carName: `${this.selectedCar.brand} ${this.selectedCar.model}`,

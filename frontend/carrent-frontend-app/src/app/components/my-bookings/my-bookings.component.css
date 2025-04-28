@@ -1,5 +1,12 @@
+
+.booking-card {
+  background-color: #f0f0f0;
+}
+
 .my-bookings-container {
-    max-width: 1200px;
+    width: 100%;
+    min-height: 90vh;
+    background-color: #FFFBF3;
     margin: 0 auto;
     padding: 20px;
   }
@@ -35,11 +42,18 @@
     color: #333;
   }
   
+  .question{
+    font-size: 85%;
+  }
+  .btn-support{
+    font-size: 95%;
+  }
   .bookings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    align-items: center;
     justify-items: center;
-    gap: 24px;
+    gap: 10px;
   }
   
   .booking-card {
@@ -50,16 +64,16 @@
   
   .car-image-container {
     position: relative;
-    height: 180px;
+    padding: 10px 10px 0px 10px;
     width: 100%;
     overflow: hidden;
   }
   
   .car-image-container .car-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: top;
+    height: 180px;
+    aspect-ratio: 3/2;
+    object-fit: cover;
+    display: block;
   }
   
   .car-image-container .status-badge {
@@ -118,8 +132,11 @@
     flex: 1;
     padding: 8px 16px;
     border-radius: 55px;
-    font-size: 14px;
     cursor: pointer;
+  }
+
+  .btn-cancel, .btn-edit {
+    font-size: 110%;
   }
   
   .booking-actions .btn-cancel {
@@ -156,10 +173,9 @@
   
   .booking-card {
     position: relative;
-    
     width:auto; /* Allow the card to take its natural width */
     max-width: 375px; /* Set a max width for the card */
-    min-height: 370px; /* Ensures the container takes at least full viewport height */
+    min-height: 385px; /* Ensures the container takes at least full viewport height */
     padding-bottom: 0px; /* Add padding to prevent content from being hidden behind fixed component */
   }
   .support-chat {
@@ -291,17 +307,4 @@
   .mobile-tabs-dropdown {
     display: block;
   }
-}
-
-/* Rest of your existing styles */
-.bookings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.booking-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
 }
