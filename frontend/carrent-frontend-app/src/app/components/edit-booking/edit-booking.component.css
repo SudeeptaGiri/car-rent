@@ -122,7 +122,7 @@ body{
     
     .car-image img {
       width: 400px;
-      height: auto;
+      height: 261px;
       object-fit: cover;
     }
     
