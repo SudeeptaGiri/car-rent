@@ -111,7 +111,7 @@
       "rating": 4.9,
       "price": 890,
       "category": "Sports car",
-      "status": "Available",
+      "status": "Not Available",
       "images": [
         {
           "id": "1",
