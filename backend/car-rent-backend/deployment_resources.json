@@ -1,0 +1,1007 @@
+{
+  "lambda-execution-policy": {
+    "policy_content": {
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "dynamodb:*",
+            "ssm:*",
+            "kms:Decrypt",
+            "cognito-idp:*",
+            "cognito-identity:*",
+            "cognito-sync:*",
+            "s3:*",
+            "ses:*",
+            "sns:*",
+            "sqs:*"
+          ],
+          "Resource": "*"
+        }
+      ],
+      "Version": "2012-10-17"
+    },
+    "resource_type": "iam_policy",
+    "tags": {}
+  },
+  "api_handler-role": {
+    "predefined_policies": [],
+    "principal_service": "lambda",
+    "custom_policies": [
+      "lambda-execution-policy"
+    ],
+    "resource_type": "iam_role"
+  },
+  "${pool_name}": {
+    "resource_type": "cognito_idp",
+    "password_policy": {
+      "minimum_length": 8,
+      "require_uppercase": true,
+      "require_symbols": true,
+      "require_lowercase": true,
+      "require_numbers": true
+    },
+    "auto_verified_attributes": [
+      "email"
+    ],
+    "sms_configuration": {},
+    "username_attributes": [
+      "email"
+    ],
+    "schema": [],
+    "client": {
+      "client_name": "car-rental-client",
+      "generate_secret": false,
+      "explicit_auth_flows": [
+        "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+        "ALLOW_CUSTOM_AUTH",
+        "ALLOW_USER_SRP_AUTH",
+        "ALLOW_REFRESH_TOKEN_AUTH"
+      ]
+    }
+  },
+  "car-rental-users-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "userId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "userId",
+        "type": "S"
+      },
+      {
+        "name": "email",
+        "type": "S"
+      },
+      {
+        "name": "firstName",
+        "type": "S"
+      },
+      {
+        "name": "lastName",
+        "type": "S"
+      },
+      {
+        "name": "password",
+        "type": "S"
+      },
+      {
+        "name": "role",
+        "type": "S"
+      },
+      {
+        "name": "imageUrl",
+        "type": "S"
+      },
+      {
+        "name": "phoneNumber",
+        "type": "S"
+      },
+      {
+        "name": "street",
+        "type": "S"
+      },
+      {
+        "name": "city",
+        "type": "S"
+      },
+      {
+        "name": "country",
+        "type": "S"
+      },
+      {
+        "name": "postalCode",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "email-index",
+        "index_key_name": "email",
+        "index_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "role-index",
+        "index_key_name": "role",
+        "index_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-cars-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "carId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "carId",
+        "type": "S"
+      },
+      {
+        "name": "model",
+        "type": "S"
+      },
+      {
+        "name": "brand",
+        "type": "S"
+      },
+      {
+        "name": "year",
+        "type": "N"
+      },
+      {
+        "name": "category",
+        "type": "S"
+      },
+      {
+        "name": "gearBoxType",
+        "type": "S"
+      },
+      {
+        "name": "fuelType",
+        "type": "S"
+      },
+      {
+        "name": "engineCapacity",
+        "type": "S"
+      },
+      {
+        "name": "fuelConsumption",
+        "type": "S"
+      },
+      {
+        "name": "passengerCapacity",
+        "type": "S"
+      },
+      {
+        "name": "climateControlOption",
+        "type": "S"
+      },
+      {
+        "name": "status",
+        "type": "S"
+      },
+      {
+        "name": "pricePerDay",
+        "type": "N"
+      },
+      {
+        "name": "locationId",
+        "type": "S"
+      },
+      {
+        "name": "images",
+        "type": "L"
+      },
+      {
+        "name": "carRating",
+        "type": "N"
+      },
+      {
+        "name": "serviceRating",
+        "type": "N"
+      },
+      {
+        "name": "carNumber",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "location-index",
+        "index_key_name": "locationId",
+        "index_key_type": "S",
+        "index_sort_key_name": "status",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "category-index",
+        "index_key_name": "category",
+        "index_key_type": "S",
+        "index_sort_key_name": "pricePerDay",
+        "index_sort_key_type": "N",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "status-index",
+        "index_key_name": "status",
+        "index_key_type": "S",
+        "index_sort_key_name": "pricePerDay",
+        "index_sort_key_type": "N",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-bookings-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "bookingId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "bookingId",
+        "type": "S"
+      },
+      {
+        "name": "carId",
+        "type": "S"
+      },
+      {
+        "name": "clientId",
+        "type": "S"
+      },
+      {
+        "name": "supportAgentId",
+        "type": "S"
+      },
+      {
+        "name": "pickupLocationId",
+        "type": "S"
+      },
+      {
+        "name": "dropOffLocationId",
+        "type": "S"
+      },
+      {
+        "name": "pickupDateTime",
+        "type": "S"
+      },
+      {
+        "name": "dropOffDateTime",
+        "type": "S"
+      },
+      {
+        "name": "bookingStatus",
+        "type": "S"
+      },
+      {
+        "name": "bookingNumber",
+        "type": "S"
+      },
+      {
+        "name": "madeBy",
+        "type": "S"
+      },
+      {
+        "name": "carMillageStart",
+        "type": "N"
+      },
+      {
+        "name": "carMillageEnd",
+        "type": "N"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "client-index",
+        "index_key_name": "clientId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "car-index",
+        "index_key_name": "carId",
+        "index_key_type": "S",
+        "index_sort_key_name": "pickupDateTime",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "support-agent-index",
+        "index_key_name": "supportAgentId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "location-bookings-index",
+        "index_key_name": "pickupLocationId",
+        "index_key_type": "S",
+        "index_sort_key_name": "pickupDateTime",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-feedbacks-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "feedbackId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "feedbackId",
+        "type": "S"
+      },
+      {
+        "name": "bookingId",
+        "type": "S"
+      },
+      {
+        "name": "carId",
+        "type": "S"
+      },
+      {
+        "name": "clientId",
+        "type": "S"
+      },
+      {
+        "name": "rating",
+        "type": "N"
+      },
+      {
+        "name": "feedbackText",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "car-feedback-index",
+        "index_key_name": "carId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "client-feedback-index",
+        "index_key_name": "clientId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "recent-feedback-index",
+        "index_key_name": "feedbackId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-locations-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "locationId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "locationId",
+        "type": "S"
+      },
+      {
+        "name": "locationName",
+        "type": "S"
+      },
+      {
+        "name": "locationAddress",
+        "type": "S"
+      },
+      {
+        "name": "locationImageUrl",
+        "type": "S"
+      },
+      {
+        "name": "city",
+        "type": "S"
+      },
+      {
+        "name": "country",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "city-index",
+        "index_key_name": "city",
+        "index_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-reports-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "reportId",
+    "hash_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "reportId",
+        "type": "S"
+      },
+      {
+        "name": "bookingId",
+        "type": "S"
+      },
+      {
+        "name": "carId",
+        "type": "S"
+      },
+      {
+        "name": "clientId",
+        "type": "S"
+      },
+      {
+        "name": "supportAgentId",
+        "type": "S"
+      },
+      {
+        "name": "bookingPeriod",
+        "type": "S"
+      },
+      {
+        "name": "carMillageStart",
+        "type": "N"
+      },
+      {
+        "name": "carMillageEnd",
+        "type": "N"
+      },
+      {
+        "name": "carServiceRating",
+        "type": "N"
+      },
+      {
+        "name": "exportUrl",
+        "type": "S"
+      },
+      {
+        "name": "dateFrom",
+        "type": "S"
+      },
+      {
+        "name": "dateTo",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ],
+    "global_indexes": [
+      {
+        "name": "booking-report-index",
+        "index_key_name": "bookingId",
+        "index_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "car-report-index",
+        "index_key_name": "carId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "support-agent-report-index",
+        "index_key_name": "supportAgentId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "client-report-index",
+        "index_key_name": "clientId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      },
+      {
+        "name": "date-range-report-index",
+        "index_key_name": "reportId",
+        "index_key_type": "S",
+        "index_sort_key_name": "createdAt",
+        "index_sort_key_type": "S",
+        "read_capacity": 5,
+        "write_capacity": 5
+      }
+    ]
+  },
+  "car-rental-content-table": {
+    "resource_type": "dynamodb_table",
+    "hash_key_name": "contentType",
+    "hash_key_type": "S",
+    "sort_key_name": "contentId",
+    "sort_key_type": "S",
+    "read_capacity": 5,
+    "write_capacity": 5,
+    "attributes": [
+      {
+        "name": "contentType",
+        "type": "S"
+      },
+      {
+        "name": "contentId",
+        "type": "S"
+      },
+      {
+        "name": "title",
+        "type": "S"
+      },
+      {
+        "name": "description",
+        "type": "S"
+      },
+      {
+        "name": "numericValue",
+        "type": "S"
+      },
+      {
+        "name": "question",
+        "type": "S"
+      },
+      {
+        "name": "answer",
+        "type": "S"
+      },
+      {
+        "name": "createdAt",
+        "type": "S"
+      },
+      {
+        "name": "updatedAt",
+        "type": "S"
+      }
+    ]
+  },
+  "car-rental-api-gateway": {
+    "resource_type": "api_gateway",
+    "deploy_stage": "api",
+    "authorizers": {
+      "cognito-authorizer": {
+        "type": "COGNITO_USER_POOLS",
+        "identity_source": "method.request.header.Authorization",
+        "user_pools": [
+          "${pool_name}"
+        ],
+        "ttl": 300
+      }
+    },
+    "resources": {
+      "/auth/sign-in": {
+        "enable_cors": true,
+        "POST": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/auth/sign-up": {
+        "enable_cors": true,
+        "POST": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/bookings": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        },
+        "POST": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/bookings/{userId}": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/cars": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/cars/{carId}": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/cars/{carId}/booked-days": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/cars/{carId}/client-review": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/cars/popular": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/feedbacks": {
+        "enable_cors": true,
+        "POST": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/feedbacks/recent": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/home/about-us": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/home/faq": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/home/locations": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/reports": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/reports/{extension}": {
+        "enable_cors": true,
+        "POST": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/users/{id}/change-password": {
+        "enable_cors": true,
+        "PUT": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/users/{id}/personal-info": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        },
+        "PUT": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/users/agents": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      },
+      "/users/clients": {
+        "enable_cors": true,
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "cognito-authorizer",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        }
+      }
+    }
+  },
+  "Reports_Sender-role": {
+    "predefined_policies": [
+      "AmazonDynamoDBReadOnlyAccess",
+      "AmazonSESFullAccess"
+    ],
+    "principal_service": "lambda",
+    "custom_policies": [
+      "lambda-execution-policy"
+    ],
+    "resource_type": "iam_role"
+  },
+  "weekly_event_rule": {
+    "resource_type": "cloudwatch_rule",
+    "rule_type": "schedule",
+    "expression": "rate(1 week)",
+    "targets": [
+      {
+        "target_id": "ReportsSenderTarget",
+        "arn": "${Reports_Sender_lambda_arn}"
+      }
+    ]
+  }
+}
