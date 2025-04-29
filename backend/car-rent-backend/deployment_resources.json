@@ -35,7 +35,7 @@
     ],
     "resource_type": "iam_role"
   },
-  "${pool_name}": {
+  "car-rental-user-pool": {
     "resource_type": "cognito_idp",
     "password_policy": {
       "minimum_length": 8,
@@ -71,7 +71,7 @@
         "type": "COGNITO_USER_POOLS",
         "identity_source": "method.request.header.Authorization",
         "user_pools": [
-          "${pool_name}"
+          "car-rental-user-pool"
         ],
         "ttl": 300
       }
@@ -417,7 +417,7 @@
   "weekly_event_rule": {
     "resource_type": "cloudwatch_rule",
     "rule_type": "schedule",
-    "expression": "rate(1 week)",
+    "expression": "rate(7 days)",
     "targets": [
       {
         "target_id": "ReportsSenderTarget",
