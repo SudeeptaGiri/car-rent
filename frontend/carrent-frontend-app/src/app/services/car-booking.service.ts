@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, map } from 'rxjs';
 import { Booking, BookingParams, CarDetails, UserInfo, LocationInfo } from '../models/booking.model';
 import { BookingService } from './booking.service';
 
@@ -39,7 +39,12 @@ export class CarBookingService {
     this.saveBookings();
     // In a real app, you would make an HTTP request here
     // For now, we'll simulate a successful response
-    return this.bookingService.addBooking(booking);
+    return this.bookingService.addBooking(booking).pipe(
+      map(savedBooking => ({
+        success: true,
+        booking: savedBooking
+      }))
+    );
   }
 
   getBookings(): Booking[] {
