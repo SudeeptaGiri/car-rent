@@ -1,7 +1,3 @@
-/* date-range-picker.component.css */
-/* .validation.text-red-500 {
-  color: #ef4444;
-}
 
 .text-sm {
   font-size: 0.875rem;
@@ -10,7 +6,7 @@
 
 .mt-2 {
   margin-top: 0.5rem;
-} */
+} 
 @media (max-width: 640px) {
     .calendar-popup {
       position: fixed;

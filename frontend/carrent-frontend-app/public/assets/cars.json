@@ -48,22 +48,27 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "10.5 L/100km",
-        "features": ["Sports Mode", "GPS", "Bluetooth", "Heated Seats"]
+        "features": [
+          "Sports Mode",
+          "GPS",
+          "Bluetooth",
+          "Heated Seats"
+        ]
       },
       "bookedDates": [
         {
-          "startDate": "2025-04-21",
+          "startDate": "2025-05-21",
           "startTime": "10:00",
-          "endDate": "2025-04-24",
+          "endDate": "2025-05-24",
           "endTime": "16:00",
           "bookingId": "booking123",
           "userId": "user456",
           "status": "confirmed"
         },
         {
-          "startDate": "2024-02-20",
+          "startDate": "2025-04-20",
           "startTime": "09:00",
-          "endDate": "2024-02-25",
+          "endDate": "2025-04-25",
           "endTime": "14:00",
           "bookingId": "booking124",
           "userId": "user789",
@@ -145,13 +150,18 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "11.2 L/100km",
-        "features": ["Sports Chrono Package", "Adaptive Suspension", "Premium Sound System", "Lane Assist"]
+        "features": [
+          "Sports Chrono Package",
+          "Adaptive Suspension",
+          "Premium Sound System",
+          "Lane Assist"
+        ]
       },
       "bookedDates": [
         {
-          "startDate": "2024-03-15",
+          "startDate": "2025-05-15",
           "startTime": "08:00",
-          "endDate": "2024-03-18",
+          "endDate": "2025-05-18",
           "endTime": "20:00",
           "bookingId": "booking125",
           "userId": "user567",
@@ -241,13 +251,19 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "18 kWh/100km",
-        "features": ["Autopilot", "Ludicrous Mode", "17-inch Display", "Over-the-air Updates", "Supercharging"]
+        "features": [
+          "Autopilot",
+          "Ludicrous Mode",
+          "17-inch Display",
+          "Over-the-air Updates",
+          "Supercharging"
+        ]
       },
       "bookedDates": [
         {
-          "startDate": "2024-04-05",
+          "startDate": "2025-04-05",
           "startTime": "09:00",
-          "endDate": "2024-04-10",
+          "endDate": "2025-05-10",
           "endTime": "18:00",
           "bookingId": "booking126",
           "userId": "user678",
@@ -292,94 +308,6 @@
     },
     {
       "id": "4",
-      "brand": "Range Rover",
-      "model": "Sport",
-      "year": 2023,
-      "location": "Raidurg, Hyderabad",
-      "rating": 4.6,
-      "price": 750,
-      "category": "Off-road car",
-      "status": "Not Available",
-      "images": [
-        {
-          "id": "1",
-          "url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1",
-          "isPrimary": true
-        },
-        {
-          "id": "2",
-          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
-          "isPrimary": false
-        },
-        {
-          "id": "3",
-          "url": "https://images.unsplash.com/photo-1546614042-7df3c24c9e5d",
-          "isPrimary": false
-        },
-        {
-          "id": "4",
-          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
-          "isPrimary": false
-        },
-        {
-          "id": "5",
-          "url": "https://images.unsplash.com/photo-1518987048-93e29699e79a",
-          "isPrimary": false
-        },
-        {
-          "id": "6",
-          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
-          "isPrimary": false
-        }
-      ],
-      "specifications": {
-        "transmission": "Automatic",
-        "engine": "Gasoline",
-        "fuelType": "GASOLINE",
-        "seats": 7,
-        "fuelConsumption": "9.2 L/100km",
-        "features": ["All-Terrain Progress Control", "Meridian Sound System", "Panoramic Roof", "Heated Seats", "360° Camera"]
-      },
-      "bookedDates": [
-        {
-          "startDate": "2024-02-10",
-          "startTime": "14:00",
-          "endDate": "2024-02-20",
-          "endTime": "10:00",
-          "bookingId": "booking128",
-          "userId": "user890",
-          "status": "confirmed"
-        }
-      ],
-      "reviews": {
-        "content": [
-          {
-            "id": "1",
-            "userName": "James Wilson",
-            "rating": 4.8,
-            "comment": "Luxury and capability in one package. Perfect for our family trip to the countryside.",
-            "date": "2023-11-22",
-            "userAvatar": "https://randomuser.me/api/portraits/men/73.jpg"
-          },
-          {
-            "id": "2",
-            "userName": "Olivia Taylor",
-            "rating": 4.5,
-            "comment": "Smooth ride and excellent off-road capabilities. Fuel economy could be better though.",
-            "date": "2023-10-15",
-            "userAvatar": "https://randomuser.me/api/portraits/women/28.jpg"
-          }
-        ]
-      },
-      "popularity": {
-        "rentCount": 120,
-        "viewCount": 280,
-        "favoriteCount": 75,
-        "isPopular": true
-      }
-    },
-    {
-      "id": "5",
       "brand": "BMW",
       "model": "M4",
       "year": 2024,
@@ -426,7 +354,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "10.8 L/100km",
-        "features": ["M Drive", "Carbon Fiber Trim", "Harman Kardon Audio", "Head-Up Display", "Sport Seats"]
+        "features": [
+          "M Drive",
+          "Carbon Fiber Trim",
+          "Harman Kardon Audio",
+          "Head-Up Display",
+          "Sport Seats"
+        ]
       },
       "bookedDates": [
         {
@@ -467,6 +401,100 @@
       }
     },
     {
+      "id": "5",
+      "brand": "Range Rover",
+      "model": "Sport",
+      "year": 2023,
+      "location": "Raidurg, Hyderabad",
+      "rating": 4.6,
+      "price": 750,
+      "category": "Off-road car",
+      "status": "Not Available",
+      "images": [
+        {
+          "id": "1",
+          "url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1",
+          "isPrimary": true
+        },
+        {
+          "id": "2",
+          "url": "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+          "isPrimary": false
+        },
+        {
+          "id": "3",
+          "url": "https://images.unsplash.com/photo-1546614042-7df3c24c9e5d",
+          "isPrimary": false
+        },
+        {
+          "id": "4",
+          "url": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+          "isPrimary": false
+        },
+        {
+          "id": "5",
+          "url": "https://images.unsplash.com/photo-1518987048-93e29699e79a",
+          "isPrimary": false
+        },
+        {
+          "id": "6",
+          "url": "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+          "isPrimary": false
+        }
+      ],
+      "specifications": {
+        "transmission": "Automatic",
+        "engine": "Gasoline",
+        "fuelType": "GASOLINE",
+        "seats": 7,
+        "fuelConsumption": "9.2 L/100km",
+        "features": [
+          "All-Terrain Progress Control",
+          "Meridian Sound System",
+          "Panoramic Roof",
+          "Heated Seats",
+          "360° Camera"
+        ]
+      },
+      "bookedDates": [
+        {
+          "startDate": "2024-02-10",
+          "startTime": "14:00",
+          "endDate": "2024-02-20",
+          "endTime": "10:00",
+          "bookingId": "booking128",
+          "userId": "user890",
+          "status": "confirmed"
+        }
+      ],
+      "reviews": {
+        "content": [
+          {
+            "id": "1",
+            "userName": "James Wilson",
+            "rating": 4.8,
+            "comment": "Luxury and capability in one package. Perfect for our family trip to the countryside.",
+            "date": "2023-11-22",
+            "userAvatar": "https://randomuser.me/api/portraits/men/73.jpg"
+          },
+          {
+            "id": "2",
+            "userName": "Olivia Taylor",
+            "rating": 4.5,
+            "comment": "Smooth ride and excellent off-road capabilities. Fuel economy could be better though.",
+            "date": "2023-10-15",
+            "userAvatar": "https://randomuser.me/api/portraits/women/28.jpg"
+          }
+        ]
+      },
+      "popularity": {
+        "rentCount": 120,
+        "viewCount": 280,
+        "favoriteCount": 75,
+        "isPopular": true
+      }
+    },
+    {
       "id": "6",
       "brand": "Mercedes-Benz",
       "model": "S-Class",
@@ -475,7 +503,7 @@
       "rating": 4.9,
       "price": 920,
       "category": "Luxury car",
-      "status": "Available",
+      "status": "Not Available",
       "images": [
         {
           "id": "1",
@@ -514,7 +542,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "8.5 L/100km",
-        "features": ["MBUX", "Burmester 3D Sound", "Massage Seats", "Augmented Reality Navigation", "Ambient Lighting"]
+        "features": [
+          "MBUX",
+          "Burmester 3D Sound",
+          "Massage Seats",
+          "Augmented Reality Navigation",
+          "Ambient Lighting"
+        ]
       },
       "bookedDates": [
         {
@@ -610,7 +644,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "13.1 L/100km",
-        "features": ["Quattro AWD", "Carbon Ceramic Brakes", "Virtual Cockpit", "Bang & Olufsen Sound", "Performance Mode"]
+        "features": [
+          "Quattro AWD",
+          "Carbon Ceramic Brakes",
+          "Virtual Cockpit",
+          "Bang & Olufsen Sound",
+          "Performance Mode"
+        ]
       },
       "bookedDates": [
         {
@@ -698,7 +738,13 @@
         "fuelType": "GASOLINE",
         "seats": 7,
         "fuelConsumption": "12.5 L/100km",
-        "features": ["Crawl Control", "Multi-Terrain Select", "Kinetic Dynamic Suspension", "Satellite Navigation", "Cooled Box"]
+        "features": [
+          "Crawl Control",
+          "Multi-Terrain Select",
+          "Kinetic Dynamic Suspension",
+          "Satellite Navigation",
+          "Cooled Box"
+        ]
       },
       "bookedDates": [
         {
@@ -786,7 +832,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "11.6 L/100km",
-        "features": ["Manettino Dial", "Carbon Fiber Interior", "JBL Professional Sound", "Launch Control", "Adaptive Headlights"]
+        "features": [
+          "Manettino Dial",
+          "Carbon Fiber Interior",
+          "JBL Professional Sound",
+          "Launch Control",
+          "Adaptive Headlights"
+        ]
       },
       "bookedDates": [
         {
@@ -874,7 +926,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "14.5 L/100km",
-        "features": ["ANIMA Selector", "Carbon Ceramic Brakes", "Lifting System", "Sensonum Audio", "Performance Data Recorder"]
+        "features": [
+          "ANIMA Selector",
+          "Carbon Ceramic Brakes",
+          "Lifting System",
+          "Sensonum Audio",
+          "Performance Data Recorder"
+        ]
       },
       "bookedDates": [
         {
@@ -962,7 +1020,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "12.2 L/100km",
-        "features": ["Rotating Display", "Naim Audio", "Massage Seats", "Air Suspension", "All-Wheel Drive"]
+        "features": [
+          "Rotating Display",
+          "Naim Audio",
+          "Massage Seats",
+          "Air Suspension",
+          "All-Wheel Drive"
+        ]
       },
       "bookedDates": [
         {
@@ -1050,7 +1114,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "10.9 L/100km",
-        "features": ["Active Sports Exhaust", "Meridian Sound System", "Performance Seats", "Adaptive Dynamics", "Switchable Active Exhaust"]
+        "features": [
+          "Active Sports Exhaust",
+          "Meridian Sound System",
+          "Performance Seats",
+          "Adaptive Dynamics",
+          "Switchable Active Exhaust"
+        ]
       },
       "bookedDates": [
         {
@@ -1138,7 +1208,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "11.4 L/100km",
-        "features": ["Adaptive Damping", "Carbon Fiber Exterior", "Bang & Olufsen Audio", "360-Degree Camera", "Sports Plus Seats"]
+        "features": [
+          "Adaptive Damping",
+          "Carbon Fiber Exterior",
+          "Bang & Olufsen Audio",
+          "360-Degree Camera",
+          "Sports Plus Seats"
+        ]
       },
       "bookedDates": [
         {
@@ -1226,7 +1302,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "15.0 L/100km",
-        "features": ["Starlight Headliner", "Bespoke Audio", "Rear Theatre Configuration", "Champagne Cooler", "Umbrella in Door"]
+        "features": [
+          "Starlight Headliner",
+          "Bespoke Audio",
+          "Rear Theatre Configuration",
+          "Champagne Cooler",
+          "Umbrella in Door"
+        ]
       },
       "bookedDates": [
         {
@@ -1314,7 +1396,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "12.2 L/100km",
-        "features": ["Variable Drift Control", "Track Telemetry", "Carbon Fiber Monocage", "Folding Driver Display", "Bowers & Wilkins Audio"]
+        "features": [
+          "Variable Drift Control",
+          "Track Telemetry",
+          "Carbon Fiber Monocage",
+          "Folding Driver Display",
+          "Bowers & Wilkins Audio"
+        ]
       },
       "bookedDates": [
         {
@@ -1402,7 +1490,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "9.7 L/100km",
-        "features": ["Mark Levinson Audio", "Head-Up Display", "Active Noise Control", "Climate Concierge", "Dynamic Handling"]
+        "features": [
+          "Mark Levinson Audio",
+          "Head-Up Display",
+          "Active Noise Control",
+          "Climate Concierge",
+          "Dynamic Handling"
+        ]
       },
       "bookedDates": [
         {
@@ -1490,7 +1584,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "11.8 L/100km",
-        "features": ["Sonus Faber Audio", "Sport Skyhook Suspension", "Carbon Fiber Interior", "Trident Headrests", "Corsa Driving Mode"]
+        "features": [
+          "Sonus Faber Audio",
+          "Sport Skyhook Suspension",
+          "Carbon Fiber Interior",
+          "Trident Headrests",
+          "Corsa Driving Mode"
+        ]
       },
       "bookedDates": [
         {
@@ -1578,7 +1678,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "12.0 L/100km",
-        "features": ["Performance Data Recorder", "Magnetic Ride Control", "Head-Up Display", "Bose Audio", "Z51 Performance Package"]
+        "features": [
+          "Performance Data Recorder",
+          "Magnetic Ride Control",
+          "Head-Up Display",
+          "Bose Audio",
+          "Z51 Performance Package"
+        ]
       },
       "bookedDates": [
         {
@@ -1666,7 +1772,13 @@
         "fuelType": "GASOLINE",
         "seats": 7,
         "fuelConsumption": "14.5 L/100km",
-        "features": ["Super Cruise", "AKG Studio Reference Audio", "Night Vision", "Rear Seat Entertainment", "Magnetic Ride Control"]
+        "features": [
+          "Super Cruise",
+          "AKG Studio Reference Audio",
+          "Night Vision",
+          "Rear Seat Entertainment",
+          "Magnetic Ride Control"
+        ]
       },
       "bookedDates": [
         {
@@ -1754,7 +1866,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "8.2 L/100km",
-        "features": ["DNA Pro Drive Mode", "Carbon Fiber Components", "Harman Kardon Audio", "Sparco Racing Seats", "Torque Vectoring"]
+        "features": [
+          "DNA Pro Drive Mode",
+          "Carbon Fiber Components",
+          "Harman Kardon Audio",
+          "Sparco Racing Seats",
+          "Torque Vectoring"
+        ]
       },
       "bookedDates": [
         {
@@ -1842,7 +1960,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "16.8 L/100km",
-        "features": ["SRT Drive Modes", "Brembo Brakes", "Harman Kardon Audio", "Launch Control", "Line Lock"]
+        "features": [
+          "SRT Drive Modes",
+          "Brembo Brakes",
+          "Harman Kardon Audio",
+          "Launch Control",
+          "Line Lock"
+        ]
       },
       "bookedDates": [
         {
@@ -1930,7 +2054,13 @@
         "fuelType": "HYBRID",
         "seats": 7,
         "fuelConsumption": "2.5 L/100km",
-        "features": ["Pilot Assist", "Bowers & Wilkins Audio", "Air Suspension", "360° Camera", "Head-Up Display"]
+        "features": [
+          "Pilot Assist",
+          "Bowers & Wilkins Audio",
+          "Air Suspension",
+          "360° Camera",
+          "Head-Up Display"
+        ]
       },
       "bookedDates": [
         {
@@ -2018,7 +2148,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "21 kWh/100km",
-        "features": ["Quad-Motor AWD", "Gear Tunnel", "Air Compressor", "Camp Kitchen", "Tank Turn"]
+        "features": [
+          "Quad-Motor AWD",
+          "Gear Tunnel",
+          "Air Compressor",
+          "Camp Kitchen",
+          "Tank Turn"
+        ]
       },
       "bookedDates": [
         {
@@ -2106,7 +2242,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "16 kWh/100km",
-        "features": ["DreamDrive Pro", "Glass Canopy Roof", "34-inch Curved Display", "Surreal Sound", "Fast Charging"]
+        "features": [
+          "DreamDrive Pro",
+          "Glass Canopy Roof",
+          "34-inch Curved Display",
+          "Surreal Sound",
+          "Fast Charging"
+        ]
       },
       "bookedDates": [
         {
@@ -2194,7 +2336,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "6.5 L/100km",
-        "features": ["Android Auto", "Apple CarPlay", "Honda Sensing", "Backup Camera", "Bluetooth"]
+        "features": [
+          "Android Auto",
+          "Apple CarPlay",
+          "Honda Sensing",
+          "Backup Camera",
+          "Bluetooth"
+        ]
       },
       "bookedDates": [
         {
@@ -2282,7 +2430,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "5.8 L/100km",
-        "features": ["Backup Camera", "Bluetooth", "Cruise Control", "Lane Departure Warning", "Smart Key"]
+        "features": [
+          "Backup Camera",
+          "Bluetooth",
+          "Cruise Control",
+          "Lane Departure Warning",
+          "Smart Key"
+        ]
       },
       "bookedDates": [
         {
@@ -2370,7 +2524,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "5.5 L/100km",
-        "features": ["Touchscreen Infotainment", "Apple CarPlay", "Android Auto", "Rear AC Vents", "Wireless Charging"]
+        "features": [
+          "Touchscreen Infotainment",
+          "Apple CarPlay",
+          "Android Auto",
+          "Rear AC Vents",
+          "Wireless Charging"
+        ]
       },
       "bookedDates": [
         {
@@ -2458,7 +2618,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "5.2 L/100km",
-        "features": ["Keyless Entry", "Push Button Start", "Touchscreen Display", "Rear Parking Sensors", "Auto Climate Control"]
+        "features": [
+          "Keyless Entry",
+          "Push Button Start",
+          "Touchscreen Display",
+          "Rear Parking Sensors",
+          "Auto Climate Control"
+        ]
       },
       "bookedDates": [
         {
@@ -2546,7 +2712,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "17 kWh/100km",
-        "features": ["Dual Panoramic Displays", "Vehicle-to-Load Function", "Augmented Reality HUD", "Remote Smart Parking", "Fast Charging"]
+        "features": [
+          "Dual Panoramic Displays",
+          "Vehicle-to-Load Function",
+          "Augmented Reality HUD",
+          "Remote Smart Parking",
+          "Fast Charging"
+        ]
       },
       "bookedDates": [
         {
@@ -2634,7 +2806,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "15.5 kWh/100km",
-        "features": ["Heat Pump", "Bluelink Connected Car Tech", "Heated Steering Wheel", "Ventilated Seats", "Smart Regenerative Braking"]
+        "features": [
+          "Heat Pump",
+          "Bluelink Connected Car Tech",
+          "Heated Steering Wheel",
+          "Ventilated Seats",
+          "Smart Regenerative Braking"
+        ]
       },
       "bookedDates": [
         {
@@ -2722,7 +2900,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "16 kWh/100km",
-        "features": ["ZConnect App", "Auto Headlamps", "Rain Sensing Wipers", "Sunroof", "iTPMS"]
+        "features": [
+          "ZConnect App",
+          "Auto Headlamps",
+          "Rain Sensing Wipers",
+          "Sunroof",
+          "iTPMS"
+        ]
       },
       "bookedDates": [
         {
@@ -2810,7 +2994,13 @@
         "fuelType": "HYBRID",
         "seats": 5,
         "fuelConsumption": "4.5 L/100km",
-        "features": ["Leather Seats", "JBL Audio", "Wireless Charging", "Head-Up Display", "Toyota Safety Sense"]
+        "features": [
+          "Leather Seats",
+          "JBL Audio",
+          "Wireless Charging",
+          "Head-Up Display",
+          "Toyota Safety Sense"
+        ]
       },
       "bookedDates": [
         {
@@ -2898,7 +3088,13 @@
         "fuelType": "HYBRID",
         "seats": 5,
         "fuelConsumption": "4.3 L/100km",
-        "features": ["Honda Sensing", "Apple CarPlay", "Android Auto", "Leather Interior", "Adaptive Cruise Control"]
+        "features": [
+          "Honda Sensing",
+          "Apple CarPlay",
+          "Android Auto",
+          "Leather Interior",
+          "Adaptive Cruise Control"
+        ]
       },
       "bookedDates": [
         {
@@ -2986,7 +3182,13 @@
         "fuelType": "HYBRID",
         "seats": 5,
         "fuelConsumption": "4.6 L/100km",
-        "features": ["Mark Levinson Audio", "Semi-Aniline Leather", "Panoramic View Monitor", "Lexus Safety System+", "Climate Concierge"]
+        "features": [
+          "Mark Levinson Audio",
+          "Semi-Aniline Leather",
+          "Panoramic View Monitor",
+          "Lexus Safety System+",
+          "Climate Concierge"
+        ]
       },
       "bookedDates": [
         {
@@ -3074,7 +3276,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "9.8 L/100km",
-        "features": ["4x4 Drivetrain", "Adventure Statistics Display", "Roof-Mounted Speakers", "Washable Interior", "Cruise Control"]
+        "features": [
+          "4x4 Drivetrain",
+          "Adventure Statistics Display",
+          "Roof-Mounted Speakers",
+          "Washable Interior",
+          "Cruise Control"
+        ]
       },
       "bookedDates": [
         {
@@ -3162,7 +3370,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "10.2 L/100km",
-        "features": ["Snorkel", "Differential Locks", "All-Wheel Drive", "High Ground Clearance", "All-Terrain Tires"]
+        "features": [
+          "Snorkel",
+          "Differential Locks",
+          "All-Wheel Drive",
+          "High Ground Clearance",
+          "All-Terrain Tires"
+        ]
       },
       "bookedDates": [
         {
@@ -3250,7 +3464,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "11.2 L/100km",
-        "features": ["Removable Top", "Rock-Trac 4x4", "Sway Bar Disconnect", "Trail Rail System", "Alpine Premium Audio"]
+        "features": [
+          "Removable Top",
+          "Rock-Trac 4x4",
+          "Sway Bar Disconnect",
+          "Trail Rail System",
+          "Alpine Premium Audio"
+        ]
       },
       "bookedDates": [
         {
@@ -3338,7 +3558,13 @@
         "fuelType": "GASOLINE",
         "seats": 4,
         "fuelConsumption": "12.8 L/100km",
-        "features": ["Track Apps", "Line Lock", "Launch Control", "Active Valve Exhaust", "SYNC 3"]
+        "features": [
+          "Track Apps",
+          "Line Lock",
+          "Launch Control",
+          "Active Valve Exhaust",
+          "SYNC 3"
+        ]
       },
       "bookedDates": [
         {
@@ -3426,7 +3652,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "10.4 L/100km",
-        "features": ["Symmetrical AWD", "Driver-Controlled Center Differential", "Recaro Seats", "Brembo Brakes", "SI-Drive"]
+        "features": [
+          "Symmetrical AWD",
+          "Driver-Controlled Center Differential",
+          "Recaro Seats",
+          "Brembo Brakes",
+          "SI-Drive"
+        ]
       },
       "bookedDates": [
         {
@@ -3514,7 +3746,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "7.8 L/100km",
-        "features": ["Dynamic Chassis Control", "Digital Cockpit Pro", "Tartan Cloth Seats", "Adaptive Cruise Control", "Harman Kardon Sound"]
+        "features": [
+          "Dynamic Chassis Control",
+          "Digital Cockpit Pro",
+          "Tartan Cloth Seats",
+          "Adaptive Cruise Control",
+          "Harman Kardon Sound"
+        ]
       },
       "bookedDates": [
         {
@@ -3602,7 +3840,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "16.5 kWh/100km",
-        "features": ["Hyperscreen", "MBUX", "Energizing Comfort", "Burmester 3D Sound", "Augmented Reality Navigation"]
+        "features": [
+          "Hyperscreen",
+          "MBUX",
+          "Energizing Comfort",
+          "Burmester 3D Sound",
+          "Augmented Reality Navigation"
+        ]
       },
       "bookedDates": [
         {
@@ -3690,7 +3934,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "19.2 kWh/100km",
-        "features": ["Theater Screen", "Panoramic Sky Lounge", "Executive Lounge", "Bowers & Wilkins Diamond Surround", "Illuminated Grille"]
+        "features": [
+          "Theater Screen",
+          "Panoramic Sky Lounge",
+          "Executive Lounge",
+          "Bowers & Wilkins Diamond Surround",
+          "Illuminated Grille"
+        ]
       },
       "bookedDates": [
         {
@@ -3778,7 +4028,13 @@
         "fuelType": "ELECTRIC",
         "seats": 4,
         "fuelConsumption": "20.1 kWh/100km",
-        "features": ["Matrix LED Headlights", "Bang & Olufsen 3D Sound", "Adaptive Air Suspension", "Virtual Cockpit Plus", "Head-Up Display"]
+        "features": [
+          "Matrix LED Headlights",
+          "Bang & Olufsen 3D Sound",
+          "Adaptive Air Suspension",
+          "Virtual Cockpit Plus",
+          "Head-Up Display"
+        ]
       },
       "bookedDates": [
         {
@@ -3866,7 +4122,13 @@
         "fuelType": "GASOLINE",
         "seats": 7,
         "fuelConsumption": "10.8 L/100km",
-        "features": ["4x4 with Low Range", "Downhill Assist Control", "JBL Premium Audio", "Leather Seats", "360° Camera"]
+        "features": [
+          "4x4 with Low Range",
+          "Downhill Assist Control",
+          "JBL Premium Audio",
+          "Leather Seats",
+          "360° Camera"
+        ]
       },
       "bookedDates": [
         {
@@ -3954,7 +4216,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "11.5 L/100km",
-        "features": ["G.O.A.T. Modes", "Removable Doors", "Trail Turn Assist", "Trail Maps", "Bash Plates"]
+        "features": [
+          "G.O.A.T. Modes",
+          "Removable Doors",
+          "Trail Turn Assist",
+          "Trail Maps",
+          "Bash Plates"
+        ]
       },
       "bookedDates": [
         {
@@ -4042,7 +4310,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "5.4 L/100km",
-        "features": ["SmartPlay Studio", "Cruise Control", "LED Projector Headlamps", "Auto Climate Control", "Keyless Entry"]
+        "features": [
+          "SmartPlay Studio",
+          "Cruise Control",
+          "LED Projector Headlamps",
+          "Auto Climate Control",
+          "Keyless Entry"
+        ]
       },
       "bookedDates": [
         {
@@ -4130,7 +4404,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "7.0 L/100km",
-        "features": ["Panoramic Sunroof", "Ventilated Seats", "Bose Premium Sound", "BlueLink Connected Car Tech", "Air Purifier"]
+        "features": [
+          "Panoramic Sunroof",
+          "Ventilated Seats",
+          "Bose Premium Sound",
+          "BlueLink Connected Car Tech",
+          "Air Purifier"
+        ]
       },
       "bookedDates": [
         {
@@ -4218,7 +4498,13 @@
         "fuelType": "GASOLINE",
         "seats": 5,
         "fuelConsumption": "6.2 L/100km",
-        "features": ["Virtual Cockpit", "Canton Sound System", "Adaptive Cruise Control", "Park Assist", "Ambient Lighting"]
+        "features": [
+          "Virtual Cockpit",
+          "Canton Sound System",
+          "Adaptive Cruise Control",
+          "Park Assist",
+          "Ambient Lighting"
+        ]
       },
       "bookedDates": [
         {
@@ -4306,7 +4592,13 @@
         "fuelType": "GASOLINE",
         "seats": 2,
         "fuelConsumption": "6.9 L/100km",
-        "features": ["Retractable Hardtop", "Bose Sound System", "Recaro Seats", "Limited Slip Differential", "Bilstein Dampers"]
+        "features": [
+          "Retractable Hardtop",
+          "Bose Sound System",
+          "Recaro Seats",
+          "Limited Slip Differential",
+          "Bilstein Dampers"
+        ]
       },
       "bookedDates": [
         {
@@ -4394,7 +4686,13 @@
         "fuelType": "ELECTRIC",
         "seats": 5,
         "fuelConsumption": "15 kWh/100km",
-        "features": ["ProPILOT Assist", "e-Pedal", "Bose Premium Audio", "Around View Monitor", "NissanConnect EV"]
+        "features": [
+          "ProPILOT Assist",
+          "e-Pedal",
+          "Bose Premium Audio",
+          "Around View Monitor",
+          "NissanConnect EV"
+        ]
       },
       "bookedDates": [
         {

@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged, of, Subject, Subscription } from 'r
 import { catchError, switchMap } from 'rxjs/operators';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { FilterService } from '../../services/filter.service';
-
+import { CarService } from '../../services/car.service';
 
 
 interface LocationSuggestion {
@@ -43,6 +43,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
   maxPrice: number = 2000;
   currentMinPrice: number = 50; // Changed from 52
   currentMaxPrice: number = 2000; // Changed from 400
+
+  //For location buffer
+  isLoadingCurrentPickupLocation = false;
+  isLoadingCurrentDropoffLocation = false;
 
 
   // Track slider state
@@ -105,7 +109,12 @@ export class FilterComponent implements OnInit, AfterViewInit {
     priceMax: 2000
   };
 
-  constructor(private http: HttpClient, private filterService: FilterService) { }
+  constructor(
+    private http: HttpClient,
+    private filterService: FilterService,
+    private carService: CarService  // Add this line
+  ) { }
+
   ngOnInit(): void {
     // Setup search debouncing for pickup location
     this.searchSubscriptions.push(
@@ -131,6 +140,8 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.pickupSuggestions = results;
         this.isLoadingPickupSuggestions = false;
       })
+
+      
     );
 
     // Setup search debouncing for dropoff location
@@ -158,6 +169,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.isLoadingDropoffSuggestions = false;
       })
     );
+
+    this.carService.getAllCars().subscribe(response => {
+      this.filterService.analyzeEngineTypes(response.content); // Use the content property which contains the car array
+    });
   }
 
   ngAfterViewInit(): void {
@@ -362,6 +377,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   useCurrentLocation(forPickup: boolean): void {
+
+    if (forPickup) {
+      this.isLoadingCurrentPickupLocation = true;
+    } else {
+      this.isLoadingCurrentDropoffLocation = true;
+    }
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -376,18 +398,18 @@ export class FilterComponent implements OnInit, AfterViewInit {
               if (forPickup) {
                 this.selectedPickupLocation = address;
                 this.selectedPickupCoordinates = coords;
-                this.pickupSearchQuery = address;
                 this.showPickupModal = false;
-
+                this.isLoadingCurrentPickupLocation = false; // Reset loading state
+  
                 // Update filter data
                 this.filterData.pickupLocation = address;
                 this.filterData.pickupCoordinates = coords;
               } else {
                 this.selectedDropoffLocation = address;
                 this.selectedDropoffCoordinates = coords;
-                this.dropoffSearchQuery = address;
                 this.showDropoffModal = false;
-
+                this.isLoadingCurrentDropoffLocation = false; // Reset loading state
+  
                 // Update filter data
                 this.filterData.dropoffLocation = address;
                 this.filterData.dropoffCoordinates = coords;
@@ -396,16 +418,31 @@ export class FilterComponent implements OnInit, AfterViewInit {
             (error) => {
               console.error('Error getting address:', error);
               alert('Could not determine your address. Please enter it manually.');
+              if (forPickup) {
+                this.isLoadingCurrentPickupLocation = false;
+              } else {
+                this.isLoadingCurrentDropoffLocation = false;
+              }
             }
           );
         },
         (error) => {
           console.error('Geolocation error:', error);
           alert('Could not access your location. Please check your browser permissions and try again.');
+          if (forPickup) {
+            this.isLoadingCurrentPickupLocation = false;
+          } else {
+            this.isLoadingCurrentDropoffLocation = false;
+          }
         }
       );
     } else {
       alert('Geolocation is not supported by your browser. Please enter your location manually.');
+      if (forPickup) {
+        this.isLoadingCurrentPickupLocation = false;
+      } else {
+        this.isLoadingCurrentDropoffLocation = false;
+      }
     }
   }
 
@@ -425,11 +462,23 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   openLocationModal(forPickup: boolean): void {
     if (forPickup) {
+      // Reset pickup modal state while preserving selected location
       this.showPickupModal = true;
       this.showDropoffModal = false;
+      this.pickupSearchQuery = ''; // Clear search input
+      this.showPickupSuggestions = false; // Hide suggestions
+      this.pickupSuggestions = []; // Clear suggestions
+      this.isLoadingPickupSuggestions = false; // Reset loading state
+      this.isLoadingCurrentPickupLocation = false; // Reset current location loading state
     } else {
+      // Reset dropoff modal state while preserving selected location
       this.showPickupModal = false;
       this.showDropoffModal = true;
+      this.dropoffSearchQuery = ''; // Clear search input
+      this.showDropoffSuggestions = false; // Hide suggestions
+      this.dropoffSuggestions = []; // Clear suggestions
+      this.isLoadingDropoffSuggestions = false; // Reset loading state
+      this.isLoadingCurrentDropoffLocation = false; // Reset current location loading state
     }
   }
 
@@ -623,6 +672,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
   // Form handling methods
   onSelectChange(field: string, event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
+    console.log(`Filter changed: ${field} = ${value}`);
 
     switch (field) {
       case 'pickupDate':
@@ -638,11 +688,13 @@ export class FilterComponent implements OnInit, AfterViewInit {
         this.filterData.gearbox = value;
         break;
       case 'engineType':
+        // Store the exact value without converting to lowercase
         this.filterData.engineType = value;
+        console.log(`Set engine type filter to: ${value}`);
         break;
     }
 
-    this.findCars(); // Call findCars to apply the filter
+ // Call findCars to apply the filter
   }
 
   clearFilters(): void {
@@ -687,19 +739,20 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   findCars(): void {
-    // Make sure all filter values are in the correct case and format
+    // Keep the original case for engineType instead of forcing lowercase
     this.filterData = {
       ...this.filterData,
       priceMin: this.currentMinPrice,
       priceMax: this.currentMaxPrice,
-      carCategory: this.filterData.carCategory.trim(),
-      gearbox: this.filterData.gearbox.trim(),
-      engineType: this.filterData.engineType.toLowerCase(),
+      carCategory: this.filterData.carCategory?.trim() || '',
+      gearbox: this.filterData.gearbox?.trim() || '',
+      engineType: this.filterData.engineType, // Don't modify the case
     };
   
     console.log('Applying filters:', this.filterData);
     this.filterService.updateFilters({ ...this.filterData });
   }
+
   // Add to your component class
   @HostListener('window:resize')
   onResize() {

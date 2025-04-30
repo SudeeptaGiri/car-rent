@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CarDetails } from '../../models/car.interface';
 import { FilterService } from '../../services/filter.service';
 import { FilterData } from '../../models/filter.model';
-import { Subscription ,of  } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 // export enum CarStatus {
@@ -44,7 +44,7 @@ export class CardsComponent implements OnInit {
   activeFilters: FilterData | null = null;
   allCars: CarDetails[] = []; // Store all cars
   filteredCars: CarDetails[] = []; // Store filtered cars
-  
+
   // Pagination properties
   currentPage = 1;
   itemsPerPage = 16; // Show 16 cars per page
@@ -54,21 +54,21 @@ export class CardsComponent implements OnInit {
   Math = Math;
 
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private dialog: MatDialog,
     private filterService: FilterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Set viewAllMode to false initially to show popular cars
     this.viewAllMode = false;
-    
+
     // Subscribe to filter changes
     this.filterSubscription = this.filterService.filters$.subscribe(filters => {
       this.activeFilters = filters;
       this.applyFilters();
     });
-    
+
     // Fetch cars data
     this.fetchCars();
     // this.filterService.filters$.subscribe(filters => {
@@ -111,7 +111,7 @@ export class CardsComponent implements OnInit {
           this.allCars = data.cars;
           this.filteredCars = [...this.allCars]; // Initialize filtered cars with all cars
           this.cars = this.filteredCars;
-          
+
           // Set default display
           if (!this.viewAllMode) {
             // Show top rated cars initially
@@ -124,7 +124,7 @@ export class CardsComponent implements OnInit {
             this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
             this.updateDisplayedCars();
           }
-          
+
           this.loading = false;
         } else {
           console.error('No cars data found');
@@ -135,7 +135,7 @@ export class CardsComponent implements OnInit {
         console.error('Error loading cars:', err);
         this.error = 'Failed to load cars. Please try again later.';
         this.loading = false;
-        
+
         // Fallback data in case of error
         this.provideFallbackData();
       }
@@ -148,81 +148,115 @@ export class CardsComponent implements OnInit {
       console.warn('No cars data to filter');
       return;
     }
-    
+
     console.log('Applying filters:', this.activeFilters);
-    
+
     // Start with all cars
     let filtered = [...this.allCars];
     const initialCount = filtered.length;
-    
+
     // If we have active filters, apply them
     if (this.activeFilters) {
       // Filter by price range with safety checks
       if (this.activeFilters.priceMin !== undefined && this.activeFilters.priceMax !== undefined) {
         console.log(`Filtering by price range: $${this.activeFilters.priceMin} - $${this.activeFilters.priceMax}`);
-        
+
         filtered = filtered.filter(car => {
           if (car.price === undefined || car.price === null) return false;
-          
-          const inPriceRange = car.price >= this.activeFilters!.priceMin && 
-                              car.price <= this.activeFilters!.priceMax;
-          
+
+          const inPriceRange = car.price >= this.activeFilters!.priceMin &&
+            car.price <= this.activeFilters!.priceMax;
+
           if (!inPriceRange) {
             console.log(`Car excluded by price: ${car.brand} ${car.model} - $${car.price}`);
           }
-          
+
           return inPriceRange;
         });
-        
+
         console.log(`After price filter: ${filtered.length} cars remaining`);
       }
-      
+
       // Filter by car category regardless of how many cars remain
       if (this.activeFilters.carCategory && this.activeFilters.carCategory !== '') {
         console.log(`Filtering by category: ${this.activeFilters.carCategory}`);
-        
-        filtered = filtered.filter(car => 
+
+        filtered = filtered.filter(car =>
           car.category === this.activeFilters!.carCategory
         );
-        
+
         console.log(`After category filter: ${filtered.length} cars remaining`);
       }
-      
+
       // Filter by gearbox/transmission
       if (this.activeFilters.gearbox && this.activeFilters.gearbox !== '') {
         console.log(`Filtering by transmission: ${this.activeFilters.gearbox}`);
-        
-        filtered = filtered.filter(car => 
+
+        filtered = filtered.filter(car =>
           car.specifications && car.specifications.transmission === this.activeFilters!.gearbox
         );
-        
+
         console.log(`After transmission filter: ${filtered.length} cars remaining`);
       }
-      
+
       // Filter by engine type
       if (this.activeFilters.engineType && this.activeFilters.engineType !== '') {
         console.log(`Filtering by engine: ${this.activeFilters.engineType}`);
         
-        filtered = filtered.filter(car => 
-          car.specifications && car.specifications.engine === this.activeFilters!.engineType
+        // Debug: Show all available engine types in the data
+        const engineTypes = new Set();
+        this.allCars.forEach(car => {
+          if (car.specifications?.engine) {
+            engineTypes.add(car.specifications.engine);
+          }
+        });
+        console.log('Available engine types in data:', Array.from(engineTypes));
+        
+        // Try to find any car with the selected engine type (for debugging)
+        const matchingCar = this.allCars.find(car => 
+          car.specifications?.engine?.toUpperCase() === this.activeFilters?.engineType.toUpperCase()
         );
+        
+        if (matchingCar) {
+          console.log(`Found matching car: ${matchingCar.brand} ${matchingCar.model} with engine: ${matchingCar.specifications.engine}`);
+        } else {
+          console.log(`No car found with engine type "${this.activeFilters.engineType}"`);
+        }
+        
+        // Use fuelType instead of engine if available, with case-insensitive comparison
+        filtered = filtered.filter(car => {
+          // Try engine first
+          if (car.specifications?.engine && 
+              car.specifications.engine.toUpperCase() === this.activeFilters?.engineType.toUpperCase()) {
+            return true;
+          }
+          
+          // Try fuelType as fallback
+          if (car.specifications?.fuelType && 
+              car.specifications.fuelType.toUpperCase() === this.activeFilters?.engineType.toUpperCase()) {
+            return true;
+          }
+          
+          // No match
+          return false;
+        });
         
         console.log(`After engine filter: ${filtered.length} cars remaining`);
       }
     }
-    
+
     console.log(`Final filter result: ${initialCount} cars → ${filtered.length} cars`);
-    
+
     // Update filtered cars
     this.filteredCars = filtered;
     this.cars = this.filteredCars;
-    
+
     // Update pagination
     this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
     this.currentPage = 1;
 
     console.log(`Filter applied: ${filtered.length} cars, ${this.totalPages} pages`);
-    
+
     // Update displayed cars based on view mode
     if (this.viewAllMode) {
       this.updateDisplayedCars();
@@ -301,7 +335,7 @@ export class CardsComponent implements OnInit {
             "endTime": "16:00",
             "bookingId": "booking123",
             "userId": "user456",
-            "status": "confirmed" 
+            "status": "confirmed"
           },
           {
             "startDate": "2024-02-20",
@@ -351,67 +385,67 @@ export class CardsComponent implements OnInit {
 
   bookCar(car: CarDetails): void {
     // Empty function as requested
-    
+
   }
 
   openCarDetailsPopup(carId: string): void {
-      const dialogRef = this.dialog.open(CarDetailsPopupComponent, {
-        width: '90vw',
-        height: '90vh',
-        maxWidth: '1200px', 
-        maxHeight: '800px',
-        position: { top: '45px' },
-        panelClass: 'custom-dialog-container',
-        data: { carId },
-        autoFocus: false,
-        hasBackdrop: true
-      });
-    }
+    const dialogRef = this.dialog.open(CarDetailsPopupComponent, {
+      width: '90vw',
+      height: '90vh',
+      maxWidth: '1200px',
+      maxHeight: '800px',
+      position: { top: '45px' },
+      panelClass: 'custom-dialog-container',
+      data: { carId },
+      autoFocus: false,
+      hasBackdrop: true
+    });
+  }
 
-    toggleViewMode(): void {
-      this.viewAllMode = !this.viewAllMode;
-      
-      if (this.viewAllMode) {
-        // Switching to "View All" mode
-        this.currentPage = 1;
-        // Calculate total pages based on filtered cars count
-        this.totalPages = Math.ceil(this.filteredCars.length / this.itemsPerPage);
-        console.log(`View All mode: ${this.filteredCars.length} cars, ${this.totalPages} pages`);
-        this.updateDisplayedCars();
+  toggleViewMode(): void {
+    this.viewAllMode = !this.viewAllMode;
+
+    if (this.viewAllMode) {
+      // Switching to "View All" mode
+      this.currentPage = 1;
+      // Calculate total pages based on filtered cars count
+      this.totalPages = Math.ceil(this.filteredCars.length / this.itemsPerPage);
+      console.log(`View All mode: ${this.filteredCars.length} cars, ${this.totalPages} pages`);
+      this.updateDisplayedCars();
+    } else {
+      // Switching back to "Popular Cars" mode
+      if (this.filteredCars.length >= 4) {
+        this.displayedCars = this.filteredCars
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 4);
       } else {
-        // Switching back to "Popular Cars" mode
-        if (this.filteredCars.length >= 4) {
-          this.displayedCars = this.filteredCars
-            .sort((a, b) => b.rating - a.rating)
-            .slice(0, 4);
-        } else {
-          this.displayedCars = this.filteredCars;
-        }
+        this.displayedCars = this.filteredCars;
       }
+    }
+  }
+
+  updateDisplayedCars(): void {
+    if (!this.viewAllMode) {
+      // In popular mode, show top rated cars
+      if (this.filteredCars.length >= 4) {
+        this.displayedCars = this.filteredCars
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 4);
+      } else {
+        this.displayedCars = this.filteredCars;
+      }
+      return;
     }
 
-    updateDisplayedCars(): void {
-      if (!this.viewAllMode) {
-        // In popular mode, show top rated cars
-        if (this.filteredCars.length >= 4) {
-          this.displayedCars = this.filteredCars
-            .sort((a, b) => b.rating - a.rating)
-            .slice(0, 4);
-        } else {
-          this.displayedCars = this.filteredCars;
-        }
-        return;
-      }
-      
-      // In view all mode, use pagination
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = Math.min(startIndex + this.itemsPerPage, this.filteredCars.length);
-      
-      console.log(`Page ${this.currentPage}/${this.totalPages}: showing cars ${startIndex+1}-${endIndex} of ${this.filteredCars.length}`);
-      
-      // Important: Use filteredCars instead of cars for pagination
-      this.displayedCars = this.filteredCars.slice(startIndex, endIndex);
-    }
+    // In view all mode, use pagination
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = Math.min(startIndex + this.itemsPerPage, this.filteredCars.length);
+
+    console.log(`Page ${this.currentPage}/${this.totalPages}: showing cars ${startIndex + 1}-${endIndex} of ${this.filteredCars.length}`);
+
+    // Important: Use filteredCars instead of cars for pagination
+    this.displayedCars = this.filteredCars.slice(startIndex, endIndex);
+  }
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
@@ -430,34 +464,34 @@ export class CardsComponent implements OnInit {
       // For more pages, show first, last, and pages around current
       const pages: number[] = [];
       const current = this.currentPage;
-      
+
       // Always show first page
       pages.push(1);
-      
+
       if (current > 3) {
         // Add ellipsis after first if needed
         pages.push(-1); // -1 represents ellipsis
       }
-      
+
       // Calculate range around current page
       const start = Math.max(2, current - 1);
       const end = Math.min(this.totalPages - 1, current + 1);
-      
+
       // Add pages around current page
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
-      
+
       if (current < this.totalPages - 2) {
         // Add ellipsis before last if needed
         pages.push(-2); // -2 represents ellipsis
       }
-      
+
       // Always show last page
       if (this.totalPages > 1) {
         pages.push(this.totalPages);
       }
-      
+
       return pages;
     }
   }

@@ -4,7 +4,7 @@
 }
 
 .my-bookings-container {
-    max-width: 1300px;
+    width: 100%;
     min-height: 90vh;
     background-color: #FFFBF3;
     margin: 0 auto;
@@ -51,8 +51,9 @@
   .bookings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    align-items: center;
     justify-items: center;
-    gap: 24px;
+    gap: 10px;
   }
   
   .booking-card {
@@ -172,7 +173,6 @@
   
   .booking-card {
     position: relative;
-    
     width:auto; /* Allow the card to take its natural width */
     max-width: 375px; /* Set a max width for the card */
     min-height: 385px; /* Ensures the container takes at least full viewport height */
@@ -307,17 +307,4 @@
   .mobile-tabs-dropdown {
     display: block;
   }
-}
-
-/* Rest of your existing styles */
-.bookings-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.booking-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
 }

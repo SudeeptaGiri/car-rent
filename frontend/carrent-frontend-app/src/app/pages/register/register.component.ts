@@ -40,6 +40,18 @@ export class RegisterComponent {
 
   ngOnInit(): void { }
 
+  emailFormatValidator(control: AbstractControl): ValidationErrors | null {
+    const email = control.value;
+    if (!email) return null;
+    const emailPattern = /^[a-z0-9](\.?[a-z0-9]+)*@[a-z0-9-]+\.[a-z]{2,}$/;
+   
+    if (!emailPattern.test(email)) {
+      return { invalidEmailFormat: true };
+    }
+   
+    return null;
+  }
+
   // Custom validator for password strength
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;

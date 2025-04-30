@@ -15,7 +15,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-car-booking',
   templateUrl: './car-booking.component.html',
-  styleUrls: ['./car-booking.component.css'], 
+  styleUrls: ['./car-booking.component.css'],
   standalone: false
 })
 export class CarBookingComponent implements OnInit, OnDestroy {
@@ -25,7 +25,7 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   userInfo!: UserInfo;
   locationInfo!: LocationInfo;
   isReserved = false;     // change this to display reserved dialog
-  
+
   totalPrice = 0;
   depositAmount = 2000;
   numberOfDays = 0;
@@ -65,7 +65,7 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     private carService: CarService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get user info
@@ -118,11 +118,11 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   
   // Location validation methods
   isLocationInvalid(controlName: string): boolean {
-    const location = controlName === 'pickupLocation' ? 
+    const location = controlName === 'pickupLocation' ?
       this.selectedPickupLocation : this.selectedDropoffLocation;
     return this.carService.isLocationInvalid(location);
   }
-  
+
   isDuplicateLocations(): boolean {
     return this.carService.isDuplicateLocations(this.selectedPickupLocation, this.selectedDropoffLocation);
   }
@@ -140,28 +140,28 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.showPickupSuggestions = true;
     this.pickupSearchSubject.next(this.pickupSearchQuery);
   }
-  
+
   onDropoffSearchInput(): void {
     this.showDropoffSuggestions = true;
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
-  
+
   selectPickupLocation(suggestion: LocationSuggestion): void {
     this.carService.selectPickupLocation(suggestion, this);
   }
-  
+
   selectDropoffLocation(suggestion: LocationSuggestion): void {
     this.carService.selectDropoffLocation(suggestion, this);
   }
-  
+
   useCurrentLocation(forPickup: boolean): void {
     this.carService.useCurrentLocation(forPickup, this);
   }
-  
+
   openLocationModal(forPickup: boolean): void {
     this.carService.openLocationModal(forPickup, this);
   }
-  
+
   closeLocationModal(): void {
     this.carService.closeLocationModal(this);
   }
@@ -226,7 +226,7 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   calculateTotalPrice(): void {
     const dateFromStr = this.bookingForm.get('dates.dateFrom')?.value;
     const dateToStr = this.bookingForm.get('dates.dateTo')?.value;
-  
+
     if (dateFromStr && dateToStr && this.selectedCar) {
       // Create dates
       this.dateFrom = new Date(dateFromStr);
@@ -267,7 +267,7 @@ export class CarBookingComponent implements OnInit, OnDestroy {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: {pickupLocation: string, dropoffLocation: string} | undefined) => {
+    dialogRef.afterClosed().subscribe((result: { pickupLocation: string, dropoffLocation: string } | undefined) => {
       if (result) {
         this.bookingForm.get('location')?.patchValue({
           pickupLocation: result.pickupLocation,

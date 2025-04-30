@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/users';
@@ -23,7 +23,11 @@ export class LoginComponent {
     private route: ActivatedRoute
   ) {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [
+        Validators.required, 
+        Validators.email,
+        this.emailFormatValidator
+      ]],
       password: ['', [Validators.required]]
     });
   }
@@ -43,6 +47,19 @@ export class LoginComponent {
     // Clear any previous session (optional)
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
+  }
+
+  emailFormatValidator(control: AbstractControl): ValidationErrors | null {
+    const email = control.value;
+    if (!email) return null;
+
+    const emailPattern = /^[a-z0-9](\.?[a-z0-9]+)*@[a-z0-9-]+\.[a-z]{2,}$/;
+    
+    if (!emailPattern.test(email)) {
+      return { invalidEmailFormat: true };
+    }
+    
+    return null;
   }
 
   onSubmit(): void {

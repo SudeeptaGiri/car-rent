@@ -49,7 +49,9 @@ top-heading{
 }
 
 .filter-container {
-  padding: 20px;
+  padding-top: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
   position: relative;
   background-color: #fffbf3;
   border: 1px black solid;
@@ -396,6 +398,30 @@ select:focus {
   text-align: center;
   color: #777;
   font-size: 14px;
+}
+
+.location-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #d32f2f;
+  animation: location-spinner 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes location-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.use-current-location:disabled {
+  opacity: 0.8;
+  background-color: #f0f0f0;
+  cursor: wait;
 }
 
 /* Responsive adjustments for modal */

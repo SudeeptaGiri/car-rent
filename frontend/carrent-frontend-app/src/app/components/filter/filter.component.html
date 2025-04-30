@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <calendar #calendarComponent class="cal flex-1 w-full pt-7"></calendar>
+            <calendar #calendarComponent class="cal flex-1 w-full pt-1"></calendar>
         </div>
 
         <div class="filter-row">
@@ -54,10 +54,10 @@
                     <select id="engineType" name="engineType" (change)="onSelectChange('engineType', $event)"
                         aria-label="Select engine type">
                         <option value="">All types</option>
-                        <option value="GASOLINE">Gasoline</option>
-                        <option value="DIESEL">Diesel</option>
-                        <option value="ELECTRIC">Electric</option>
-                        <option value="HYBRID">Hybrid</option>
+                        <option value="Gasoline">Gasoline</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Hybrid">Hybrid</option>
                     </select>
                 </div>
             </div>
@@ -93,7 +93,7 @@
 </section>
 
 <!-- Pickup Location Modal -->
-<div class="location-modal" *ngIf="showPickupModal" role="dialog" aria-labelledby="pickupModalTitle">
+<div class="location-modal" *ngIf="showPickupModal" role="dialog" aria-labelledby="pickupModalTitle" aria-modal="true">
     <div class="location-modal-content">
         <div class="location-modal-header">
             <h3 id="pickupModalTitle">Choose pick-up location</h3>
@@ -104,9 +104,10 @@
 
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(true)"
-                aria-label="Use current location for pickup">
-                <span class="location-icon" aria-hidden="true">📍</span>
-                Use current location
+                aria-label="Use current location for pickup" [disabled]="isLoadingCurrentPickupLocation">
+                <span *ngIf="!isLoadingCurrentPickupLocation" class="location-icon" aria-hidden="true">📍</span>
+                <span *ngIf="isLoadingCurrentPickupLocation" class="location-spinner" aria-hidden="true"></span>
+                <span>{{ isLoadingCurrentPickupLocation ? 'Fetching location...📌' : 'Use current location' }}</span>
             </button>
 
             <div class="location-search-container">
@@ -114,7 +115,26 @@
                 <input type="text" id="pickupSearch" placeholder="Search for a city or address"
                     [(ngModel)]="pickupSearchQuery" (input)="onPickupSearchInput()" class="location-search-input"
                     aria-label="Search for pickup location">
-                <!-- Rest of pickup modal content -->
+                <div class="location-suggestions" *ngIf="showPickupSuggestions" role="listbox"
+                    aria-label="Pick-up location suggestions">
+                    <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions" role="status"
+                        aria-live="polite">
+                        Searching...
+                    </div>
+                    <div class="no-suggestions"
+                        *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1"
+                        role="status" aria-live="polite">
+                        No locations found
+                    </div>
+                    <div class="suggestion-item" *ngFor="let suggestion of pickupSuggestions; let i = index"
+                        (click)="selectPickupLocation(suggestion)" role="option" [attr.aria-selected]="false"
+                        [attr.id]="'pickup-suggestion-' + i" tabindex="0"
+                        (keydown.enter)="selectPickupLocation(suggestion)"
+                        (keydown.space)="selectPickupLocation(suggestion)">
+                        <span class="suggestion-icon" aria-hidden="true">📍</span>
+                        <span class="suggestion-text">{{ suggestion.displayName }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -133,9 +153,10 @@
 
         <div class="location-modal-body">
             <button class="use-current-location" (click)="useCurrentLocation(false)"
-                aria-label="Use current location for drop-off">
-                <span class="location-icon" aria-hidden="true">📍</span>
-                <span>Use current location</span>
+                aria-label="Use current location for drop-off" [disabled]="isLoadingCurrentDropoffLocation">
+                <span *ngIf="!isLoadingCurrentDropoffLocation" class="location-icon" aria-hidden="true">📍</span>
+                <span *ngIf="isLoadingCurrentDropoffLocation" class="location-spinner" aria-hidden="true"></span>
+                <span>{{ isLoadingCurrentDropoffLocation ? 'Fetching location...📌' : 'Use current location' }}</span>
             </button>
 
             <div class="location-search-container">
@@ -143,25 +164,20 @@
                 <input type="text" id="dropoffSearch" name="dropoffSearch" placeholder="Search for a city or address"
                     [(ngModel)]="dropoffSearchQuery" (input)="onDropoffSearchInput()" class="location-search-input"
                     aria-label="Search for drop-off location" aria-describedby="dropoffSearchHint">
-
                 <div id="dropoffSearchHint" class="sr-only">
                     Type to search for available drop-off locations
                 </div>
-
                 <div class="location-suggestions" *ngIf="showDropoffSuggestions" role="listbox"
                     aria-label="Drop-off location suggestions">
-
                     <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions" role="status"
                         aria-live="polite">
                         Searching...
                     </div>
-
                     <div class="no-suggestions"
                         *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1"
                         role="status" aria-live="polite">
                         No locations found
                     </div>
-
                     <div class="suggestion-item" *ngFor="let suggestion of dropoffSuggestions; let i = index"
                         (click)="selectDropoffLocation(suggestion)" role="option" [attr.aria-selected]="false"
                         [attr.id]="'dropoff-suggestion-' + i" tabindex="0"
