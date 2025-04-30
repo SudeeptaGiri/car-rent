@@ -59,6 +59,7 @@
             <div *ngIf="submitted && f['email'].errors" class="text-red-500 text-xs mt-1">
               <div *ngIf="f['email'].errors['required']">Email is required</div>
               <div *ngIf="f['email'].errors['email']">Please enter a valid email</div>
+              <div *ngIf="f['email'].errors['invalidEmailFormat']">Email can only contain letters, numbers, dots, and underscores</div>
             </div>
             <div *ngIf="errorMessage" class="text-red-500 text-xs mt-1">
               {{ errorMessage }}
