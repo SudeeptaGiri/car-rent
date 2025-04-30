@@ -74,7 +74,7 @@
                 id="password" 
                 formControlName="password" 
                 placeholder="Create password" 
-                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light  text-gray-500 focus:text-black" 
+                class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light  text-gray-500 focus:text-black" 
                 [ngClass]="{'border-red-500': submitted && f['password'].errors}"
               >
               <button 
@@ -112,7 +112,7 @@
                 id="confirmPassword" 
                 formControlName="confirmPassword" 
                 placeholder="Confirm password" 
-                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500" 
+                class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500" 
                 [ngClass]="{'border-red-500': submitted && f['confirmPassword'].errors}"
               >
               <button 
