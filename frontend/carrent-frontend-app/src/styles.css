@@ -78,6 +78,60 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
   margin-top: 0 !important;
 }
 
+/* Override default positioning for top dialog *//* Add any additional global styles here */
+.invalid-feedback {
+  display: block;
+}
+
+/* Fix for any potential z-index issues with dialogs */
+.cdk-overlay-container {
+  z-index: 9999;
+}
+
+/* Improve dialog styles */
+.dialog-container {
+  .mat-mdc-dialog-surface {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .mat-mdc-dialog-content {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+/* Success dialog container styles */
+.success-dialog-container {
+  .mat-mdc-dialog-surface {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+  .mat-mdc-dialog-content {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+/* Position dialog at the top of the page */
+.top-dialog {
+  margin-top: 0 !important;
+  position: absolute !important;
+  top: 0 !important;
+}
+
+/* Style for dialogs without backdrop */
+.no-backdrop-dialog {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Position the dialog container at the top */
+.cdk-overlay-pane.top-dialog {
+  position: absolute !important;
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
 /* Override default positioning for top dialog */
 .cdk-global-overlay-wrapper {
   align-items: flex-start !important;
@@ -87,4 +141,26 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 /* For dialogs without backdrop, make sure they're visible */
 .no-backdrop-dialog .mat-mdc-dialog-container {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Hide Edge’s built-in eye icon inside password input */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+.cdk-global-overlay-wrapper {
+  align-items: flex-start !important;
+  justify-content: center !important;
+}
+
+/* For dialogs without backdrop, make sure they're visible */
+.no-backdrop-dialog .mat-mdc-dialog-container {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+/* Hide Edge’s built-in eye icon inside password input */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }
