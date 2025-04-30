@@ -43,8 +43,22 @@ export class CarService {
     private router: Router
   ) {
     this.loadBookingsForCurrentUser();
-    this.loadSampleBookings(); 
+    if (this.bookings.length === 0) {
+      this.loadSampleBookings(); 
+    }
     interval(1000).subscribe(() => this.updateBookingStatuses());
+  }
+  submitFeedback(bookingId: string, rating: number, comment: string): void {
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].feedback = {
+        rating,
+        comment,
+        submittedAt: new Date()
+      };
+      this.bookings[bookingIndex].status = BookingStatus.BOOKING_FINISHED;
+      this.bookingsSubject.next([...this.bookings]);
+    }
   }
   private loadBookingsForCurrentUser(): void {
     const storageKey = this.getStorageKeyForUser();
@@ -795,27 +809,46 @@ export class CarService {
   }
 
 
-  updateBooking(booking: Booking): Observable<Booking> {
-    // In a real app, this would be an HTTP PUT request to your backend
-    return new Observable<Booking>(observer => {
-      try {
-        const bookingsStr = localStorage.getItem('bookings');
-        let bookings: Booking[] = bookingsStr ? JSON.parse(bookingsStr) : [];
+  // Updated updateBooking method in car.service.ts
+updateBooking(booking: Booking): Observable<Booking> {
+  return new Observable<Booking>(observer => {
+    try {
+      // Find the booking in our internal array
+      const index = this.bookings.findIndex(b => b.id === booking.id);
+      
+      if (index !== -1) {
+        // Update the booking in our array
+        this.bookings[index] = {
+          ...booking,
+          // Ensure dates are Date objects
+          pickupDate: new Date(booking.pickupDate),
+          dropoffDate: new Date(booking.dropoffDate)
+        };
         
-        const index = bookings.findIndex(b => b.id === booking.id);
-        if (index !== -1) {
-          bookings[index] = booking;
-          localStorage.setItem('bookings', JSON.stringify(bookings));
-          observer.next(booking);
-        } else {
-          observer.error(new Error('Booking not found'));
-        }
+        // Save to localStorage using the correct key
+        this.saveBookingsToStorage();
+        
+        // Emit updated bookings
+        this.bookingsSubject.next([...this.bookings]);
+        
+        // Return success
+        observer.next(this.bookings[index]);
         observer.complete();
-      } catch (error) {
-        observer.error(error);
+      } else {
+        // Booking not found
+        observer.error(new Error('Booking not found'));
       }
-    });
-  }
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      observer.error(error);
+    }
+  });
+}
+
+// Add this helper method to car.service.ts
+private getBookingIndex(bookingId: string): number {
+  return this.bookings.findIndex(b => b.id === bookingId);
+}
 
   getBookingById(id: string): Observable<Booking | undefined> {
     return this.getBookings().pipe(

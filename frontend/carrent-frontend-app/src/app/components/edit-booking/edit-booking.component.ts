@@ -216,23 +216,29 @@ export class EditBookingComponent implements OnInit, OnDestroy {
     this.carService.onDateRangeSelected(event, this);
   }
 
-  saveBooking(): void {
-    if (this.bookingForm.valid && this.booking) {
+  // Updated saveBooking method in edit-booking.component.ts
+saveBooking(): void {
+  if (this.bookingForm.valid && this.booking) {
+    try {
       // Get updated values from form
       const updatedPickupLocation = this.selectedPickupLocation || this.booking.pickupLocation;
       const updatedDropoffLocation = this.selectedDropoffLocation || this.booking.dropoffLocation;
       
-      // Update booking object with new values
-      this.booking.pickupDate = this.dateFrom;
-      this.booking.dropoffDate = this.dateTo;
-      this.booking.pickupLocation = updatedPickupLocation;
-      this.booking.dropoffLocation = updatedDropoffLocation;
-      this.booking.numberOfDays = this.numberOfDays;
-      this.booking.totalPrice = this.totalPrice;
+      // Create updated booking object
+      const updatedBooking: Booking = {
+        ...this.booking,
+        pickupDate: this.dateFrom,
+        dropoffDate: this.dateTo,
+        pickupLocation: updatedPickupLocation,
+        dropoffLocation: updatedDropoffLocation,
+        numberOfDays: this.numberOfDays,
+        totalPrice: this.totalPrice
+      };
       
       // Call service to update booking
-      this.carService.updateBooking(this.booking).subscribe({
-        next: () => {
+      this.carService.updateBooking(updatedBooking).subscribe({
+        next: (result) => {
+          console.log('Booking updated successfully:', result);
           // Navigate back to my-bookings page on success
           this.router.navigate(['/my-bookings']);
         },
@@ -241,8 +247,14 @@ export class EditBookingComponent implements OnInit, OnDestroy {
           alert('Failed to update booking. Please try again.');
         }
       });
+    } catch (error) {
+      console.error('Error in saveBooking:', error);
+      alert('An unexpected error occurred. Please try again.');
     }
+  } else {
+    alert('Please fill in all required fields correctly.');
   }
+}
 
   // Getter for formatted booked dates (for calendar component)
   get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {

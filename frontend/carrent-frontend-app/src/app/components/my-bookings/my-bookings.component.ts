@@ -136,7 +136,7 @@ ngOnInit(): void {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.bookingService.submitFeedback(booking.id, result.rating, result.comment);
+        this.carService.submitFeedback(booking.id, result.rating, result.comment);
       }
     });
   }
