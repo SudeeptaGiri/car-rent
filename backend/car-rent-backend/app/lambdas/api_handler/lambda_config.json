@@ -11,7 +11,7 @@
   "dependencies": [],
   "event_sources": [],
   "env_variables": {
-    "MONGODB_URI": "mongodb+srv://sudeeptagiri:wuhz1H38HnG0Dyjl@cluster0.jyqubr4.mongodb.net/",
+    "MONGODB_URI": "mongodb+srv://gearup:gearUp8@cluster0.idgfejd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
     "NODE_ENV": "development"
   },
   "publish_version": true,
