@@ -1,30 +1,23 @@
 // src/app/components/edit-booking/edit-booking.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { BookingService } from '../../services/booking.service';
+import { Subject, Subscription } from 'rxjs';
 import { Booking } from '../../models/booking.model';
-import { HttpClient } from '@angular/common/http';
-import { Subject, Subscription, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, catchError, map } from 'rxjs/operators';
-import { CalendarComponent } from '../calendar/calendar.component';
-import { BookedDate, CarDetails } from '../../models/car.interface';
-// import { LocationDialogComponent } from '../location-dialog/location-dialog.component';
+import { CarService, LocationSuggestion } from '../../services/car.service';
+import * as moment from 'moment';
 
-interface LocationSuggestion {
-  displayName: string;
-  lat: number;
-  lon: number;
-}
 @Component({
   selector: 'app-edit-booking',
   templateUrl: './edit-booking.component.html',
   styleUrls: ['./edit-booking.component.css'],
   standalone: false
 })
-
-export class EditBookingComponent implements OnInit {
+export class EditBookingComponent implements OnInit, OnDestroy {
+  bookingForm!: FormGroup;
+  booking!: Booking;
+  
+  // Location search properties
   pickupSearchQuery = '';
   dropoffSearchQuery = '';
   pickupSuggestions: LocationSuggestion[] = [];
@@ -35,145 +28,101 @@ export class EditBookingComponent implements OnInit {
   isLoadingDropoffSuggestions = false;
   showPickupModal = false;
   showDropoffModal = false;
+  
+  // Selected locations
   selectedPickupLocation: string | null = null;
+  selectedPickupCoordinates: { lat: number; lon: number } | null = null;
   selectedDropoffLocation: string | null = null;
+  selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
+  
+  // Search subjects for debouncing
   private pickupSearchSubject = new Subject<string>();
   private dropoffSearchSubject = new Subject<string>();
   private searchSubscriptions: Subscription[] = [];
-  selectedPickupCoordinates: { lat: number; lon: number } | null = null;
-  selectedDropoffCoordinates: { lat: number; lon: number } | null = null
-  name!:string;
-  email!:string;
-  phone!:string;
-  selectedCar!: CarDetails;
-
-  bookingForm!: FormGroup;
-  booking!: Booking;
+  
+  // Booking properties
   totalPrice = 0;
   depositAmount = 2000;
   numberOfDays = 0;
   dateFrom!: Date;
   dateTo!: Date;
-
   isCalendarOpen = false;
-  
-  // Add this getter for formatted booked dates
-  get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
-    // You can get booked dates from your service or pass them as input
-    return this.selectedCar?.bookedDates?.map(date => ({
-      startDate: date.startDate,
-      endDate: date.endDate
-    })) || [];
-  }
-  
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private bookingService: BookingService,
-    private http: HttpClient
-  ) {
-    console.log('EditBookingComponent initialized'); // Debug log
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-    console.log('Current user:', currentUser); // Debug log
-    this.name = (currentUser?.firstName+" "+currentUser?.lastName) || 'Unable to retrieve name';
-    this.email = currentUser?.email || 'Unable to retrieve email';
-    this.phone = currentUser?.phone || '+38 111 111 11 11'; // Default phone number
-  }
-
-  private setupLocationSearch(): void {
-    this.searchSubscriptions.push(
-      this.pickupSearchSubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(query => {
-          this.isLoadingPickupSuggestions = true;
-          return this.searchLocations(query);
-        })
-      ).subscribe(suggestions => {
-        this.pickupSuggestions = suggestions;
-        this.isLoadingPickupSuggestions = false;
-      })
-    );
-
-    this.searchSubscriptions.push(
-      this.dropoffSearchSubject.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(query => {
-          this.isLoadingDropoffSuggestions = true;
-          return this.searchLocations(query);
-        })
-      ).subscribe(suggestions => {
-        this.dropoffSuggestions = suggestions;
-        this.isLoadingDropoffSuggestions = false;
-      })
-    );
-  }
-
-  private searchLocations(query: string) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
-    
-    return this.http.get<any[]>(url).pipe(
-      map(results => results.map(item => ({
-        displayName: item.display_name.split(',').slice(0, 2).join(','),
-        lat: parseFloat(item.lat),
-        lon: parseFloat(item.lon)
-      })))
-    );
-  }
+    private carService: CarService
+  ) {}
 
   ngOnInit(): void {
+    // Setup location search with debouncing
     this.setupLocationSearch();
+    
+    // Load booking data from route parameter
     this.route.params.subscribe(params => {
       const bookingId = params['id'];
-      console.log('Booking ID from route:', bookingId); // Debug log
       if (bookingId) {
         this.loadBooking(bookingId);
+      } else {
+        // If no booking ID, redirect to bookings list
+        this.router.navigate(['/my-bookings']);
       }
     });
   }
 
-  carPricePerDay: number = 0;
-
-loadBooking(bookingId: string): void {
-  this.bookingService.getBookings().subscribe(bookings => {
-    const booking = bookings.find(b => b.id === bookingId);
-    if (booking) {
-      this.booking = booking;
-      this.selectedPickupLocation = booking.pickupLocation;
-      this.selectedDropoffLocation = booking.dropoffLocation;
-      this.dateFrom = new Date(booking.pickupDate);
-      this.dateTo = new Date(booking.dropoffDate);
-      
-      // Get the car price per day by dividing total price by number of days
-      this.carPricePerDay = booking.totalPrice / booking.numberOfDays;
-      
-      this.initForm();
-      this.calculateTotalPrice();
-    } else {
-      this.router.navigate(['/my-bookings']);
-    }
-  });
-}
+  loadBooking(bookingId: string): void {
+    this.carService.getBookingById(bookingId).subscribe({
+      next: (booking) => {
+        if (booking) {
+          this.booking = booking;
+          
+          // Set initial locations from booking
+          this.selectedPickupLocation = booking.pickupLocation;
+          this.selectedDropoffLocation = booking.dropoffLocation;
+          
+          // Set initial dates from booking
+          this.dateFrom = new Date(booking.pickupDate);
+          this.dateTo = new Date(booking.dropoffDate);
+          
+          // Set initial price values
+          this.numberOfDays = booking.numberOfDays;
+          this.totalPrice = booking.totalPrice;
+          
+          // Initialize form with booking data
+          this.initForm();
+        } else {
+          // Booking not found, redirect to bookings list
+          this.router.navigate(['/my-bookings']);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading booking:', error);
+        this.router.navigate(['/my-bookings']);
+      }
+    });
+  }
 
   initForm(): void {
     if (!this.booking) return;
 
+    // Get user info from localStorage
+    const userInfo = this.carService.getUserInfo();
+
     // Initialize form with booking data
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
-        fullName: [{value: this.name, disabled: true}],
-        email: [{value: this.email, disabled: true}],
-        phone: [{value: this.phone, disabled: true}]
+        fullName: [{value: userInfo.fullName, disabled: true}],
+        email: [{value: userInfo.email, disabled: true}],
+        phone: [{value: userInfo.phone, disabled: true}]
       }),
       location: this.fb.group({
-        pickupLocation: [this.selectedPickupLocation || this.booking.pickupLocation],
-        dropoffLocation: [this.selectedDropoffLocation || this.booking.dropoffLocation]
+        pickupLocation: [this.selectedPickupLocation || this.booking.pickupLocation, Validators.required],
+        dropoffLocation: [this.selectedDropoffLocation || this.booking.dropoffLocation, Validators.required]
       }),
       dates: this.fb.group({
-        dateFrom: [this.dateFrom.toISOString()],
-        dateTo: [this.dateTo.toISOString()]
+        dateFrom: [this.dateFrom.toISOString(), Validators.required],
+        dateTo: [this.dateTo.toISOString(), Validators.required]
       })
     });
 
@@ -183,6 +132,28 @@ loadBooking(bookingId: string): void {
     });
   }
 
+  // Setup location search with debouncing
+  setupLocationSearch(): void {
+    // Setup pickup location search
+    this.searchSubscriptions.push(
+      this.carService.setupLocationSearch(
+        this.pickupSearchSubject,
+        (results) => this.pickupSuggestions = results,
+        (isLoading) => this.isLoadingPickupSuggestions = isLoading
+      )
+    );
+    
+    // Setup dropoff location search
+    this.searchSubscriptions.push(
+      this.carService.setupLocationSearch(
+        this.dropoffSearchSubject,
+        (results) => this.dropoffSuggestions = results,
+        (isLoading) => this.isLoadingDropoffSuggestions = isLoading
+      )
+    );
+  }
+
+  // Location methods - delegating to service
   onPickupSearchInput(): void {
     this.showPickupSuggestions = true;
     this.pickupSearchSubject.next(this.pickupSearchQuery);
@@ -192,186 +163,83 @@ loadBooking(bookingId: string): void {
     this.showDropoffSuggestions = true;
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
-
+  
   selectPickupLocation(suggestion: LocationSuggestion): void {
-    this.selectedPickupLocation = suggestion.displayName;
-    this.selectedPickupCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
-    this.pickupSearchQuery = suggestion.displayName;
-    this.showPickupSuggestions = false;
-    this.showPickupModal = false;
-    
-    this.bookingForm.get('location')?.patchValue({
-      pickupLocation: suggestion.displayName
-    });
+    this.carService.selectPickupLocation(suggestion, this);
   }
-
+  
   selectDropoffLocation(suggestion: LocationSuggestion): void {
-    this.selectedDropoffLocation = suggestion.displayName;
-    this.selectedDropoffCoordinates = { lat: suggestion.lat, lon: suggestion.lon };
-    this.dropoffSearchQuery = suggestion.displayName;
-    this.showDropoffSuggestions = false;
-    this.showDropoffModal = false;
-    
-    this.bookingForm.get('location')?.patchValue({
-      dropoffLocation: suggestion.displayName
-    });
+    this.carService.selectDropoffLocation(suggestion, this);
   }
-
+  
   useCurrentLocation(forPickup: boolean): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords = {
-            lat: position.coords.latitude,
-            lon: position.coords.longitude
-          };
-          
-          this.reverseGeocode(coords.lat, coords.lon).subscribe(
-            (address) => {
-              if (forPickup) {
-                this.selectedPickupLocation = address;
-                this.selectedPickupCoordinates = coords;
-                this.pickupSearchQuery = address;
-                this.showPickupModal = false;
-                
-                this.bookingForm.get('location')?.patchValue({
-                  pickupLocation: address
-                });
-              } else {
-                this.selectedDropoffLocation = address;
-                this.selectedDropoffCoordinates = coords;
-                this.dropoffSearchQuery = address;
-                this.showDropoffModal = false;
-                
-                this.bookingForm.get('location')?.patchValue({
-                  dropoffLocation: address
-                });
-              }
-            },
-            (error) => {
-              console.error('Error getting address:', error);
-              alert('Could not determine your address. Please enter it manually.');
-            }
-          );
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          alert('Could not access your location. Please check your browser permissions and try again.');
-        }
-      );
-    } else {
-      alert('Geolocation is not supported by your browser. Please enter your location manually.');
-    }
+    this.carService.useCurrentLocation(forPickup, this);
   }
-
-  reverseGeocode(lat: number, lon: number) {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    
-    return this.http.get<any>(url).pipe(
-      map(result => {
-        if (result && result.display_name) {
-          return result.display_name.split(',').slice(0, 2).join(',');
-        }
-        return 'Current location';
-      }),
-      catchError(() => of('Current location'))
-    );
-  }
-
+  
   openLocationModal(forPickup: boolean): void {
-    if (forPickup) {
-      this.showPickupModal = true;
-      this.showDropoffModal = false;
-      this.pickupSearchQuery = this.selectedPickupLocation || '';
-    } else {
-      this.showPickupModal = false;
-      this.showDropoffModal = true;
-      this.dropoffSearchQuery = this.selectedDropoffLocation || '';
-    }
+    this.carService.openLocationModal(forPickup, this);
   }
-
+  
   closeLocationModal(): void {
-    this.showPickupModal = false;
-    this.showDropoffModal = false;
+    this.carService.closeLocationModal(this);
   }
-
-  ngOnDestroy(): void {
-    this.searchSubscriptions.forEach(sub => sub.unsubscribe());
-  }  
 
   toggleCalendar(): void {
-    this.isCalendarOpen = !this.isCalendarOpen;
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    // this.isCalendarOpen = !this.isCalendarOpen;
-    console.log('Calendar toggled:', this.isCalendarOpen);
-  }
-
-  onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
-    // Convert moment objects to Date objects
-    this.dateFrom = event.startDate.toDate();
-    this.dateTo = event.endDate.toDate();
-
-    // Update the form with the new dates
-    this.bookingForm.patchValue({
-      dates: {
-        dateFrom: this.dateFrom.toISOString(),
-        dateTo: this.dateTo.toISOString()
-      }
-    });
-
-    // Recalculate total price
-    this.calculateTotalPrice();
+    this.carService.toggleCalendar(this);
   }
 
   calculateTotalPrice(): void {
-    if (this.dateFrom && this.dateTo) {
-      // Calculate difference in days
-      const diffTime = Math.abs(this.dateTo.getTime() - this.dateFrom.getTime());
-      this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      this.totalPrice = this.numberOfDays * this.carPricePerDay; // Use actual car price instead of 180
+    const dateFromStr = this.bookingForm.get('dates.dateFrom')?.value;
+    const dateToStr = this.bookingForm.get('dates.dateTo')?.value;
+    
+    if (dateFromStr && dateToStr && this.booking) {
+      // Create dates
+      this.dateFrom = new Date(dateFromStr);
+      this.dateTo = new Date(dateToStr);
+      
+      // Calculate price based on daily rate
+      const dailyRate = this.booking.totalPrice / this.booking.numberOfDays;
+      
+      // Use service to calculate price
+      const result = this.carService.calculateTotalPrice(
+        this.dateFrom, 
+        this.dateTo, 
+        dailyRate
+      );
+      
+      this.numberOfDays = result.numberOfDays;
+      this.totalPrice = result.totalPrice;
     }
   }
 
-  getDefaultEndDate(): Date {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 5); // Default to 5 days rental
-    return endDate;
+  onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
+    this.carService.onDateRangeSelected(event, this);
   }
 
-  formatDate(date: Date | null): string {
-    if (!date) return '';
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      day: 'numeric'
-    });
-  }
-  
-  formatTime(date: Date | null): string {
-    if (!date) return '';
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false
-    });
-  }
-
-  saveBooking(): void {
-    if (this.bookingForm.valid) {
-      // Get the form values
-      const formValues = this.bookingForm.value;
-  
-      // Update booking with new dates
-      this.bookingService.updateBookingDates(
-        this.booking.id,
-        this.dateFrom,
-        this.dateTo
-      ).subscribe({
-        next: () => {
-          // Show success message (optional)
-          // Navigate back to my-bookings page
+  // Updated saveBooking method in edit-booking.component.ts
+saveBooking(): void {
+  if (this.bookingForm.valid && this.booking) {
+    try {
+      // Get updated values from form
+      const updatedPickupLocation = this.selectedPickupLocation || this.booking.pickupLocation;
+      const updatedDropoffLocation = this.selectedDropoffLocation || this.booking.dropoffLocation;
+      
+      // Create updated booking object
+      const updatedBooking: Booking = {
+        ...this.booking,
+        pickupDate: this.dateFrom,
+        dropoffDate: this.dateTo,
+        pickupLocation: updatedPickupLocation,
+        dropoffLocation: updatedDropoffLocation,
+        numberOfDays: this.numberOfDays,
+        totalPrice: this.totalPrice
+      };
+      
+      // Call service to update booking
+      this.carService.updateBooking(updatedBooking).subscribe({
+        next: (result) => {
+          console.log('Booking updated successfully:', result);
+          // Navigate back to my-bookings page on success
           this.router.navigate(['/my-bookings']);
         },
         error: (error) => {
@@ -379,6 +247,23 @@ loadBooking(bookingId: string): void {
           alert('Failed to update booking. Please try again.');
         }
       });
+    } catch (error) {
+      console.error('Error in saveBooking:', error);
+      alert('An unexpected error occurred. Please try again.');
     }
+  } else {
+    alert('Please fill in all required fields correctly.');
+  }
+}
+
+  // Getter for formatted booked dates (for calendar component)
+  get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
+    // This would come from your booking service in a real app
+    return [];
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscriptions to prevent memory leaks
+    this.searchSubscriptions.forEach(sub => sub.unsubscribe());
   }
 }

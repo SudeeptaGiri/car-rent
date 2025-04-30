@@ -29,8 +29,11 @@ export class BookingService {
   private loadBookingsForCurrentUser(): void {
     const storageKey = this.getStorageKeyForUser();
     const storedBookings = localStorage.getItem(storageKey);
+    console.log('Loading bookings with key:', storageKey);
+    console.log('Stored bookings raw:', storedBookings);
     
     if (storedBookings) {
+      try{
       this.bookings = JSON.parse(storedBookings).map((booking: Booking) => ({
         ...booking,
         pickupDate: new Date(booking.pickupDate),
@@ -40,6 +43,15 @@ export class BookingService {
           submittedAt: new Date(booking.feedback.submittedAt)
         } : undefined
       }));
+       // Update booking statuses and emit
+       this.updateBookingStatuses();
+       this.bookingsSubject.next([...this.bookings]);
+
+      //  console.log('Loaded bookings:', this.bookings);
+    } catch (error) {
+      console.error('Error parsing stored bookings:', error);
+      this.bookings = []; // Reset bookings if parsing fails
+    }
     } else {
       this.bookings = [];
     }
@@ -59,22 +71,30 @@ export class BookingService {
   }
 
   // Add new booking
-  addBooking(booking: Booking): Observable<any> {
-    this.bookings.push(booking);
-    this.saveBookingsToStorage();
-    this.bookingsSubject.next([...this.bookings]);
-    return of({ success: true, booking });
+  addBooking(booking: Booking): Observable<Booking> {
+    return new Observable<Booking>(observer => {
+      try {
+        const bookingsStr = localStorage.getItem('bookings');
+        const bookings: Booking[] = bookingsStr ? JSON.parse(bookingsStr) : [];
+        bookings.push(booking);
+        localStorage.setItem('bookings', JSON.stringify(bookings));
+        observer.next(booking);
+        observer.complete();
+      } catch (error) {
+        observer.error(error);
+      }
+    });
   }
 
-  // Cancel booking
-  cancelBooking(bookingId: string): void {
-    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
-    if (bookingIndex !== -1) {
-      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-      this.saveBookingsToStorage();
-      this.bookingsSubject.next([...this.bookings]);
-    }
-  }
+  // // Cancel booking
+  // cancelBooking(bookingId: string): void {
+  //   const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+  //   if (bookingIndex !== -1) {
+  //     this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+  //     this.saveBookingsToStorage();
+  //     this.bookingsSubject.next([...this.bookings]);
+  //   }
+  // }
 
   // Clear all bookings for current user when logging out
   clearUserBookings(): void {
@@ -115,55 +135,6 @@ export class BookingService {
     const feedbackDate = new Date('2025-04-13T12:00:00');
 
     // Sample data
-    this.bookings = [
-      {
-        id: '4',
-        carId: '104',
-        carName: 'Nissan Z 2024',
-        carImage: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
-        orderNumber: '#2440',
-        pickupDate: pickup4,
-        dropoffDate: dropoff4,
-        status: BookingStatus.CANCELLED,
-        totalPrice:900,
-        numberOfDays:5,
-        pickupLocation: 'Hyderabad',
-        dropoffLocation: 'Chennai'
-      },
-      {
-        id: '5',
-        carId: '105',
-        carName: 'Mercedes-Benz A class 2019',
-        carImage: 'assets/Car7.svg',
-        orderNumber: '#2452',
-        pickupDate: pickup5,
-        dropoffDate: dropoff5,
-        status: BookingStatus.SERVICE_PROVIDED,
-        totalPrice:900,
-        numberOfDays:5,
-        pickupLocation: 'Hyderabad',
-        dropoffLocation: 'Chennai'
-      },
-      {
-        id: '6',
-        carId: '106',
-        carName: 'BMW 330i 2020',
-        carImage: "https://images.unsplash.com/photo-1551830820-330a71b99659?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1650&q=80",
-        orderNumber: '#2437',
-        pickupDate: pickup6,
-        dropoffDate: dropoff6,
-        status: BookingStatus.BOOKING_FINISHED,
-        feedback: {
-          rating: 5,
-          comment: 'Great car, excellent service!',
-          submittedAt: feedbackDate
-        },
-        totalPrice:900,
-        numberOfDays:5,
-        pickupLocation: 'Hyderabad',
-        dropoffLocation: 'Chennai'
-      }
-    ];
     
     // Initialize the status based on current date
     this.updateBookingStatuses();
