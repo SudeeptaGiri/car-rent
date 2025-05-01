@@ -703,8 +703,8 @@ export class CarService {
     return (
       formValid && 
       !this.isLocationInvalid(pickupLocation) && 
-      !this.isLocationInvalid(dropoffLocation) && 
-      !this.isDuplicateLocations(pickupLocation, dropoffLocation)
+      !this.isLocationInvalid(dropoffLocation)
+      // !this.isDuplicateLocations(pickupLocation, dropoffLocation)
     );
   }
 
