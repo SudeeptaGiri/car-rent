@@ -72,8 +72,10 @@
               <input 
                 [type]="showPassword ? 'text' : 'password'" 
                 id="password" 
-                formControlName="password" 
+                formControlName="password"
                 placeholder="Create password" 
+                (keypress)="onKeyPress($event)"
+                (paste)="onPaste($event, 'password')"
                 class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light  text-gray-500 focus:text-black" 
                 [ngClass]="{'border-red-500': submitted && f['password'].errors}"
               >
@@ -112,6 +114,8 @@
                 id="confirmPassword" 
                 formControlName="confirmPassword" 
                 placeholder="Confirm password" 
+                (keypress)="onKeyPress($event)"
+                (paste)="onPaste($event, 'confirmPassword')"
                 class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500" 
                 [ngClass]="{'border-red-500': submitted && f['confirmPassword'].errors}"
               >
