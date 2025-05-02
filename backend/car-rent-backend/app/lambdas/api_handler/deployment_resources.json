@@ -1,9 +1,9 @@
 {
-  "api_handler-role": {
+  "api_handler_lambda-role": {
     "predefined_policies": [],
     "principal_service": "lambda",
     "custom_policies": [
-      "lambda-basic-execution"
+      "lambda-execution-policy"
     ],
     "resource_type": "iam_role",
     "tags": {}

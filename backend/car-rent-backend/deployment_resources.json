@@ -35,7 +35,7 @@
     ],
     "resource_type": "iam_role"
   },
-  "${pool_name}": {
+  "car-rental-user-pool": {
     "resource_type": "cognito_idp",
     "password_policy": {
       "minimum_length": 8,
@@ -71,7 +71,7 @@
         "type": "COGNITO_USER_POOLS",
         "identity_source": "method.request.header.Authorization",
         "user_pools": [
-          "${pool_name}"
+          "car-rental-user-pool"
         ],
         "ttl": 300
       }
@@ -333,7 +333,7 @@
         "enable_cors": true,
         "PUT": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -348,7 +348,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -360,7 +360,7 @@
         },
         "PUT": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -375,7 +375,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -390,7 +390,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -417,7 +417,7 @@
   "weekly_event_rule": {
     "resource_type": "cloudwatch_rule",
     "rule_type": "schedule",
-    "expression": "rate(1 week)",
+    "expression": "rate(7 days)",
     "targets": [
       {
         "target_id": "ReportsSenderTarget",
