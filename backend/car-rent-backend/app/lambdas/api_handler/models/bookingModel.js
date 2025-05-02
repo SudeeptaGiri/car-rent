@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-  bookingId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   carId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Car',
     required: true
   },
   clientId: {
