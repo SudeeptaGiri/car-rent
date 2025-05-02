@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { connectToDatabase } = require('../authcontroller/authcontroller');
+// const { connectToDatabase } = require('../authcontroller/authcontroller');
 
 // JWT configuration
 const JWT_SECRET = 'd7f8a2b5c4e9f3a1d6b7c8e9f0a2d3b4c5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0';
@@ -15,7 +15,7 @@ const JWT_EXPIRES_IN = '24h';
 exports.getPersonalInfo = async (event) => {
   try {
     // Connect to the database first
-    await connectToDatabase();
+    // await connectToDatabase();
     
     // Extract userId from path parameters
     const id = event.pathParameters.id;
@@ -84,7 +84,7 @@ exports.getPersonalInfo = async (event) => {
 exports.updatePersonalInfo = async (event) => {
   try {
     // Connect to the database first
-    await connectToDatabase();
+    // await connectToDatabase();
     
     // Extract userId from path parameters
     const id = event.pathParameters.id;
@@ -176,7 +176,7 @@ exports.updatePersonalInfo = async (event) => {
 exports.changePassword = async (event) => {
   try {
     // Connect to the database first
-    await connectToDatabase();
+    // await connectToDatabase();
     
     // Extract userId from path parameters
     const id = event.pathParameters.id;
@@ -273,7 +273,7 @@ exports.changePassword = async (event) => {
 exports.getClients = async (event) => {
   try {
     // Connect to the database first
-    await connectToDatabase();
+    // await connectToDatabase();
     
     // Find all clients
     const clients = await User.find({ role: 'Client' }).select('_id firstName lastName');
@@ -314,7 +314,7 @@ exports.getClients = async (event) => {
 exports.getAgents = async (event) => {
   try {
     // Connect to the database first
-    await connectToDatabase();
+    // await connectToDatabase();
     
     // Find all support agents
     const agents = await User.find({ role: 'SupportAgent' }).select('_id firstName lastName');

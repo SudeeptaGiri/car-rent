@@ -9,29 +9,29 @@ const JWT_EXPIRES_IN = '24h';
 
 let cachedDb = null;
 
-async function connectToDatabase() {
-  if (cachedDb) return cachedDb;
+// async function connectToDatabase() {
+//   if (cachedDb) return cachedDb;
 
-  const mongoURI = 'mongodb+srv://gearup:gearUp8@cluster0.idgfejd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+//   const mongoURI = 'mongodb+srv://gearup:gearUp8@cluster0.idgfejd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
   
-  try {
-    const client = await mongoose.connect(mongoURI);
-    cachedDb = client.connection.db;
-    console.log('Connected to MongoDB successfully!');
-    return cachedDb;
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    throw error;
-  }
-}
+//   try {
+//     const client = await mongoose.connect(mongoURI);
+//     cachedDb = client.connection.db;
+//     console.log('Connected to MongoDB successfully!');
+//     return cachedDb;
+//   } catch (error) {
+//     console.error('MongoDB connection error:', error);
+//     throw error;
+//   }
+// }
 // Add this line at the end of authController.js
-exports.connectToDatabase = connectToDatabase;
+// exports.connectToDatabase = connectToDatabase;
 
 
 // SignUp Handler
 exports.signUp = async (event) => {
   try {
-    await connectToDatabase();
+    // await connectToDatabase();
     const body = JSON.parse(event.body || '{}');
     const { firstName, lastName, email, password } = body;
 
@@ -79,7 +79,7 @@ exports.signUp = async (event) => {
 // SignIn Handler
 exports.signIn = async (event) => {
   try {
-    await connectToDatabase();
+    // await connectToDatabase();
     const body = JSON.parse(event.body || '{}');
     const { email, password } = body;
 

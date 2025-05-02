@@ -1,9 +1,35 @@
 const authController = require("./authcontroller/authcontroller");
 const userController = require("./usercontroller/usercontroller");
+const { connectToDatabase } = require('./utils/database');
+const { createResponse } = require('./utils/responseUtil');
+const CarController = require('./carController');
+// Import other controllers as needed (UserController, BookingController, etc.)
+
+// Initialize database connection
+let dbConnection;
+const handleCors = () => {
+  return {
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+      'Access-Control-Allow-Credentials': true
+    },
+    body: JSON.stringify({})
+  };
+};
 
 exports.handler = async (event, context) => {
     // Keep connection alive between function calls
     context.callbackWaitsForEmptyEventLoop = false;
+    // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleCors();
+  }
+  if (!dbConnection) {
+    dbConnection = await connectToDatabase();
+  }
     
     // Get the path and method from the event
     const path = event.rawPath || event.path || "/";
@@ -78,6 +104,28 @@ exports.handler = async (event, context) => {
           if (path === "/users/agents" && method === "GET") {
             return await userController.getAgents(event);
           }
+
+              
+    // Car routes
+    if (path === '/cars' && method === 'GET') {
+      return await CarController.getAllCars(event);
+    }
+    
+    if (path.match(/^\/cars\/[^/]+$/) && method === 'GET') {
+      return await CarController.getCarById(event);
+    }
+    
+    if (path === '/cars/popular' && method === 'GET') {
+      return await CarController.getPopularCars(event);
+    }
+    
+    if (path.match(/^\/cars\/[^/]+\/booked-days$/) && method === 'GET') {
+      return await CarController.getCarBookedDays(event);
+    }
+    
+    if (path.match(/^\/cars\/[^/]+\/client-review$/) && method === 'GET') {
+      return await CarController.getCarClientReviews(event);
+    }
         
         // If no routes match, return 404 Not Found
         return {
@@ -101,4 +149,5 @@ exports.handler = async (event, context) => {
             })
         };
     }
-};
+
+  };
