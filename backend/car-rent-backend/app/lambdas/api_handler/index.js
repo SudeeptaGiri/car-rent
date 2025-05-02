@@ -62,22 +62,6 @@ exports.handler = async (event, context) => {
       return await CarController.getCarClientReviews(event);
     }
     
-    // Admin car routes (these should be protected by authorization)
-    if (path === '/admin/cars' && method === 'POST') {
-      // Here you would add authorization check
-      return await CarController.createCar(event);
-    }
-    
-    if (path.match(/^\/admin\/cars\/[^/]+$/) && method === 'PUT') {
-      // Here you would add authorization check
-      return await CarController.updateCar(event);
-    }
-    
-    if (path.match(/^\/admin\/cars\/[^/]+$/) && method === 'DELETE') {
-      // Here you would add authorization check
-      return await CarController.deleteCar(event);
-    }
-    
     // Add other routes here (user routes, booking routes, etc.)
     
     // If no route matches
