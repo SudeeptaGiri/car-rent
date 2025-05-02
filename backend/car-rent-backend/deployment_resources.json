@@ -333,7 +333,7 @@
         "enable_cors": true,
         "PUT": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -348,7 +348,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -360,7 +360,7 @@
         },
         "PUT": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -375,7 +375,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -390,7 +390,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,

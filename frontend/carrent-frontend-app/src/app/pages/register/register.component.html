@@ -58,7 +58,7 @@
             >
             <div *ngIf="submitted && f['email'].errors" class="text-red-500 text-xs mt-1">
               <div *ngIf="f['email'].errors['required']">Email is required</div>
-              <div *ngIf="f['email'].errors['email']">Please enter a valid email</div>
+              <div *ngIf="f['email'].errors['email'] || f['email'].errors['pattern']">Please enter a valid email</div>
             </div>
             <div *ngIf="errorMessage" class="text-red-500 text-xs mt-1">
               {{ errorMessage }}
@@ -72,9 +72,11 @@
               <input 
                 [type]="showPassword ? 'text' : 'password'" 
                 id="password" 
-                formControlName="password" 
+                formControlName="password"
                 placeholder="Create password" 
-                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light  text-gray-500 focus:text-black" 
+                (keypress)="onKeyPress($event)"
+                (paste)="onPaste($event, 'password')"
+                class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light  text-gray-500 focus:text-black" 
                 [ngClass]="{'border-red-500': submitted && f['password'].errors}"
               >
               <button 
@@ -112,7 +114,9 @@
                 id="confirmPassword" 
                 formControlName="confirmPassword" 
                 placeholder="Confirm password" 
-                class="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500" 
+                (keypress)="onKeyPress($event)"
+                (paste)="onPaste($event, 'confirmPassword')"
+                class="w-full pr-10 border border-gray-300 rounded p-2 focus:outline-none focus:ring-1 font-light text-gray-500" 
                 [ngClass]="{'border-red-500': submitted && f['confirmPassword'].errors}"
               >
               <button 

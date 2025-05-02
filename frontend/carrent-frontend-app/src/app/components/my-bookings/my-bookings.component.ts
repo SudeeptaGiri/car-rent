@@ -10,6 +10,8 @@ import { FeedbackDialogComponent } from '../feedback-dialog/feedback-dialog.comp
 import { ViewFeedbackDialogComponent } from '../view-feedback-dialog/view-feedback-dialog.component';
 import { BookingCancelledDialogComponent } from '../booking-cancelled-dialog/booking-cancelled-dialog.component';
 import { Router } from '@angular/router';
+import { CarDetails } from '../../models/car.interface';
+import { CarService } from '../../services/car.service';
 
 @Component({
   selector: 'app-my-bookings',
@@ -28,23 +30,41 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
   
   constructor(
-    private bookingService: BookingService,
+    private carService: CarService,
     private dialog: MatDialog,
+    private bookingService: BookingService, 
     private router: Router // Add this
-  ) {}
+  ) {
+  }
   navigateToEditBooking(booking: Booking): void {
     this.router.navigate(['/edit-booking', booking.id]);
   }
   
-  ngOnInit(): void {
-    this.subscription.add(
-      this.bookingService.getBookings().subscribe(bookings => {
-        console.log('Loaded user bookings:', bookings);
-        this.bookings = bookings;
-        this.filterBookings();
+  // In MyBookingsComponent
+ngOnInit(): void {
+  this.subscription.add(
+      this.carService.bookings$.subscribe({
+        next: (bookings) => {
+          console.log('Raw bookings received:', bookings);
+          if (bookings && bookings.length > 0) {
+              this.bookings = [...bookings];
+              console.log('Bookings array after assignment:', this.bookings);
+              this.filteredBookings = [...bookings];
+              console.log('FilteredBookings after assignment:', this.filteredBookings);
+              this.filterBookings();
+          } else {
+              this.bookings = [];
+              this.filteredBookings = [];
+          }
+      },
+      error: (error) => {
+          console.error('Error loading bookings:', error);
+          this.bookings = [];
+          this.filteredBookings = [];
+      }
       })
-    );
-  }
+  );
+}
 
   private filterBookings(): void {
     if (this.currentTab === 'ALL') {
@@ -52,6 +72,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     } else {
       this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
     }
+    console.log('Filtered bookings after filter:', this.filteredBookings);
   }
   
   ngOnDestroy(): void {
@@ -64,7 +85,9 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   }
   
   isWithin12Hours(booking: Booking): boolean {
-    return this.bookingService.isWithin12Hours(booking);
+    const now = new Date();
+        const hoursRemaining = (booking.pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        return hoursRemaining <= 12 && hoursRemaining > 0;
   }
   
   toggleDropdown(): void {
@@ -87,21 +110,22 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   
   openCancelDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(CancelBookingDialogComponent, {
-      width: '400px',
-      position: { top: '40vh', right: '0px' },
-      data: { booking }
+        width: '400px',
+        position: { top: '40vh', right: '0px' },
+        data: { booking }
     });
     
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.bookingService.cancelBooking(booking.id);
-        this.dialog.open(BookingCancelledDialogComponent, {
-          width: '400px',
-          position: { top: '40vh', right: '0px' },
-        });
-      }
+        if (result) {
+            // Changed from bookingService to carService
+            this.carService.cancelBooking(booking.id);
+            this.dialog.open(BookingCancelledDialogComponent, {
+                width: '400px',
+                position: { top: '40vh', right: '0px' },
+            });
+        }
     });
-  }
+}
   
   openFeedbackDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(FeedbackDialogComponent, {
@@ -112,7 +136,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.bookingService.submitFeedback(booking.id, result.rating, result.comment);
+        this.carService.submitFeedback(booking.id, result.rating, result.comment);
       }
     });
   }
