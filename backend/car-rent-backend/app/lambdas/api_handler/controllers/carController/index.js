@@ -1,5 +1,6 @@
 
 const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 const { createResponse } = require('../../utils/responseUtil');
 const Car = require('../../models/carModel');
 const Booking = require('../../models/bookingModel');
