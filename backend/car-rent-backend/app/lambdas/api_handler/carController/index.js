@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 const { createResponse } = require('../utils/responseUtil');
 const Car = require('../models/carModel');
 const Booking = require('../models/bookingModel');
@@ -115,7 +116,7 @@ const CarController = {
 
       // Transform data to match expected response format
       const carsList = cars.map(car => ({
-        carId: car.carId,
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
         imageUrl: car.images.length > 0 ? car.images : null,
         location: car.location,
@@ -144,8 +145,8 @@ const CarController = {
   getCarById: async (event) => {
     try {
       const carId = event.pathParameters.carId;
-
-      const car = await Car.findOne({ carId });
+      const carObjId = new mongoose.Types.ObjectId(carId);
+      const car = await Car.findOne({ _id: carObjId });
 
       if (!car) {
         return createResponse(404, {
@@ -155,7 +156,7 @@ const CarController = {
 
       // Transform data to match expected response format
       const carDetails = {
-        carId: car.carId,
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
@@ -205,7 +206,7 @@ const CarController = {
 
       // Transform data to match expected response format
       const carsList = popularCars.map(car => ({
-        carId: car.carId,
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
         imageUrl: car.images.length > 0 ? car.images[0] : null,
         location: car.location,
