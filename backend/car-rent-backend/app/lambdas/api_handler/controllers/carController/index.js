@@ -1,10 +1,10 @@
-const { v4: uuidv4 } = require("uuid");
-const mongoose = require("mongoose");
-const { createResponse } = require("../utils/responseUtil");
-const Car = require("../models/carModel");
-const Booking = require("../models/bookingModel");
-const Feedback = require("../models/feedbackModel");
-const Location = require("../models/locationModel");
+
+const { v4: uuidv4 } = require('uuid');
+const { createResponse } = require('../../utils/responseUtil');
+const Car = require('../../models/carModel');
+const Booking = require('../../models/bookingModel');
+const Feedback = require('../../models/feedbackModel');
+const Location = require('../../models/locationModel');
 
 const CarController = {
   // Get all cars with filtering options

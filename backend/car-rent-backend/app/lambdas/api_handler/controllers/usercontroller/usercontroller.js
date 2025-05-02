@@ -1,5 +1,5 @@
 // controllers/userController.js
-const User = require('../models/User');
+const User = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');

@@ -1,8 +1,9 @@
-const authController = require("./authcontroller/authcontroller");
-const userController = require("./usercontroller/usercontroller");
-const { connectToDatabase } = require("./utils/database");
-const { createResponse } = require("./utils/responseUtil");
-const CarController = require("./carController");
+const authController = require("../api_handler/controllers/authController/authcontroller");
+const userController = require("../api_handler/controllers/userController/usercontroller");
+const bookingController = require("../api_handler/controllers/bookingController/bookingcontroller");
+const { connectToDatabase } = require('./utils/database');
+const { createResponse } = require('./utils/responseUtil');
+const CarController = require("../api_handler/controllers/carController/index");
 // Import other controllers as needed (UserController, BookingController, etc.)
 
 // Initialize database connection
