@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const carSchema = new mongoose.Schema({
-  carId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   model: {
     type: String,
     required: true
@@ -60,7 +55,8 @@ const carSchema = new mongoose.Schema({
     required: true
   },
   locationId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Location',
     required: true
   },
   location: {
