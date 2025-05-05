@@ -20,12 +20,17 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    const userData = sessionStorage.getItem('currentUser');
-    this.user = userData ? JSON.parse(userData) : null;
+    
+    // Get user from AuthService instead of directly from sessionStorage
+    this.user = this.authService.getCurrentUser();
+     // Subscribe to user changes
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+    });
   
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
+      .subscribe((event: any) => {
         this.updateSelectedTab(event.urlAfterRedirects);
       });
   
@@ -62,7 +67,9 @@ export class HeaderComponent implements OnInit {
     }
   }
   
-
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
