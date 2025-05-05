@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CarDetailsPopupComponent } from '../car-details-popup/car-details-popup.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,13 +6,26 @@ import { CarDetails } from '../../models/car.interface';
 import { FilterService } from '../../services/filter.service';
 import { FilterData } from '../../models/filter.model';
 import { Subscription, of } from 'rxjs';
+import { CarService } from '../../services/car.service';
 import { catchError } from 'rxjs/operators';
 
-// export enum CarStatus {
-//   AVAILABLE = 'Available',
-//   RESERVED = 'Reserved',
-//   UNAVAILABLE = 'Unavailable'
-// }
+// Define the extended properties that are used but not in the original interface
+interface ExtendedCarDetails extends CarDetails {
+  fuelType?: string;
+  gearBoxType?: string;
+  _id?: string;
+  carId?: string;
+}
+
+// Define proper CarSpecifications interface to ensure all required fields exist
+interface CarSpecifications {
+  transmission: string;
+  engine: string;
+  fuelType: string;
+  seats: number;
+  fuelConsumption: string;
+  features: string[];
+}
 
 export enum CarCategory {
   PASSENGER = 'Passenger car',
@@ -22,16 +35,15 @@ export enum CarCategory {
   OFFROAD = 'Off-road car'
 }
 
-
 @Component({
   selector: 'app-cards',
   standalone: false,
   templateUrl: './cards.component.html',
   styleUrls: ['./cards.component.css']
 })
-export class CardsComponent implements OnInit {
-  cars: CarDetails[] = [];
-  popularCars: CarDetails[] = [];
+export class CardsComponent implements OnInit, OnDestroy {
+  cars: ExtendedCarDetails[] = [];
+  popularCars: ExtendedCarDetails[] = [];
   loading = true;
   error: string | null = null;
   viewAllMode = false;
@@ -42,92 +54,219 @@ export class CardsComponent implements OnInit {
   // Filter properties to CardsComponent class
   filterSubscription: Subscription = new Subscription();
   activeFilters: FilterData | null = null;
-  allCars: CarDetails[] = []; // Store all cars
-  filteredCars: CarDetails[] = []; // Store filtered cars
+  allCars: ExtendedCarDetails[] = []; // Store all cars
+  filteredCars: ExtendedCarDetails[] = []; // Store filtered cars
 
   // Pagination properties
   currentPage = 1;
   itemsPerPage = 16; // Show 16 cars per page
   totalPages = 1;
-  displayedCars: CarDetails[] = [];
+  displayedCars: ExtendedCarDetails[] = [];
 
   Math = Math;
 
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private carService: CarService
   ) { }
 
   ngOnInit(): void {
+    console.log('CardsComponent initialized');
     // Set viewAllMode to false initially to show popular cars
     this.viewAllMode = false;
 
     // Subscribe to filter changes
     this.filterSubscription = this.filterService.filters$.subscribe(filters => {
+      console.log('Filter changes detected:', filters);
       this.activeFilters = filters;
       this.applyFilters();
     });
 
-    // Fetch cars data
+    // Fetch cars data using CarService
     this.fetchCars();
-    // this.filterService.filters$.subscribe(filters => {
-    //   if (filters) {
-    //     this.filteredCars = this.filterService.filterCars(this.cars, filters);
-    //   } else {
-    //     this.filteredCars = this.cars;
-    //   }
-    // });
   }
 
   ngOnDestroy(): void {
+    console.log('CardsComponent destroyed');
     if (this.filterSubscription) {
       this.filterSubscription.unsubscribe();
     }
   }
+
   clearFilters(): void {
+    console.log('Clearing filters');
     this.filterService.resetFilters();
   }
 
-
   fetchCars(): void {
-    console.log('Fetching cars data...');
-    // Note: Use both possible paths to handle different deployment configurations
-    this.http.get<{ cars: CarDetails[] }>('assets/cars.json').pipe(
-      catchError(err => {
-        console.log('Trying alternative path...');
-        // Try alternative path if first fails
-        return this.http.get<{ cars: CarDetails[] }>('/assets/cars.json').pipe(
-          catchError(err2 => {
-            console.error('All paths failed:', err2);
-            return of({ cars: [] });
-          })
-        );
-      })
-    ).subscribe({
-      next: (data) => {
-        console.log('Cars data loaded successfully:', data);
-        if (data && data.cars && data.cars.length > 0) {
-          this.allCars = data.cars;
-          this.filteredCars = [...this.allCars]; // Initialize filtered cars with all cars
+    console.log('Fetching cars data from service...');
+    this.loading = true;
+    
+    this.carService.getAllCars().subscribe({
+      next: (response) => {
+        console.log('Cars data loaded successfully:', response);
+        if (response && response.content && response.content.length > 0) {
+          // Process MongoDB car data - ensure all fields map correctly
+          this.allCars = response.content.map((carData: any) => {
+            // Use any type for initial data to avoid TypeScript errors on unknown properties
+            // Create a properly typed object with all required fields
+            const processedCar: ExtendedCarDetails = {
+              ...carData,
+              id: carData.id || carData._id || carData.carId || '',
+              // Initialize specifications with proper structure
+              specifications: carData.specifications || {
+                transmission: '',
+                engine: '',
+                fuelType: '',
+                seats: 0,
+                fuelConsumption: '',
+                features: []
+              },
+              // Explicitly copy extended properties
+              fuelType: carData.fuelType,
+              gearBoxType: carData.gearBoxType,
+              _id: carData._id,
+              carId: carData.carId
+            };
+
+            // Process images if they're strings (MongoDB format)
+            if (Array.isArray(carData.images)) {
+              processedCar.images = carData.images.map((img: any, index: number) => {
+                if (typeof img === 'string') {
+                  return {
+                    id: index.toString(),
+                    url: img,
+                    isPrimary: index === 0
+                  };
+                }
+                return img;
+              });
+            } else if (!carData.images) {
+              // Provide a fallback image if none exists
+              processedCar.images = [{
+                id: '0',
+                url: 'assets/placeholder-car.svg',
+                isPrimary: true
+              }];
+            }
+
+            // Ensure rating is a number
+            if (typeof carData.rating === 'string') {
+              processedCar.rating = parseFloat(carData.rating);
+            }
+
+            // Ensure price is a number
+            if (typeof carData.price === 'string') {
+              processedCar.price = parseFloat(carData.price);
+            }
+
+            // Map gearBoxType to transmission in specifications if needed
+            if (carData.gearBoxType && processedCar.specifications && 
+                !processedCar.specifications.transmission) {
+              processedCar.specifications.transmission = 
+                carData.gearBoxType.toUpperCase() === 'AUTOMATIC' ? 'Automatic' : 'Manual';
+            }
+
+            // Map fuelType to engine/fuelType in specifications if needed
+            if (carData.fuelType && processedCar.specifications && 
+                !processedCar.specifications.fuelType) {
+              processedCar.specifications.fuelType = carData.fuelType.charAt(0) + 
+                carData.fuelType.slice(1).toLowerCase();
+            }
+
+            return processedCar;
+          });
+          
+          this.filteredCars = [...this.allCars]; 
           this.cars = this.filteredCars;
 
           // Set default display
           if (!this.viewAllMode) {
-            // Show top rated cars initially
-            this.popularCars = [...this.allCars]
-              .sort((a, b) => b.rating - a.rating)
-              .slice(0, 4);
-            this.displayedCars = this.popularCars;
+            // Get popular cars
+            this.carService.getPopularCars(4).subscribe({
+              next: (popularCarsData: any[]) => {
+                console.log('Popular cars loaded:', popularCarsData);
+                this.popularCars = popularCarsData.map((carData: any) => {
+                  // Create a properly formatted car object
+                  const processedCar: ExtendedCarDetails = {
+                    ...carData,
+                    id: carData.id || carData._id || carData.carId || '',
+                    // Explicitly copy extended properties
+                    fuelType: carData.fuelType,
+                    gearBoxType: carData.gearBoxType,
+                    _id: carData._id,
+                    carId: carData.carId,
+                    // Initialize specifications properly
+                    specifications: carData.specifications || {
+                      transmission: '',
+                      engine: '',
+                      fuelType: '',
+                      seats: 0,
+                      fuelConsumption: '',
+                      features: []
+                    }
+                  };
+
+                  // Process images for popular cars
+                  if (Array.isArray(carData.images)) {
+                    processedCar.images = carData.images.map((img: any, index: number) => {
+                      if (typeof img === 'string') {
+                        return {
+                          id: index.toString(),
+                          url: img,
+                          isPrimary: index === 0
+                        };
+                      }
+                      return img;
+                    });
+                  } else if (!carData.images) {
+                    processedCar.images = [{
+                      id: '0',
+                      url: 'assets/placeholder-car.svg',
+                      isPrimary: true
+                    }];
+                  }
+
+                  // Ensure rating is a number
+                  if (typeof carData.rating === 'string') {
+                    processedCar.rating = parseFloat(carData.rating);
+                  }
+
+                  // Ensure price is a number
+                  if (typeof carData.price === 'string') {
+                    processedCar.price = parseFloat(carData.price);
+                  }
+
+                  return processedCar;
+                });
+                
+                this.displayedCars = this.popularCars;
+                this.loading = false;
+              },
+              error: (error) => {
+                console.error('Error loading popular cars:', error);
+                // Fallback to sorting by rating
+                this.popularCars = [...this.allCars]
+                  .sort((a, b) => {
+                    const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
+                    const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
+                    return ratingB - ratingA;
+                  })
+                  .slice(0, 4);
+                this.displayedCars = this.popularCars;
+                this.loading = false;
+              }
+            });
           } else {
             // Or show paginated results
             this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
             this.updateDisplayedCars();
+            this.loading = false;
           }
-
-          this.loading = false;
         } else {
-          console.error('No cars data found');
+          console.error('No cars data found in response:', response);
           this.provideFallbackData();
         }
       },
@@ -135,127 +274,127 @@ export class CardsComponent implements OnInit {
         console.error('Error loading cars:', err);
         this.error = 'Failed to load cars. Please try again later.';
         this.loading = false;
-
-        // Fallback data in case of error
         this.provideFallbackData();
       }
     });
   }
 
-  // Update the applyFilters method with better debugging and error handling
+  // Modified to use client-side filtering with fixed type issues
   applyFilters(): void {
     if (!this.allCars || !this.allCars.length) {
       console.warn('No cars data to filter');
       return;
     }
 
-    console.log('Applying filters:', this.activeFilters);
-
-    // Start with all cars
-    let filtered = [...this.allCars];
-    const initialCount = filtered.length;
-
-    // If we have active filters, apply them
-    if (this.activeFilters) {
-      // Filter by price range with safety checks
-      if (this.activeFilters.priceMin !== undefined && this.activeFilters.priceMax !== undefined) {
-        console.log(`Filtering by price range: $${this.activeFilters.priceMin} - $${this.activeFilters.priceMax}`);
-
-        filtered = filtered.filter(car => {
-          if (car.price === undefined || car.price === null) return false;
-
-          const inPriceRange = car.price >= this.activeFilters!.priceMin &&
-            car.price <= this.activeFilters!.priceMax;
-
-          if (!inPriceRange) {
-            console.log(`Car excluded by price: ${car.brand} ${car.model} - $${car.price}`);
-          }
-
-          return inPriceRange;
-        });
-
-        console.log(`After price filter: ${filtered.length} cars remaining`);
-      }
-
-      // Filter by car category regardless of how many cars remain
-      if (this.activeFilters.carCategory && this.activeFilters.carCategory !== '') {
-        console.log(`Filtering by category: ${this.activeFilters.carCategory}`);
-
-        filtered = filtered.filter(car =>
-          car.category === this.activeFilters!.carCategory
-        );
-
-        console.log(`After category filter: ${filtered.length} cars remaining`);
-      }
-
-      // Filter by gearbox/transmission
-      if (this.activeFilters.gearbox && this.activeFilters.gearbox !== '') {
-        console.log(`Filtering by transmission: ${this.activeFilters.gearbox}`);
-
-        filtered = filtered.filter(car =>
-          car.specifications && car.specifications.transmission === this.activeFilters!.gearbox
-        );
-
-        console.log(`After transmission filter: ${filtered.length} cars remaining`);
-      }
-
-      // Filter by engine type
-      if (this.activeFilters.engineType && this.activeFilters.engineType !== '') {
-        console.log(`Filtering by engine: ${this.activeFilters.engineType}`);
+    console.log('Applying filters client-side:', this.activeFilters);
+    this.loading = true;
+    
+    if (!this.activeFilters) {
+      // If no filters, show all cars
+      this.filteredCars = [...this.allCars];
+      this.cars = this.filteredCars;
+      this.updatePaginationAndDisplay();
+      this.loading = false;
+      return;
+    }
+    
+    // Filter cars locally
+    this.filteredCars = this.allCars.filter(car => {
+      let matchesFilter = true;
+      
+      // Price Range Filter
+      if (this.activeFilters?.priceMin !== undefined && this.activeFilters?.priceMax !== undefined) {
+        const carPrice = typeof car.price === 'string' ? parseFloat(car.price) : car.price;
         
-        // Debug: Show all available engine types in the data
-        const engineTypes = new Set();
-        this.allCars.forEach(car => {
-          if (car.specifications?.engine) {
-            engineTypes.add(car.specifications.engine);
-          }
-        });
-        console.log('Available engine types in data:', Array.from(engineTypes));
+        if (carPrice < this.activeFilters.priceMin || carPrice > this.activeFilters.priceMax) {
+          matchesFilter = false;
+        }
+      }
+      
+      // Car Category Filter
+      if (this.activeFilters?.carCategory && matchesFilter) {
+        const carCategory = car.category?.toLowerCase() || '';
+        const filterCategory = this.activeFilters.carCategory.toLowerCase();
         
-        // Try to find any car with the selected engine type (for debugging)
-        const matchingCar = this.allCars.find(car => 
-          car.specifications?.engine?.toUpperCase() === this.activeFilters?.engineType.toUpperCase()
-        );
+        if (carCategory !== filterCategory) {
+          matchesFilter = false;
+        }
+      }
+      
+      // Gearbox/Transmission Filter
+      if (this.activeFilters?.gearbox && matchesFilter) {
+        // Check multiple fields that could contain transmission info
+        let carTransmission: string;
         
-        if (matchingCar) {
-          console.log(`Found matching car: ${matchingCar.brand} ${matchingCar.model} with engine: ${matchingCar.specifications.engine}`);
-        } else {
-          console.log(`No car found with engine type "${this.activeFilters.engineType}"`);
+        // First try to get from specifications.transmission
+        if (car.specifications?.transmission) {
+          carTransmission = car.specifications.transmission.toLowerCase();
+        }
+        // If not found, try the extended property gearBoxType
+        else if (car.gearBoxType) {
+          carTransmission = car.gearBoxType.toUpperCase() === 'AUTOMATIC' ? 'automatic' : 'manual';
+        }
+        // Default to empty string if neither is available
+        else {
+          carTransmission = '';
         }
         
-        // Use fuelType instead of engine if available, with case-insensitive comparison
-        filtered = filtered.filter(car => {
-          // Try engine first
-          if (car.specifications?.engine && 
-              car.specifications.engine.toUpperCase() === this.activeFilters?.engineType.toUpperCase()) {
-            return true;
-          }
-          
-          // Try fuelType as fallback
-          if (car.specifications?.fuelType && 
-              car.specifications.fuelType.toUpperCase() === this.activeFilters?.engineType.toUpperCase()) {
-            return true;
-          }
-          
-          // No match
-          return false;
-        });
+        const filterTransmission = this.activeFilters.gearbox.toLowerCase();
         
-        console.log(`After engine filter: ${filtered.length} cars remaining`);
+        if (carTransmission !== filterTransmission) {
+          matchesFilter = false;
+        }
       }
-    }
-
-    console.log(`Final filter result: ${initialCount} cars → ${filtered.length} cars`);
-
-    // Update filtered cars
-    this.filteredCars = filtered;
+      
+      // Engine Type Filter
+      if (this.activeFilters?.engineType && matchesFilter) {
+        let engineMatch = false;
+        const filterEngineType = this.activeFilters.engineType.toUpperCase();
+        
+        // Check multiple potential fields that might contain engine info
+        const engineFields: (string | undefined)[] = [
+          car.specifications?.engine,
+          car.specifications?.fuelType,
+          car.fuelType
+        ];
+        
+        for (const field of engineFields) {
+          if (field && field.toString().toUpperCase().includes(filterEngineType)) {
+            engineMatch = true;
+            break;
+          }
+        }
+        
+        if (!engineMatch) {
+          matchesFilter = false;
+        }
+      }
+      
+      // Location Filter
+      if (this.activeFilters?.pickupLocation && matchesFilter) {
+        const carLocation = car.location?.toLowerCase() || '';
+        const filterLocation = this.activeFilters.pickupLocation.toLowerCase();
+        
+        if (!carLocation.includes(filterLocation)) {
+          matchesFilter = false;
+        }
+      }
+      
+      return matchesFilter;
+    });
+    
+    console.log(`Client-side filtering complete: ${this.filteredCars.length} cars match the criteria`);
     this.cars = this.filteredCars;
+    this.updatePaginationAndDisplay();
+    this.loading = false;
+  }
 
+  private updatePaginationAndDisplay(): void {
     // Update pagination
     this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
     this.currentPage = 1;
 
-    console.log(`Filter applied: ${filtered.length} cars, ${this.totalPages} pages`);
+    console.log(`Filter result: ${this.filteredCars.length} cars, ${this.totalPages} pages`);
 
     // Update displayed cars based on view mode
     if (this.viewAllMode) {
@@ -265,7 +404,11 @@ export class CardsComponent implements OnInit {
       if (this.filteredCars.length >= 4) {
         // Show top rated filtered cars
         this.displayedCars = this.filteredCars
-          .sort((a, b) => b.rating - a.rating)
+          .sort((a, b) => {
+            const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
+            const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
+            return ratingB - ratingA;
+          })
           .slice(0, 4);
       } else {
         // Not enough filtered cars, show all filtered cars
@@ -275,7 +418,8 @@ export class CardsComponent implements OnInit {
   }
 
   provideFallbackData(): void {
-    // Fallback data in case the JSON file can't be loaded
+    console.log('Providing fallback data');
+    // Fallback data in case the API call fails
     this.cars = [
       {
         "id": "1",
@@ -286,89 +430,28 @@ export class CardsComponent implements OnInit {
         "rating": 4.8,
         "price": 550,
         "category": "Sports car",
-        "status": "Not Available",
+        "status": "Available",
         "images": [
           {
             "id": "1",
             "url": "assets/Car1.svg",
             "isPrimary": true
-          },
-          {
-            "id": "2",
-            "url": "assets/Car2.svg",
-            "isPrimary": false
-          },
-          {
-            "id": "3",
-            "url": "assets/Car3.svg",
-            "isPrimary": false
-          },
-          {
-            "id": "4",
-            "url": "assets/Car4.svg",
-            "isPrimary": false
-          },
-          {
-            "id": "5",
-            "url": "assets/Car5.svg",
-            "isPrimary": false
-          },
-          {
-            "id": "6",
-            "url": "assets/Car6.svg",
-            "isPrimary": false
           }
         ],
         "specifications": {
           "transmission": "Automatic",
           "engine": "Gasoline",
-          "fuelType": "GASOLINE",
+          "fuelType": "Gasoline",
           "seats": 2,
           "fuelConsumption": "10.5 L/100km",
           "features": ["Sports Mode", "GPS"]
         },
-        "bookedDates": [
-          {
-            "startDate": "2025-04-21",
-            "startTime": "10:00",
-            "endDate": "2025-04-24",
-            "endTime": "16:00",
-            "bookingId": "booking123",
-            "userId": "user456",
-            "status": "confirmed"
-          },
-          {
-            "startDate": "2024-02-20",
-            "startTime": "09:00",
-            "endDate": "2024-02-25",
-            "endTime": "14:00",
-            "bookingId": "booking124",
-            "userId": "user789",
-            "status": "confirmed"
-          }
-        ],
+        "bookedDates": [],
         "reviews": {
-          "content": [
-            {
-              "id": "1",
-              "userName": "John Doe",
-              "rating": 4.8,
-              "comment": "Amazing sports car experience! The power and handling are exceptional.",
-              "date": "2024-01-15",
-              "userAvatar": "assets/User1.svg"
-            },
-            {
-              "id": "2",
-              "userName": "Sarah Smith",
-              "rating": 1.9,
-              "comment": "Perfect weekend car. Smooth ride and great features.",
-              "date": "2024-01-10",
-              "userAvatar": "assets/User2.svg"
-            }
-          ],
-          "totalPages": 1,
+          "content": [],
+          "totalPages": 0,
           "currentPage": 0,
-          "totalElements": 2
+          "totalElements": 0
         },
         "popularity": {
           "rentCount": 150,
@@ -377,18 +460,22 @@ export class CardsComponent implements OnInit {
           "isPopular": true
         }
       }
-    ];
+    ] as ExtendedCarDetails[]; // Type assertion for the fallback data
+    
+    this.allCars = [...this.cars];
+    this.filteredCars = [...this.cars];
     this.popularCars = [...this.cars];
     this.displayedCars = this.popularCars;
     this.error = null;
+    this.loading = false;
   }
 
-  bookCar(car: CarDetails): void {
+  bookCar(car: ExtendedCarDetails): void {
     // Empty function as requested
-
   }
 
   openCarDetailsPopup(carId: string): void {
+    console.log('Opening car details popup for car ID:', carId);
     const dialogRef = this.dialog.open(CarDetailsPopupComponent, {
       width: '90vw',
       height: '90vh',
@@ -404,6 +491,7 @@ export class CardsComponent implements OnInit {
 
   toggleViewMode(): void {
     this.viewAllMode = !this.viewAllMode;
+    console.log(`View mode toggled: ${this.viewAllMode ? 'View All' : 'Popular Cars'}`);
 
     if (this.viewAllMode) {
       // Switching to "View All" mode
@@ -416,7 +504,11 @@ export class CardsComponent implements OnInit {
       // Switching back to "Popular Cars" mode
       if (this.filteredCars.length >= 4) {
         this.displayedCars = this.filteredCars
-          .sort((a, b) => b.rating - a.rating)
+          .sort((a, b) => {
+            const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
+            const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
+            return ratingB - ratingA;
+          })
           .slice(0, 4);
       } else {
         this.displayedCars = this.filteredCars;
@@ -429,7 +521,11 @@ export class CardsComponent implements OnInit {
       // In popular mode, show top rated cars
       if (this.filteredCars.length >= 4) {
         this.displayedCars = this.filteredCars
-          .sort((a, b) => b.rating - a.rating)
+          .sort((a, b) => {
+            const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
+            const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
+            return ratingB - ratingA;
+          })
           .slice(0, 4);
       } else {
         this.displayedCars = this.filteredCars;
