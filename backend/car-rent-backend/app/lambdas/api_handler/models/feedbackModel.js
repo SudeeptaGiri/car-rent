@@ -1,21 +1,19 @@
 const mongoose = require('mongoose');
 
 const feedbackSchema = new mongoose.Schema({
-  feedbackId: {
-    type: String,
-    required: true,
-    unique: true
-  },
   carId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Car',
     required: true
   },
   clientId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
   bookingId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Booking',
     required: true
   },
   author: {

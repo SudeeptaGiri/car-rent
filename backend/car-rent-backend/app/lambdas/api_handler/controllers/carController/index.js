@@ -1,4 +1,6 @@
+
 const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 const { createResponse } = require('../../utils/responseUtil');
 const Car = require('../../models/carModel');
 const Booking = require('../../models/bookingModel');
@@ -21,7 +23,7 @@ const CarController = {
         minPrice,
         maxPrice,
         page = 1,
-        size = 8
+        size = 8,
       } = queryParams;
 
       // Build filter object
@@ -47,12 +49,25 @@ const CarController = {
         filter.pricePerDay = { $gte: parseInt(minPrice) };
       }
       if (maxPrice) {
-        filter.pricePerDay = { ...filter.pricePerDay, $lte: parseInt(maxPrice) };
+        filter.pricePerDay = {
+          ...filter.pricePerDay,
+          $lte: parseInt(maxPrice),
+        };
       }
 
       // Add location filter if provided
       if (pickupLocationId) {
-        filter.locationId = pickupLocationId;
+        try {
+          // Convert string ID to MongoDB ObjectId
+          const locationObjectId = new mongoose.Types.ObjectId(
+            pickupLocationId
+          );
+          filter.locationId = locationObjectId;
+        } catch (error) {
+          // If the provided ID isn't a valid ObjectId, it won't match any cars
+          // We can either return an empty result or just use the string value
+          filter.locationId = pickupLocationId;
+        }
       }
 
       // Filter out cars that are booked during the requested period
@@ -63,31 +78,38 @@ const CarController = {
         // Find all bookings that overlap with the requested period
         const overlappingBookings = await Booking.find({
           $and: [
-            { bookingStatus: { $nin: ['CANCELLED'] } },
+            { bookingStatus: { $nin: ["CANCELLED"] } },
             {
               $or: [
                 {
                   // Booking starts during requested period
-                  pickupDateTime: { $gte: pickupDate, $lt: dropOffDate }
+                  pickupDateTime: { $gte: pickupDate, $lt: dropOffDate },
                 },
                 {
                   // Booking ends during requested period
-                  dropOffDateTime: { $gt: pickupDate, $lte: dropOffDate }
+                  dropOffDateTime: { $gt: pickupDate, $lte: dropOffDate },
                 },
                 {
                   // Booking spans the entire requested period
                   $and: [
                     { pickupDateTime: { $lte: pickupDate } },
-                    { dropOffDateTime: { $gte: dropOffDate } }
-                  ]
-                }
-              ]
-            }
-          ]
-        }).select('carId');
+                    { dropOffDateTime: { $gte: dropOffDate } },
+                  ],
+                },
+              ],
+            },
+          ],
+        }).select("carId");
 
         // Extract car IDs from overlapping bookings
-        const bookedCarIds = overlappingBookings.map(booking => booking.carId);
+        const bookedCarIds = overlappingBookings.map(
+          (booking) => booking.carId
+        );
+
+        // Exclude booked cars from results
+        if (bookedCarIds.length > 0) {
+          filter._id = { $nin: bookedCarIds }; // Use _id instead of carId
+        }
 
         // Exclude booked cars from results
         if (bookedCarIds.length > 0) {
@@ -95,7 +117,7 @@ const CarController = {
         }
 
         // Only show available cars
-        filter.status = 'AVAILABLE';
+        filter.status = "AVAILABLE";
       }
 
       // Calculate pagination
@@ -114,28 +136,28 @@ const CarController = {
       const totalPages = Math.ceil(totalElements / pageSize);
 
       // Transform data to match expected response format
-      const carsList = cars.map(car => ({
-        carId: car.carId,
+      const carsList = cars.map((car) => ({
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
         imageUrl: car.images.length > 0 ? car.images : null,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
         carRating: car.carRating.toString(),
         serviceRating: car.serviceRating.toString(),
-        status: car.status
+        status: car.status,
       }));
 
       return createResponse(200, {
         content: carsList,
         currentPage: pageNum,
         totalElements,
-        totalPages
+        totalPages,
       });
     } catch (error) {
-      console.error('Error getting cars:', error);
+      console.error("Error getting cars:", error);
       return createResponse(500, {
-        message: 'Error retrieving cars',
-        error: error.message
+        message: "Error retrieving cars",
+        error: error.message,
       });
     }
   },
@@ -144,18 +166,18 @@ const CarController = {
   getCarById: async (event) => {
     try {
       const carId = event.pathParameters.carId;
-
-      const car = await Car.findOne({ carId });
+      const carObjId = new mongoose.Types.ObjectId(carId);
+      const car = await Car.findOne({ _id: carObjId });
 
       if (!car) {
         return createResponse(404, {
-          message: 'Car not found'
+          message: "Car not found",
         });
       }
 
       // Transform data to match expected response format
       const carDetails = {
-        carId: car.carId,
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
@@ -168,15 +190,15 @@ const CarController = {
         fuelConsumption: car.fuelConsumption,
         passengerCapacity: car.passengerCapacity,
         climateControlOption: car.climateControlOption,
-        images: car.images
+        images: car.images,
       };
 
       return createResponse(200, carDetails);
     } catch (error) {
-      console.error('Error getting car by ID:', error);
+      console.error("Error getting car by ID:", error);
       return createResponse(500, {
-        message: 'Error retrieving car',
-        error: error.message
+        message: "Error retrieving car",
+        error: error.message,
       });
     }
   },
@@ -189,8 +211,8 @@ const CarController = {
 
       // Build filter object
       const filter = {
-        status: 'AVAILABLE',
-        carRating: { $gt: 4.0 } // Only cars with rating > 4.0
+        status: "AVAILABLE",
+        carRating: { $gt: 4.0 }, // Only cars with rating > 4.0
       };
 
       // Add category filter if provided
@@ -204,25 +226,25 @@ const CarController = {
         .limit(5);
 
       // Transform data to match expected response format
-      const carsList = popularCars.map(car => ({
-        carId: car.carId,
+      const carsList = popularCars.map((car) => ({
+        carId: car._id,
         model: `${car.brand} ${car.model} ${car.year}`,
-        imageUrl: car.images.length > 0 ? car.images[0] : null,
+        imageUrl: car.images.length > 0 ? car.images : null,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
         carRating: car.carRating.toString(),
         serviceRating: car.serviceRating.toString(),
-        status: car.status
+        status: car.status,
       }));
 
       return createResponse(200, {
-        content: carsList
+        content: carsList,
       });
     } catch (error) {
-      console.error('Error getting popular cars:', error);
+      console.error("Error getting popular cars:", error);
       return createResponse(500, {
-        message: 'Error retrieving popular cars',
-        error: error.message
+        message: "Error retrieving popular cars",
+        error: error.message,
       });
     }
   },
@@ -231,42 +253,43 @@ const CarController = {
   getCarBookedDays: async (event) => {
     try {
       const carId = event.pathParameters.carId;
+      const carObjectId = new mongoose.Types.ObjectId(carId);
 
       // Find all active bookings for the car
       const bookings = await Booking.find({
-        carId,
-        bookingStatus: { $nin: ['CANCELLED'] }
-      }).select('pickupDateTime dropOffDateTime');
+        carId: carObjectId,
+        bookingStatus: { $nin: ["CANCELLED"] },
+      }).select("pickupDateTime dropOffDateTime");
 
       if (!bookings || bookings.length === 0) {
         return createResponse(200, {
-          content: []
+          content: [],
         });
       }
 
       // Generate array of booked dates
       const bookedDates = new Set();
-      
-      bookings.forEach(booking => {
+
+      bookings.forEach((booking) => {
         const pickupDate = new Date(booking.pickupDateTime);
         const dropOffDate = new Date(booking.dropOffDateTime);
-        
+
         // Loop through each day in the booking
         const currentDate = new Date(pickupDate);
         while (currentDate <= dropOffDate) {
-          bookedDates.add(currentDate.toISOString().split('T')[0]); // Add date in YYYY-MM-DD format
+          bookedDates.add(currentDate.toISOString().split("T")[0]); // Add date in YYYY-MM-DD format
           currentDate.setDate(currentDate.getDate() + 1);
         }
       });
 
       return createResponse(200, {
-        content: Array.from(bookedDates)
+        content: Array.from(bookedDates),
       });
     } catch (error) {
-      console.error('Error getting car booked days:', error);
+      console.error("Error getting car booked days:", error);
       return createResponse(500, {
-        message: 'Error retrieving car booked days',
-        error: error.message
+        message: "Error retrieving car booked days",
+        error: error.message,
       });
     }
   },
@@ -275,12 +298,13 @@ const CarController = {
   getCarClientReviews: async (event) => {
     try {
       const carId = event.pathParameters.carId;
+      const carObjectId = new mongoose.Types.ObjectId(carId);
       const queryParams = event.queryStringParameters || {};
       const {
         page = 1,
         size = 5,
-        sort = 'DATE',
-        direction = 'DESC'
+        sort = "DATE",
+        direction = "DESC",
       } = queryParams;
 
       // Calculate pagination
@@ -290,50 +314,53 @@ const CarController = {
 
       // Determine sort field and direction
       let sortField = { date: -1 }; // Default sort by date descending
-      
-      if (sort === 'RATING') {
-        sortField = { carRating: direction === 'ASC' ? 1 : -1 };
-      } else if (sort === 'DATE') {
-        sortField = { date: direction === 'ASC' ? 1 : -1 };
+
+      if (sort === "RATING") {
+        sortField = { carRating: direction === "ASC" ? 1 : -1 };
+      } else if (sort === "DATE") {
+        sortField = { date: direction === "ASC" ? 1 : -1 };
       }
 
       // Find reviews for the car
-      const reviews = await Feedback.find({ carId })
+      const reviews = await Feedback.find({ carId: carObjectId })
         .sort(sortField)
         .skip(skip)
         .limit(pageSize);
 
       // Count total reviews for pagination info
-      const totalElements = await Feedback.countDocuments({ carId });
+      const totalElements = await Feedback.countDocuments({ carId: carObjectId });
       const totalPages = Math.ceil(totalElements / pageSize);
 
       // Transform data to match expected response format
-      const reviewsList = reviews.map(review => ({
+      const reviewsList = reviews.map((review) => ({
         author: review.author,
         authorImageUrl: review.authorImageUrl,
-        date: new Date(review.date).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
+        date: new Date(review.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
         }),
-        rentalExperience: ((review.carRating + review.serviceRating) / 2).toFixed(1),
-        text: review.feedbackText
+        rentalExperience: (
+          (review.carRating + review.serviceRating) /
+          2
+        ).toFixed(1),
+        text: review.feedbackText,
       }));
 
       return createResponse(200, {
         content: reviewsList,
         currentPage: pageNum,
         totalElements,
-        totalPages
+        totalPages,
       });
     } catch (error) {
-      console.error('Error getting car client reviews:', error);
+      console.error("Error getting car client reviews:", error);
       return createResponse(500, {
-        message: 'Error retrieving car client reviews',
-        error: error.message
+        message: "Error retrieving car client reviews",
+        error: error.message,
       });
     }
-  }
+  },
 };
 
 module.exports = CarController;
