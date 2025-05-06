@@ -55,11 +55,9 @@ exports.createBooking = async (event) => {
         const overlappingBooking = await Booking.findOne({
             carId: mongoCarId,
             bookingStatus: { $nin: ['CANCELLED'] },
-            $or: [
-                {
-                    pickupDateTime: { $lte: dropOffDate },
-                    dropOffDateTime: { $gte: pickupDate }
-                }
+            $and: [
+                { pickupDateTime: { $lt: dropOffDate } },
+                { dropOffDateTime: { $gt: pickupDate } }
             ]
         });
 

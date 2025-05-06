@@ -50,11 +50,11 @@ const bookingSchema = new mongoose.Schema({
 });
 
 // Create indexes for better query performance
-bookingSchema.index({ carId: 1 });
-bookingSchema.index({ clientId: 1 });
+bookingSchema.index({ carId: 1 }, { unique: false });
+bookingSchema.index({ clientId: 1 }, { unique: false });
 bookingSchema.index({ pickupDateTime: 1 });
 bookingSchema.index({ dropOffDateTime: 1 });
-bookingSchema.index({ bookingStatus: 1 });
+bookingSchema.index({ bookingStatus: 1 }, { unique: false });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 
