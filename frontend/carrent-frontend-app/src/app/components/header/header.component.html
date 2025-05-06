@@ -8,21 +8,32 @@
   <div class="center-nav">
     <nav class="nav-bar">
       <ul>
-        <li>
+        <!-- Show Home, Cars, and Bookings tabs for regular users -->
+        <ng-container *ngIf="user?.role !== 'Admin'">
+          <li>
+            <a 
+              [ngClass]="{ 'active-tab': selectedTab === 'home' }"
+              (click)="setActiveTab('home')"
+            >Home</a>
+          </li>
+          <li>
+            <a 
+              [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
+              (click)="setActiveTab('cars')"
+            >Cars</a>
+          </li>
+          <li *ngIf="isAuthenticated()">
+            <a [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
+               (click)="setActiveTab('bookings')">My Bookings</a>
+          </li>
+        </ng-container>
+        
+        <!-- Show Dashboard tab only for Admin -->
+        <li *ngIf="user?.role === 'Admin'">
           <a 
-            [ngClass]="{ 'active-tab': selectedTab === 'home' }"
-            (click)="setActiveTab('home')"
-          >Home</a>
-        </li>
-        <li>
-          <a 
-            [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
-            (click)="setActiveTab('cars')"
-          >Cars</a>
-        </li>
-        <li *ngIf="isAuthenticated()">
-          <a [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
-             (click)="setActiveTab('bookings')">My Bookings</a>
+            [ngClass]="{ 'active-tab': selectedTab === 'dashboard' }"
+            (click)="setActiveTab('dashboard')"
+          >Dashboard</a>
         </li>
       </ul>
     </nav>
@@ -37,15 +48,21 @@
   <div class="mobile-menu" [class.active]="menuOpen">
     <nav class="nav-bar">
       <ul>
-        <li><a routerLink="/">Home</a></li>
-        <li><a href="/car">Cars</a></li>
-        <li *ngIf="isAuthenticated()"><a routerLink="/my-bookings">My Bookings</a></li>
+        <!-- Show Home, Cars, and Bookings for regular users -->
+        <ng-container *ngIf="user?.role !== 'Admin'">
+          <li><a routerLink="/">Home</a></li>
+          <li><a href="/car">Cars</a></li>
+          <li *ngIf="isAuthenticated()"><a routerLink="/my-bookings">My Bookings</a></li>
+        </ng-container>
+        
+        <!-- Show Dashboard only for Admin -->
+        <li *ngIf="user?.role === 'Admin'"><a routerLink="/dashboard">Dashboard</a></li>
       </ul>
     </nav>
     <div class="login-side" *ngIf="isAuthenticated(); else mobileGuest">
       <div class="user-dropdown">
         <span (click)="toggleDropdown()" class="user-name">
-         {{ user?.firstName }} ▼
+          {{ user?.firstName }} ▼
         </span>
         <ul [class.expanded]="dropdownOpen" class="dropdown-menu-mobile">
           <li (click)="goToProfile()">Profile</li>
@@ -74,11 +91,11 @@
       <div class="login-side">
         <div class="user-dropdown" style="display: contents; justify-content: center;">
           <div class="profile-avatar">
-            <ng-container *ngIf="user?.imageUrl; else nameInitial">
-              <img [src]="user?.firstName" alt="Profile" class="profile-icon" />
+            <ng-container *ngIf="user?.imageUrl && user?.imageUrl !== 'null'; else nameInitial">
+              <img [src]="user?.imageUrl" alt="Profile" class="profile-icon" />
             </ng-container>
             <ng-template #nameInitial>
-              <div class="initial-avatar">{{ user?.firstName?.charAt(0) }}</div>
+              <div class="initial-avatar">{{ getInitial() }}</div>
             </ng-template>
           </div>
           <span (click)="toggleDropdown()" class="user-name">

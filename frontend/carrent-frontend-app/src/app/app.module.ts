@@ -68,7 +68,7 @@ import { DocumentsComponent } from './components/profile/documents/documents.com
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { CarsComponent } from './pages/cars/cars.component';
-
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -129,7 +129,12 @@ import { CarsComponent } from './pages/cars/cars.component';
     MatNativeDateModule,
     MatCardModule,
     MatSelectModule,
-    FeedbackComponent
+    FeedbackComponent,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
   providers: [ provideHttpClient(),LocationService,FilterService],
   bootstrap: [AppComponent],
