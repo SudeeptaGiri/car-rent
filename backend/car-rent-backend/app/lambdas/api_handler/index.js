@@ -3,7 +3,7 @@ const userController = require("./controllers/userController/userController");
 const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
-// Import other controllers as needed (UserController, BookingController, etc.)
+const homepageController = require('./controllers/homepageController/homepageController');
 
 // Initialize database connection
 let dbConnection;
@@ -112,23 +112,79 @@ exports.handler = async (event, context) => {
       return await CarController.getAllCars(event);
     }
 
-    if (path.match(/^\/cars\/[^/]+$/) && method === "GET") {
-      return await CarController.getCarById(event);
-    }
-
     if (path === "/cars/popular" && method === "GET") {
       return await CarController.getPopularCars(event);
     }
 
     if (path.match(/^\/cars\/[^/]+\/booked-days$/) && method === "GET") {
+      // Extract carId from path if pathParameters is not available
+      if (!event.pathParameters) {
+        const match = path.match(/\/cars\/([^\/]+)\/booked-days$/);
+        if (match) {
+          event.pathParameters = { carId: match[1] };
+        }
+      }
       return await CarController.getCarBookedDays(event);
     }
 
     if (path.match(/^\/cars\/[^/]+\/client-review$/) && method === "GET") {
+      // Extract carId from path if pathParameters is not available
+      if (!event.pathParameters) {
+        const match = path.match(/\/cars\/([^\/]+)\/client-review$/);
+        if (match) {
+          event.pathParameters = { carId: match[1] };
+        }
+      }
       return await CarController.getCarClientReviews(event);
     }
 
+    // This route must come after the specific /cars/... routes
+    if (path.match(/^\/cars\/[^/]+$/) && method === "GET") {
+      // Extract carId from path if pathParameters is not available
+      if (!event.pathParameters) {
+        const match = path.match(/\/cars\/([^\/]+)$/);
+        if (match) {
+          event.pathParameters = { carId: match[1] };
+        }
+      }
+      return await CarController.getCarById(event);
+    }
+
+    // Homepage routes - Adding logging to debug the issue
+    console.log(`Checking if path '${path}' matches homepage routes`);
+    
+    if (path === "/home/about-us" && method === "GET") {
+      console.log("Matched /home/about-us route, calling homepageController.getAboutUs");
+      try {
+        return await homepageController.getAboutUs(event);
+      } catch (error) {
+        console.error("Error in getAboutUs:", error);
+        throw error;
+      }
+    }
+    
+    if (path === "/home/faq" && method === "GET") {
+      console.log("Matched /home/faq route, calling homepageController.getFAQ");
+      try {
+        return await homepageController.getFAQ(event);
+      } catch (error) {
+        console.error("Error in getFAQ:", error);
+        throw error;
+      }
+    }
+    
+    if (path === "/home/locations" && method === "GET") {
+      console.log("Matched /home/locations route, calling homepageController.getLocations");
+      try {
+        return await homepageController.getLocations(event);
+      } catch (error) {
+        console.error("Error in getLocations:", error);
+        throw error;
+      }
+    }
+
     // If no routes match, return 404 Not Found
+    console.log(`No route matched for: ${method} ${path}`);
     return {
       statusCode: 404,
       headers: headers,
