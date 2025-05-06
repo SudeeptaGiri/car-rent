@@ -1,5 +1,5 @@
-const authController = require("./controllers/authcontroller/authcontroller");
-const userController = require("./controllers/usercontroller/usercontroller");
+const authController = require("./controllers/authController/authController");
+const userController = require("./controllers/userController/userController");
 const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
