@@ -35,9 +35,10 @@
             <div *ngIf="f['email'].errors['email']">Please enter a valid email</div>
             <div *ngIf="f['email'].errors['invalidEmailFormat']">Email can only contain letters, numbers, dots, and underscores</div>
           </div>
-          <div *ngIf="errorMessage && errorMessage === 'Invalid email'" class="text-red-500 text-xs mt-1">
-            {{ errorMessage }}
-          </div>
+          <!-- Replace these specific error checks with more general ones -->
+<div *ngIf="errorMessage" class="text-red-500 text-xs mt-1">
+  {{ errorMessage }}
+</div>
         </div>
 
 
@@ -61,9 +62,10 @@
               </svg>
             </button>
           </div>
-          <div *ngIf="errorMessage && errorMessage==='Invalid password'" class="text-red-500 text-xs mt-1">
-            {{ errorMessage }}
-          </div>
+          <!-- Replace these specific error checks with more general ones -->
+<div *ngIf="errorMessage" class="text-red-500 text-xs mt-1">
+  {{ errorMessage }}
+</div>
         </div>
 
         <!-- Login button -->

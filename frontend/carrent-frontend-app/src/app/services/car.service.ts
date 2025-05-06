@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, Subject, Subscription } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of, Subject, Subscription, BehaviorSubject, interval } from 'rxjs';
 import { map, catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import {
   CarDetails,
@@ -9,17 +9,18 @@ import {
   BookedDate,
   ReviewsData,
   BookingRequest,
-  CarImage
+  MongoDBCar,
+  mongoDBCarToCarDetails,
+  convertMongoDBResponse,
+  MongoDBCarListResponse
 } from '../models/car.interface';
 import { Booking, BookingStatus, UserInfo, LocationInfo } from '../models/booking.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CarReservedDialogComponent } from '../components/car-reserved-dialog/car-reserved-dialog.component';
 import { BookingSuccessDialogComponent } from '../components/booking-success-dialog/booking-success-dialog.component';
 import { Router } from '@angular/router';
-import { BehaviorSubject, interval } from 'rxjs';
-
-import * as moment from 'moment';
 import { FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 
 export interface LocationSuggestion {
   displayName: string;
@@ -31,23 +32,31 @@ export interface LocationSuggestion {
   providedIn: 'root'
 })
 export class CarService {
-  private jsonUrl = 'assets/cars.json';
-  private readonly STORAGE_KEY = 'bookings';
-  private bookings: Booking[] = [];
-  private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  bookings$ = this.bookingsSubject.asObservable()
+   // MongoDB API endpoint - update this with your actual AWS API Gateway URL
+   private apiBaseUrl = 'https://gvhal0t30j.execute-api.eu-west-3.amazonaws.com/api';
   
-  constructor(
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private router: Router
-  ) {
-    this.loadBookingsForCurrentUser();
-    if (this.bookings.length === 0) {
-      this.loadSampleBookings(); 
-    }
-    interval(1000).subscribe(() => this.updateBookingStatuses());
-  }
+   // Keep JSON URL for fallback during development/transition
+   private jsonUrl = 'assets/cars.json';
+   
+   private readonly STORAGE_KEY = 'bookings';
+   private bookings: Booking[] = [];
+   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
+   bookings$ = this.bookingsSubject.asObservable();
+   
+   constructor(
+     private http: HttpClient,
+     private dialog: MatDialog,
+     private router: Router
+   ) {
+     this.loadBookingsForCurrentUser();
+     if (this.bookings.length === 0) {
+       this.loadSampleBookings(); 
+     }
+     interval(1000).subscribe(() => this.updateBookingStatuses());
+   }
+
+
+
   submitFeedback(bookingId: string, rating: number, comment: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
@@ -177,6 +186,7 @@ export class CarService {
   }
 
   addBooking(booking: Booking): Observable<Booking> {
+    // Implementation unchanged
     return new Observable<Booking>(observer => {
       try {
         // Add to internal array
@@ -206,13 +216,14 @@ export class CarService {
   }
 
   cancelBooking(bookingId: string): void {
+    // Implementation unchanged
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
         this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
         this.saveBookingsToStorage();
         this.bookingsSubject.next([...this.bookings]);
     }
-}
+  }
 
   private updateBookingStatuses(): void {
     const now = new Date();
@@ -302,23 +313,38 @@ export class CarService {
     return userEmail ? `${this.STORAGE_KEY}_${userEmail}` : this.STORAGE_KEY;
   }
 
-  getAllCars(page: number = 0): Observable<CarListResponse> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const allCars = response.cars;
-        return {
-          content: allCars,
-          totalPages: 1,
-          currentPage: 0,
-          totalElements: allCars.length
-        };
+  getAllCars(page: number = 0, size: number = 50): Observable<CarListResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<MongoDBCarListResponse>(`${this.apiBaseUrl}/cars`, { params }).pipe(
+      map(response => convertMongoDBResponse(response)),
+      catchError(error => {
+        console.error('Error fetching cars from API:', error);
+        // Fallback to local JSON if API fails (temporary during migration)
+        return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+          map(response => ({
+            content: response.cars,
+            totalPages: 1,
+            currentPage: 0,
+            totalElements: response.cars.length
+          }))
+        );
       })
     );
   }
 
   getCarDetails(carId: string): Observable<CarDetails | undefined> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => response.cars.find(car => car.id === carId))
+    return this.http.get<MongoDBCar>(`${this.apiBaseUrl}/cars/${carId}`).pipe(
+      map(car => mongoDBCarToCarDetails(car)),
+      catchError(error => {
+        console.error(`Error fetching car details for ID ${carId}:`, error);
+        // Fallback to local JSON if API fails
+        return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+          map(response => response.cars.find(car => car.id === carId))
+        );
+      })
     );
   }
  
@@ -327,87 +353,170 @@ export class CarService {
     totalCars: number,
     currentIndex: number
   }> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const allCars = response.cars;
-        const currentIndex = allCars.findIndex(car => car.id === carId);
-        const car = allCars[currentIndex];
-        
-        return {
-          car,
-          totalCars: allCars.length,
-          currentIndex
-        };
+    return this.http.get<MongoDBCar>(`${this.apiBaseUrl}/cars/${carId}`).pipe(
+      switchMap(car => {
+        return this.getAllCars().pipe(
+          map(allCarsResponse => {
+            const allCars = allCarsResponse.content;
+            const currentIndex = allCars.findIndex(c => c.id === carId);
+            
+            return {
+              car: mongoDBCarToCarDetails(car),
+              totalCars: allCars.length,
+              currentIndex: currentIndex >= 0 ? currentIndex : 0
+            };
+          })
+        );
+      }),
+      catchError(error => {
+        console.error(`Error fetching car details with navigation for ID ${carId}:`, error);
+        // Fallback to local JSON if API fails
+        return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+          map(response => {
+            const allCars = response.cars;
+            const currentIndex = allCars.findIndex(car => car.id === carId);
+            const car = currentIndex >= 0 ? allCars[currentIndex] : undefined;
+            
+            return {
+              car,
+              totalCars: allCars.length,
+              currentIndex: currentIndex >= 0 ? currentIndex : 0
+            };
+          })
+        );
       })
     );
   }
 
   getNextCar(currentId: string): Observable<CarDetails | undefined> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+    return this.getAllCars().pipe(
       map(response => {
-        const allCars = response.cars;
+        const allCars = response.content;
         const currentIndex = allCars.findIndex(car => car.id === currentId);
-        return allCars[currentIndex + 1];
+        if (currentIndex >= 0 && currentIndex < allCars.length - 1) {
+          return allCars[currentIndex + 1];
+        }
+        return undefined;
       })
     );
   }
 
   getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+    return this.getAllCars().pipe(
       map(response => {
-        const allCars = response.cars;
+        const allCars = response.content;
         const currentIndex = allCars.findIndex(car => car.id === currentId);
-        return allCars[currentIndex - 1];
+        if (currentIndex > 0) {
+          return allCars[currentIndex - 1];
+        }
+        return undefined;
       })
     );
   }
 
   getCarBookedDates(carId: string): Observable<BookedDate[]> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const car = response.cars.find(c => c.id === carId);
-        return car ? car.bookedDates : [];
+    return this.http.get<BookedDate[]>(`${this.apiBaseUrl}/cars/${carId}/booked-dates`).pipe(
+      catchError(error => {
+        console.error(`Error fetching booked dates for car ID ${carId}:`, error);
+        // Fallback to local JSON if API fails
+        return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+          map(response => {
+            const car = response.cars.find(c => c.id === carId);
+            return car ? car.bookedDates : [];
+          })
+        );
       })
     );
   }
 
   getCarReviews(carId: string): Observable<ReviewsData> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const car = response.cars.find(c => c.id === carId);
-        return car ? car.reviews : { content: [], totalPages: 0, currentPage: 0, totalElements: 0 };
+    return this.http.get<ReviewsData>(`${this.apiBaseUrl}/cars/${carId}/client-review`).pipe(
+      catchError(error => {
+        console.error(`Error fetching reviews for car ID ${carId}:`, error);
+        // Fallback to local JSON if API fails
+        return this.http.get<CarsResponse>(this.jsonUrl).pipe(
+          map(response => {
+            const car = response.cars.find(c => c.id === carId);
+            return car ? car.reviews : { content: [], totalPages: 0, currentPage: 0, totalElements: 0 };
+          })
+        );
+      })
+    );
+  }
+
+  getPopularCars(limit: number = 4): Observable<CarDetails[]> {
+    return this.http.get<MongoDBCarListResponse>(`${this.apiBaseUrl}/cars/popular?limit=${limit}`).pipe(
+      map(response => response.content.map(car => mongoDBCarToCarDetails(car))),
+      catchError(error => {
+        console.error('Error fetching popular cars:', error);
+        // Fallback to local JSON if API fails
+        return this.getAllCars().pipe(
+          map(response => {
+            // Sort by rating and get top 'limit' cars
+            return response.content
+              .sort((a, b) => b.rating - a.rating)
+              .slice(0, limit);
+          })
+        );
       })
     );
   }
 
   createBooking(bookingRequest: BookingRequest): Observable<any> {
-    return this.http.get<CarsResponse>(this.jsonUrl).pipe(
-      map(response => {
-        const car = response.cars.find(c => c.id === bookingRequest.carId);
-        if (car) {
-          // Add new booking to car's bookedDates
-          const newBookedDate: BookedDate = {
-            startDate: bookingRequest.startDate,
-            startTime: bookingRequest.startTime,
-            endDate: bookingRequest.endDate,
-            endTime: bookingRequest.endTime,
-            bookingId: `booking${Date.now()}`,
-            userId: bookingRequest.userId,
-            status: 'pending' as 'pending' | 'confirmed' | 'completed' // Type assertion to match union type
-          };
-          
-          car.bookedDates.push(newBookedDate);
-          
-          // Get existing bookings and add new one
-          const storageKey = this.getStorageKeyForUser();
-          const existingBookingsStr = localStorage.getItem(storageKey);
-          const existingBookings: Booking[] = existingBookingsStr ? JSON.parse(existingBookingsStr) : [];
-          
-          localStorage.setItem(storageKey, JSON.stringify(existingBookings));
-        }
-        return bookingRequest;
+    return this.http.post<any>(`${this.apiBaseUrl}/bookings`, bookingRequest).pipe(
+      catchError(error => {
+        console.error('Error creating booking:', error);
+        // Fallback to local JSON if API fails
+        return this.getCarDetails(bookingRequest.carId).pipe(
+          map(car => {
+            if (car) {
+              // Add new booking to car's bookedDates (simulation)
+              const newBookedDate: BookedDate = {
+                startDate: bookingRequest.startDate,
+                startTime: bookingRequest.startTime,
+                endDate: bookingRequest.endDate,
+                endTime: bookingRequest.endTime,
+                bookingId: `booking${Date.now()}`,
+                userId: bookingRequest.userId,
+                status: 'pending'
+              };
+              
+              // Get existing bookings and add new one
+              const storageKey = this.getStorageKeyForUser();
+              const existingBookingsStr = localStorage.getItem(storageKey);
+              const existingBookings: Booking[] = existingBookingsStr ? JSON.parse(existingBookingsStr) : [];
+              
+              localStorage.setItem(storageKey, JSON.stringify(existingBookings));
+            }
+            return bookingRequest;
+          })
+        );
       })
     );
+  }
+
+  analyzeEngineTypes(cars: any[]): void {
+    console.log('Analyzing engine types in car data...');
+    
+    const engineTypes = new Set();
+    const missingEngineData = [];
+    
+    cars.forEach(car => {
+      if (car.specifications?.engine) {
+        engineTypes.add(car.specifications.engine);
+      } else if (car.fuelType) {
+        // For MongoDB format
+        engineTypes.add(car.fuelType);
+      } else {
+        missingEngineData.push(car.id || car._id || car.carId);
+      }
+    });
+    
+    console.log('Engine types found in data:', Array.from(engineTypes));
+    
+    if (missingEngineData.length > 0) {
+      console.warn(`${missingEngineData.length} cars are missing engine data`);
+    }
   }
 
   // ==================== LOCATION METHODS ====================
