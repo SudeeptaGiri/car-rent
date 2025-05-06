@@ -287,10 +287,6 @@ export class CarService {
       })
     };
     
-    if (authToken) {
-      httpOptions.headers = httpOptions.headers.set('Authorization', `Bearer ${authToken}`);
-    }
-    
     // Create an observable for the API call using pipe pattern
     this.http.post<any>(`${this.bookingsApiUrl}/bookings`, bookingRequest, httpOptions)
       .pipe(

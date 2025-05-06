@@ -1,12 +1,17 @@
 const mongoose = require('mongoose');
-const { createResponse } = require('../../utils/responseUtil');
 const Booking = require('../../models/bookingModel');
 const Car = require('../../models/carModel');
 const User = require('../../models/userModel');
+const { createResponse } = require('../../utils/responseUtil');
 
 exports.createBooking = async (event) => {
     try {
         console.log('Received event:', JSON.stringify(event, null, 2));
+        
+        // Handle OPTIONS request for CORS preflight
+        if (event.httpMethod === "OPTIONS") {
+            return createResponse(200, {});
+        }
         
         if (!event.body) {
             return createResponse(400, { message: 'Request body is missing' });
@@ -106,7 +111,12 @@ exports.createBooking = async (event) => {
 
         const message = `New booking was successfully created. \n${car.brand} ${car.model} ${car.year} is booked for ${formattedPickupDate} - ${formattedDropOffDate} \nYou can change booking details until 10:30 PM ${formattedPickupDate}.\nYour order: #${orderNumber} (${formattedDate})`;
 
-        return createResponse(200, { message });
+        return createResponse(200, { 
+            message,
+            bookingId: newBooking._id,
+            orderNumber: newBooking.orderNumber,
+            totalPrice: newBooking.totalPrice
+        });
     } catch (error) {
         console.error('Error creating booking:', error);
         return createResponse(500, { 
@@ -118,6 +128,11 @@ exports.createBooking = async (event) => {
 
 exports.getAllBookings = async (event) => {
     try {
+        // Handle OPTIONS request for CORS preflight
+        if (event.httpMethod === "OPTIONS") {
+            return createResponse(200, {});
+        }
+        
         const { dateFrom, dateTo, clientId } = event.queryStringParameters || {};
         
         const filter = {};
@@ -164,6 +179,11 @@ exports.getAllBookings = async (event) => {
 
 exports.getUserBookings = async (event) => {
     try {
+        // Handle OPTIONS request for CORS preflight
+        if (event.httpMethod === "OPTIONS") {
+            return createResponse(200, {});
+        }
+        
         const { userId } = event.pathParameters;
 
         const bookings = await Booking.find({ clientId: userId })
