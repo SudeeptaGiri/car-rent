@@ -55,6 +55,11 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  goToReports(): void {
+    this.router.navigate(['/reports']);
+    this.dropdownOpen = false; // Close the dropdown after navigation
+  }
+
   setActiveTab(tab: string) {
     this.selectedTab = tab;
     switch (tab) {

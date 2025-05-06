@@ -42,7 +42,7 @@ const routes: Routes = [
   { path: 'my-bookings', component: MyBookingsPageComponent, pathMatch: 'full' }, 
   { path: 'edit-booking/:id', component: EditBookingPageComponent },
   { path: 'cars', component: CarsComponent, pathMatch: 'full' },
-  { path: 'reports', component: ReportsComponent, pathMatch: 'full', canActivate: [adminGuard] },
+  { path: 'reports', component: ReportsComponent, pathMatch: 'full', canActivate: [authGuard, adminGuard] },
 ];
 
 @NgModule({

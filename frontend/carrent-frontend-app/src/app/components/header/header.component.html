@@ -92,6 +92,7 @@
           <ul *ngIf="dropdownOpen" class="dropdown-menu">
             <li (click)="goToProfile()">Profile</li>
             <li (click)="logout()">Logout</li>
+            <li *ngIf="isAdmin()" (click)="goToReports()">Reports</li>
           </ul>
         </div>
         <select aria-label="Language selection">

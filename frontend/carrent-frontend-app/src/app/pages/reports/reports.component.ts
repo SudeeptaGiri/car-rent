@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reports',
+  standalone: false,
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css']
 })
