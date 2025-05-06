@@ -20,11 +20,9 @@
             (click)="setActiveTab('cars')"
           >Cars</a>
         </li>
-        <li *ngIf="user">
-          <a  
-            [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
-            (click)="setActiveTab('bookings')"
-          >My Bookings</a>
+        <li *ngIf="isAuthenticated()">
+          <a [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
+             (click)="setActiveTab('bookings')">My Bookings</a>
         </li>
       </ul>
     </nav>
@@ -41,13 +39,13 @@
       <ul>
         <li><a routerLink="/">Home</a></li>
         <li><a href="/car">Cars</a></li>
-        <li *ngIf="user"><a routerLink="/my-bookings">My Bookings</a></li>
+        <li *ngIf="isAuthenticated()"><a routerLink="/my-bookings">My Bookings</a></li>
       </ul>
     </nav>
-    <div class="login-side" *ngIf="user; else mobileGuest">
+    <div class="login-side" *ngIf="isAuthenticated(); else mobileGuest">
       <div class="user-dropdown">
         <span (click)="toggleDropdown()" class="user-name">
-         {{ user.firstName }} ▼
+         {{ user?.firstName }} ▼
         </span>
         <ul [class.expanded]="dropdownOpen" class="dropdown-menu-mobile">
           <li (click)="goToProfile()">Profile</li>
@@ -70,44 +68,44 @@
     </ng-template>
   </div>
 
- <!-- Desktop login: only visible on screens wider than 640px -->
-<div class="desktop-only">
-  <ng-container *ngIf="user; else desktopGuestLinks">
-    <div class="login-side">
-      <div class="user-dropdown" style="display: contents; justify-content: center;">
-        <div class="profile-avatar">
-          <ng-container *ngIf="user?.image; else nameInitial">
-            <img [src]="user.image" alt="Profile" class="profile-icon" />
-          </ng-container>
-          <ng-template #nameInitial>
-            <div class="initial-avatar">{{ user.firstName.charAt(0) }}</div>
-          </ng-template>
+  <!-- Desktop login: only visible on screens wider than 640px -->
+  <div class="desktop-only">
+    <ng-container *ngIf="isAuthenticated(); else desktopGuestLinks">
+      <div class="login-side">
+        <div class="user-dropdown" style="display: contents; justify-content: center;">
+          <div class="profile-avatar">
+            <ng-container *ngIf="user?.imageUrl; else nameInitial">
+              <img [src]="user?.firstName" alt="Profile" class="profile-icon" />
+            </ng-container>
+            <ng-template #nameInitial>
+              <div class="initial-avatar">{{ user?.firstName?.charAt(0) }}</div>
+            </ng-template>
+          </div>
+          <span (click)="toggleDropdown()" class="user-name">
+            Hello, {{ user?.firstName }} {{ user?.role ? '(' + user?.role + ')' : '' }}
+          </span>
+          <ul *ngIf="dropdownOpen" class="dropdown-menu">
+            <li (click)="goToProfile()">Profile</li>
+            <li (click)="logout()">Logout</li>
+          </ul>
         </div>
-        <span (click)="toggleDropdown()" class="user-name">
-          Hello, {{ user.firstName }} ({{ user.role }})
-        </span>
-        <ul *ngIf="dropdownOpen" class="dropdown-menu">
-          <li (click)="goToProfile()">Profile</li>
-          <li (click)="logout()">Logout</li>
-        </ul>
+        <select aria-label="Language selection">
+          <option value="en" selected>En</option>
+          <option value="fr">Fr</option>
+          <option value="es">Es</option>
+        </select>
       </div>
-      <select aria-label="Language selection">
-        <option value="en" selected>En</option>
-        <option value="fr">Fr</option>
-        <option value="es">Es</option>
-      </select>
-    </div>
-  </ng-container>
-  
-
-  <ng-template #desktopGuestLinks>
-    <div class="login-side">
-      <app-user-role></app-user-role>
-      <select aria-label="Language selection">
-        <option value="en" selected>En</option>
-        <option value="fr">Fr</option>
-        <option value="es">Es</option>
-      </select>
-    </div>
-  </ng-template>
-</div>
+    </ng-container>
+    
+    <ng-template #desktopGuestLinks>
+      <div class="login-side">
+        <app-user-role></app-user-role>
+        <select aria-label="Language selection">
+          <option value="en" selected>En</option>
+          <option value="fr">Fr</option>
+          <option value="es">Es</option>
+        </select>
+      </div>
+    </ng-template>
+  </div>
+</header>

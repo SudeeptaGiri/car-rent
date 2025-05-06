@@ -2,7 +2,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-
 import { BookingService } from '../../services/booking.service';
 import { Booking, BookingStatus } from '../../models/booking.model';
 import { CancelBookingDialogComponent } from '../cancel-booking-dialog/cancel-booking-dialog.component';

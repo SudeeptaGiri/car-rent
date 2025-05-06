@@ -187,35 +187,6 @@ export class RegisterComponent implements OnInit {
 
     return null;
   }
-
-  onSubmit(): void {
-    this.submitted = true;
-    this.errorMessage = '';
-
-    if (this.registrationForm.invalid) {
-      return;
-    }
-
-    const user: User = {
-      firstName: this.registrationForm.value.firstName,
-      lastName: this.registrationForm.value.lastName,
-      email: this.registrationForm.value.email,
-      password: this.registrationForm.value.password,
-    };
-
-    this.authService.register(user).subscribe({
-      next: (response) => {
-        console.log('Registration successful', response);
-        this.registrationSuccess = true;
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        console.error('Registration failed', error);
-        this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
-      }
-    });
-  }
-
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
@@ -231,4 +202,44 @@ export class RegisterComponent implements OnInit {
   get f() {
     return this.registrationForm.controls;
   }
+  onSubmit(): void {
+    this.submitted = true;
+    this.errorMessage = '';
+  
+    if (this.registrationForm.invalid) {
+      return;
+    }
+  
+    const user: User = {
+      firstName: this.registrationForm.value.firstName,
+      lastName: this.registrationForm.value.lastName,
+      email: this.registrationForm.value.email,
+      password: this.registrationForm.value.password,
+    };
+  
+    this.authService.register(user).subscribe({
+      next: (response) => {
+        console.log('Registration successful', response);
+        this.registrationSuccess = true;
+        
+        // If you want to automatically log the user in after registration
+        // (since the backend now returns a token on registration)
+        // you can navigate directly to a protected route
+        // this.router.navigate(['/dashboard']); // or wherever you want to send them
+        
+        // Or if you still want them to go to login page:
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Registration failed', error);
+        // Updated to handle specific API error messages
+        if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Registration failed. Please try again.';
+        }
+      }
+    });
+  }
+
 }

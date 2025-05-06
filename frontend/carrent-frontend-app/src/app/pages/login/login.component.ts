@@ -43,10 +43,10 @@ export class LoginComponent {
         }, 5000);
       }
     });
-
-    // Clear any previous session (optional)
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
+    
+    // Remove these lines as they're no longer needed
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('currentUser');
   }
 
   emailFormatValidator(control: AbstractControl): ValidationErrors | null {
@@ -73,19 +73,20 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
   
     this.authService.login(email, password).subscribe({
-      next: (response: { token: string, user: User }) => {
+      next: (response) => {
         console.log('Login successful', response);
-  
-        // Save token and full user data
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('currentUser', JSON.stringify(response.user));
+        // No need to manually store token and user data as the AuthService now handles this
         this.router.navigate(['/']);
       },
       error: (error) => {
-        console.error('Login failed', error.message);
-  
-        // Directly get the message from the thrown error
-        this.errorMessage = error.message || 'Login failed. Please try again.';
+        console.error('Login failed', error);
+        
+        // Handle specific error messages from the API
+        if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Login failed. Please try again.';
+        }
       }
     });
   }
