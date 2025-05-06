@@ -68,6 +68,7 @@ import { DocumentsComponent } from './components/profile/documents/documents.com
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { CarsComponent } from './pages/cars/cars.component';
+import { ReportsComponent } from './pages/reports/reports.component';
 
 
 @NgModule({
@@ -108,7 +109,8 @@ import { CarsComponent } from './pages/cars/cars.component';
     DocumentsComponent,
     ChangePasswordComponent,
     TruncatePipe,
-    CarsComponent
+    CarsComponent,
+    ReportsComponent
   ],
   imports: [
     BrowserModule,
