@@ -3,7 +3,8 @@ const userController = require("./controllers/userController/userController");
 const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
-const bookingController = require("./controllers/bookingController/bookingController")
+const bookingController = require("./controllers/bookingController/bookingController");
+
 // Import other controllers as needed (UserController, BookingController, etc.)
 
 // Add this at the top of your index.js
@@ -29,6 +30,14 @@ const handleCors = () => {
 
 exports.handler = async (event, context) => {
   // Keep connection alive between function calls
+  console.log('FULL EVENT:', JSON.stringify(event, null, 2));
+  
+  const extractedPath = event.rawPath || event.path || event.resource || "/";
+  console.log('EXTRACTED PATH:', extractedPath);
+  console.log('EVENT.PATH:', event.path);
+  console.log('EVENT.RAWPATH:', event.rawPath);
+  console.log('EVENT.RESOURCE:', event.resource);
+  
   context.callbackWaitsForEmptyEventLoop = false;
   // Handle CORS preflight requests
   if (event.httpMethod === "OPTIONS") {
@@ -39,7 +48,8 @@ exports.handler = async (event, context) => {
   }
 
   // Get the path and method from the event
-  const path = event.rawPath || event.path || "/";
+  // Modify this line in your handler function
+const path = event.rawPath || event.path || event.resource || "/";
   const method =
     event.requestContext?.http?.method || event.httpMethod || "UNKNOWN";
 
@@ -135,7 +145,10 @@ exports.handler = async (event, context) => {
     }
 
     if (path === "/bookings" && method === "POST") {
+      console.log('Handling POST /bookings request');
+      console.log('Request body:', event.body);
       const result = await bookingController.createBooking(event);
+      console.log('Booking result:', result);
       return result;
     }
 
