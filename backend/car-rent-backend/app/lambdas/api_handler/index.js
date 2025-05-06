@@ -137,6 +137,18 @@ exports.handler = async (event, context) => {
       }
       return await CarController.getCarClientReviews(event);
     }
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'GET') {
+      return await documentController.getUserDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'POST') {
+      return await documentController.uploadDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents\/[^\/]+\/[^\/]+$/i) && method === 'DELETE') {
+      return await documentController.deleteDocument(event);
+    }
+    
 
     // This route must come after the specific /cars/... routes
     if (path.match(/^\/cars\/[^/]+$/) && method === "GET") {

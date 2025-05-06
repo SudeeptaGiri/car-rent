@@ -16,14 +16,13 @@ export class HeaderComponent implements OnInit {
   dropdownOpen = false;
   selectedTab!: string;
 
-
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    
     // Get user from AuthService instead of directly from sessionStorage
     this.user = this.authService.getCurrentUser();
-     // Subscribe to user changes
+    
+    // Subscribe to user changes
     this.authService.user$.subscribe(user => {
       this.user = user;
     });
@@ -45,6 +44,8 @@ export class HeaderComponent implements OnInit {
       this.selectedTab = 'cars';
     } else if (url.startsWith('/my-bookings')) {
       this.selectedTab = 'bookings';
+    } else if (url.startsWith('/dashboard')) {
+      this.selectedTab = 'dashboard';
     } else {
       this.selectedTab = '';
     }
@@ -62,6 +63,9 @@ export class HeaderComponent implements OnInit {
       case 'bookings':
         this.router.navigate(['/my-bookings']);
         break;
+      case 'dashboard':
+        this.router.navigate(['/dashboard']);
+        break;
       default:
         this.router.navigate(['/']);
     }
@@ -70,6 +74,7 @@ export class HeaderComponent implements OnInit {
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }
+  
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
@@ -81,10 +86,19 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.user = null;
+    this.router.navigate(['/']);
   }
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  
+  // Get the first letter of the user's first name for the avatar
+  getInitial(): string {
+    if (this.user && this.user.firstName) {
+      return this.user.firstName.charAt(0).toUpperCase();
+    }
+    return '?';
   }
 
   @HostListener('window:resize', [])
@@ -93,7 +107,4 @@ export class HeaderComponent implements OnInit {
       this.menuOpen = false;
     }
   }
-
-
-
 }
