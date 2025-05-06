@@ -127,6 +127,18 @@ exports.handler = async (event, context) => {
     if (path.match(/^\/cars\/[^/]+\/client-review$/) && method === "GET") {
       return await CarController.getCarClientReviews(event);
     }
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'GET') {
+      return await documentController.getUserDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'POST') {
+      return await documentController.uploadDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents\/[^\/]+\/[^\/]+$/i) && method === 'DELETE') {
+      return await documentController.deleteDocument(event);
+    }
+    
 
     // If no routes match, return 404 Not Found
     return {
