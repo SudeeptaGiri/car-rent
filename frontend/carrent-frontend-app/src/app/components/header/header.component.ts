@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { RoleAssignmentService } from '../../services/role-assignment.service';
 import { User } from '../../models/users';
 
 @Component({
@@ -16,28 +17,30 @@ export class HeaderComponent implements OnInit {
   dropdownOpen = false;
   selectedTab!: string;
 
-
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private roleService: RoleAssignmentService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    
     // Get user from AuthService instead of directly from sessionStorage
     this.user = this.authService.getCurrentUser();
-     // Subscribe to user changes
+    // Subscribe to user changes
     this.authService.user$.subscribe(user => {
       this.user = user;
     });
-  
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.updateSelectedTab(event.urlAfterRedirects);
       });
-  
+
     // Set initially based on current URL
     this.updateSelectedTab(this.router.url);
   }
-  
+
   updateSelectedTab(url: string) {
     if (url === '/' || url === '/main') {
       this.selectedTab = 'home';
@@ -45,11 +48,13 @@ export class HeaderComponent implements OnInit {
       this.selectedTab = 'cars';
     } else if (url.startsWith('/my-bookings')) {
       this.selectedTab = 'bookings';
+    } else if (url.startsWith('/reports')) {
+      this.selectedTab = 'reports';
     } else {
       this.selectedTab = '';
     }
   }
-  
+
   setActiveTab(tab: string) {
     this.selectedTab = tab;
     switch (tab) {
@@ -62,14 +67,22 @@ export class HeaderComponent implements OnInit {
       case 'bookings':
         this.router.navigate(['/my-bookings']);
         break;
+      case 'reports':
+        this.router.navigate(['/reports']);
+        break;
       default:
         this.router.navigate(['/']);
     }
   }
-  
+
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }
+
+  isAdmin(): boolean {
+    return this.roleService.isAdmin();
+  }
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
@@ -93,7 +106,4 @@ export class HeaderComponent implements OnInit {
       this.menuOpen = false;
     }
   }
-
-
-
 }

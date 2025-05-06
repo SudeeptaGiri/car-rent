@@ -10,13 +10,27 @@ export class RoleAssignmentService {
     'agent.smith@example.com',
     'anastasia@gmail.com' // for testing
   ];
+  
+  private adminEmails: string[] = [
+    'admin@example.com',
+    'admin@carrent.com'
+  ];
 
   constructor() {}
 
   // Assign role based on email
-  assignRole(email: string): 'Support Agent' | 'Client' {
-    const isAgent = this.supportAgentsEmails.includes(email.toLowerCase());
-    return isAgent ? 'Support Agent' : 'Client';
+  assignRole(email: string): 'Admin' | 'Support Agent' | 'Client' {
+    const emailLower = email.toLowerCase();
+    
+    if (this.adminEmails.includes(emailLower)) {
+      return 'Admin';
+    }
+    
+    if (this.supportAgentsEmails.includes(emailLower)) {
+      return 'Support Agent';
+    }
+    
+    return 'Client';
   }
 
   // Get current role (for header display)
@@ -29,6 +43,13 @@ export class RoleAssignmentService {
       return 'Visitor';
     }
   }
+  
+  // Check if current user is admin
+  isAdmin(): boolean {
+    const userData = this.getCurrentUser();
+    return userData?.role === 'Admin';
+  }
+  
   getCurrentUser(): User | null {
     const userData = sessionStorage.getItem('currentUser');
     return userData ? JSON.parse(userData) : null;

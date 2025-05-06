@@ -24,6 +24,10 @@
           <a [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
              (click)="setActiveTab('bookings')">My Bookings</a>
         </li>
+        <li *ngIf="isAdmin()">
+          <a [ngClass]="{ 'active-tab': selectedTab === 'reports' }"
+             (click)="setActiveTab('reports')">Reports</a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -40,6 +44,7 @@
         <li><a routerLink="/">Home</a></li>
         <li><a href="/car">Cars</a></li>
         <li *ngIf="isAuthenticated()"><a routerLink="/my-bookings">My Bookings</a></li>
+        <li *ngIf="isAdmin()"><a routerLink="/reports">Reports</a></li>
       </ul>
     </nav>
     <div class="login-side" *ngIf="isAuthenticated(); else mobileGuest">
