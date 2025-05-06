@@ -1,9 +1,15 @@
-const authController = require("./controllers/authController/authcontroller");
-const userController = require("./controllers/userController/usercontroller");
+const authController = require("./controllers/authController/authController");
+const userController = require("./controllers/userController/userController");
 const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
+const bookingController = require("./controllers/bookingController/bookingController")
 // Import other controllers as needed (UserController, BookingController, etc.)
+
+// Add this at the top of your index.js
+console.log('Loading function');
+console.log('Current working directory:', process.cwd());
+console.log('Directory contents:', require('fs').readdirSync('.'));
 
 // Initialize database connection
 let dbConnection;
@@ -128,6 +134,27 @@ exports.handler = async (event, context) => {
       return await CarController.getCarClientReviews(event);
     }
 
+    if (path === "/bookings" && method === "POST") {
+      const result = await bookingController.createBooking(event);
+      return result;
+    }
+
+    if (path === "/bookings" && method === "GET") {
+      const result = await bookingController.getAllBookings(event);
+      return result;
+    }
+
+    if (path.match(/^\/bookings\/[^/]+$/) && method === "GET") {
+      if (!event.pathParameters) {
+        const match = path.match(/\/bookings\/([^/]+)/);
+        if (match) {
+          event.pathParameters = { userId: match[1] };
+        }
+      }
+      const result = await bookingController.getUserBookings(event);
+      return result;
+    }
+
     // If no routes match, return 404 Not Found
     return {
       statusCode: 404,
@@ -144,7 +171,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers: headers,
       body: JSON.stringify({
-        message: "Something went wrong",
+        message: "Internal Server Error",
         error: error.message,
       }),
     };
