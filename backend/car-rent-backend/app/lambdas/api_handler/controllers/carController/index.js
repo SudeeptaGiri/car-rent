@@ -1,4 +1,3 @@
-
 const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 const { createResponse } = require('../../utils/responseUtil');
@@ -6,11 +5,15 @@ const Car = require('../../models/carModel');
 const Booking = require('../../models/bookingModel');
 const Feedback = require('../../models/feedbackModel');
 const Location = require('../../models/locationModel');
+const { connectToDatabase } = require('../../utils/database');
 
 const CarController = {
-  // Get all cars with filtering options
+  // GET /cars - Get all cars with filtering options
   getAllCars: async (event) => {
     try {
+      console.log('Getting all cars with filters');
+      await connectToDatabase();
+      
       const queryParams = event.queryStringParameters || {};
       const {
         pickupLocationId,
@@ -64,8 +67,7 @@ const CarController = {
           );
           filter.locationId = locationObjectId;
         } catch (error) {
-          // If the provided ID isn't a valid ObjectId, it won't match any cars
-          // We can either return an empty result or just use the string value
+          // If the provided ID isn't a valid ObjectId, try as string
           filter.locationId = pickupLocationId;
         }
       }
@@ -108,12 +110,7 @@ const CarController = {
 
         // Exclude booked cars from results
         if (bookedCarIds.length > 0) {
-          filter._id = { $nin: bookedCarIds }; // Use _id instead of carId
-        }
-
-        // Exclude booked cars from results
-        if (bookedCarIds.length > 0) {
-          filter.carId = { $nin: bookedCarIds };
+          filter._id = { $nin: bookedCarIds }; 
         }
 
         // Only show available cars
@@ -135,11 +132,13 @@ const CarController = {
       const totalElements = await Car.countDocuments(filter);
       const totalPages = Math.ceil(totalElements / pageSize);
 
-      // Transform data to match expected response format
+      console.log(`Found ${cars.length} cars matching filters (total: ${totalElements})`);
+
+      // Transform data to match expected response format in API spec
       const carsList = cars.map((car) => ({
-        carId: car._id,
+        carId: car._id.toString(),
         model: `${car.brand} ${car.model} ${car.year}`,
-        imageUrl: car.images.length > 0 ? car.images : null,
+        imageUrl: car.images.length > 0 ? car.images[0] : null,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
         carRating: car.carRating.toString(),
@@ -162,12 +161,35 @@ const CarController = {
     }
   },
 
-  // Get car by ID
+  // GET /cars/{carId} - Get car by ID
   getCarById: async (event) => {
     try {
-      const carId = event.pathParameters.carId;
-      const carObjId = new mongoose.Types.ObjectId(carId);
-      const car = await Car.findOne({ _id: carObjId });
+      console.log('Getting car by ID');
+      await connectToDatabase();
+      
+      // Extract car ID from path parameters or path
+      let carId;
+      if (event.pathParameters && event.pathParameters.carId) {
+        carId = event.pathParameters.carId;
+      } else {
+        // Extract from path if not available in pathParameters
+        const match = event.path.match(/\/cars\/([^\/]+)$/);
+        if (match) {
+          carId = match[1];
+        } else {
+          return createResponse(400, { message: 'Car ID is required' });
+        }
+      }
+      
+      console.log(`Looking for car with ID: ${carId}`);
+      
+      let car;
+      try {
+        const carObjId = new mongoose.Types.ObjectId(carId);
+        car = await Car.findOne({ _id: carObjId });
+      } catch (error) {
+        return createResponse(400, { message: 'Invalid car ID format' });
+      }
 
       if (!car) {
         return createResponse(404, {
@@ -175,9 +197,9 @@ const CarController = {
         });
       }
 
-      // Transform data to match expected response format
+      // Transform data to match expected response format in API spec
       const carDetails = {
-        carId: car._id,
+        carId: car._id.toString(),
         model: `${car.brand} ${car.model} ${car.year}`,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
@@ -203,11 +225,16 @@ const CarController = {
     }
   },
 
-  // Get popular cars
+  // GET /cars/popular - Get popular cars
   getPopularCars: async (event) => {
     try {
+      console.log('Getting popular cars');
+      await connectToDatabase();
+      
       const queryParams = event.queryStringParameters || {};
       const { category } = queryParams;
+      
+      console.log('Filter category:', category);
 
       // Build filter object
       const filter = {
@@ -223,13 +250,14 @@ const CarController = {
       // Get top 5 cars by rating
       const popularCars = await Car.find(filter)
         .sort({ carRating: -1 })
-        .limit(5);
+      
+      console.log(`Found ${popularCars.length} popular cars`);
 
-      // Transform data to match expected response format
+      // Transform data to match expected response format in API spec
       const carsList = popularCars.map((car) => ({
-        carId: car._id,
+        carId: car._id.toString(),
         model: `${car.brand} ${car.model} ${car.year}`,
-        imageUrl: car.images.length > 0 ? car.images : null,
+        imageUrl: car.images.length > 0 ? car.images[0] : null,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
         carRating: car.carRating.toString(),
@@ -249,11 +277,34 @@ const CarController = {
     }
   },
 
-  // Get car booked days
+  // GET /cars/{carId}/booked-days - Get car booked days
   getCarBookedDays: async (event) => {
     try {
-      const carId = event.pathParameters.carId;
-      const carObjectId = new mongoose.Types.ObjectId(carId);
+      console.log('Getting car booked days');
+      await connectToDatabase();
+      
+      // Extract car ID from path parameters or path
+      let carId;
+      if (event.pathParameters && event.pathParameters.carId) {
+        carId = event.pathParameters.carId;
+      } else {
+        // Extract from path if not available in pathParameters
+        const match = event.path.match(/\/cars\/([^\/]+)\/booked-days$/);
+        if (match) {
+          carId = match[1];
+        } else {
+          return createResponse(400, { message: 'Car ID is required' });
+        }
+      }
+      
+      console.log(`Looking for booked days for car ID: ${carId}`);
+      
+      let carObjectId;
+      try {
+        carObjectId = new mongoose.Types.ObjectId(carId);
+      } catch (error) {
+        return createResponse(400, { message: 'Invalid car ID format' });
+      }
 
       // Find all active bookings for the car
       const bookings = await Booking.find({
@@ -281,6 +332,8 @@ const CarController = {
           currentDate.setDate(currentDate.getDate() + 1);
         }
       });
+      
+      console.log(`Found ${bookedDates.size} booked days for car ID: ${carId}`);
 
       return createResponse(200, {
         content: Array.from(bookedDates),
@@ -294,11 +347,35 @@ const CarController = {
     }
   },
 
-  // Get car client reviews
+  // GET /cars/{carId}/client-review - Get car client reviews
   getCarClientReviews: async (event) => {
     try {
-      const carId = event.pathParameters.carId;
-      const carObjectId = new mongoose.Types.ObjectId(carId);
+      console.log('Getting car client reviews');
+      await connectToDatabase();
+      
+      // Extract car ID from path parameters or path
+      let carId;
+      if (event.pathParameters && event.pathParameters.carId) {
+        carId = event.pathParameters.carId;
+      } else {
+        // Extract from path if not available in pathParameters
+        const match = event.path.match(/\/cars\/([^\/]+)\/client-review$/);
+        if (match) {
+          carId = match[1];
+        } else {
+          return createResponse(400, { message: 'Car ID is required' });
+        }
+      }
+      
+      console.log(`Looking for reviews for car ID: ${carId}`);
+      
+      let carObjectId;
+      try {
+        carObjectId = new mongoose.Types.ObjectId(carId);
+      } catch (error) {
+        return createResponse(400, { message: 'Invalid car ID format' });
+      }
+      
       const queryParams = event.queryStringParameters || {};
       const {
         page = 1,
@@ -330,11 +407,13 @@ const CarController = {
       // Count total reviews for pagination info
       const totalElements = await Feedback.countDocuments({ carId: carObjectId });
       const totalPages = Math.ceil(totalElements / pageSize);
+      
+      console.log(`Found ${reviews.length} reviews for car ID: ${carId} (total: ${totalElements})`);
 
-      // Transform data to match expected response format
+      // Transform data to match expected response format in API spec
       const reviewsList = reviews.map((review) => ({
         author: review.author,
-        authorImageUrl: review.authorImageUrl,
+        authorImageUrl: review.authorImageUrl || '',
         date: new Date(review.date).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "2-digit",

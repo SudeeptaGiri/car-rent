@@ -20,7 +20,7 @@ const routes: Routes = [
   {path:"register", component:RegisterComponent},
   {
     path: "profile", 
-    component: ProfileComponent,
+    component: ProfileComponent, canActivate: [authGuard],
     children: [
       { path: 'reviews', component: ReviewsComponent },
       { path: 'personal-info', component: PersonalInfoComponent },

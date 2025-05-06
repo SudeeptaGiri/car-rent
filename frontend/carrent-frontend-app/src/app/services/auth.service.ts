@@ -72,9 +72,57 @@ export class AuthService {
 
   // Get current user from session storage
   getCurrentUser(): User | null {
+    // First check session storage for cached user data
     const userStr = sessionStorage.getItem('currentUser');
-    const user = userStr ? JSON.parse(userStr) : null;
+    let user = userStr ? JSON.parse(userStr) : null;
+    
+    if (!user) {
+      return null; // If no user in session storage, return null
+    }
+    
+    // Return the cached user immediately for UI responsiveness
     this.userSubject.next(user);
+    
+    // Get the user ID
+    const userId = user.id || user._id;
+    
+    if (userId) {
+      // Fetch fresh user data from API without auth headers
+      this.http.get<any>(`${this.apiUrl}/users/${userId}/personal-info`)
+        .subscribe({
+          next: (response) => {
+            // Map the response to our User model
+            const freshUser: User = {
+              _id: response.clientId || userId,
+              firstName: response.firstName,
+              lastName: response.lastName,
+              email: response.email,
+              role: user.role, // Keep the role from session storage if not in API response
+              imageUrl: response.imageUrl,
+              phoneNumber: response.phoneNumber,
+              address: {
+                street: response.street || '',
+                city: response.city || '',
+                country: response.country || '',
+                postalCode: response.postalCode || ''
+              },
+              // Explicitly exclude password
+              password: ''
+            };
+            
+            // Update session storage with fresh data
+            sessionStorage.setItem('currentUser', JSON.stringify(freshUser));
+            
+            // Notify subscribers of updated user data
+            this.userSubject.next(freshUser);
+          },
+          error: (error) => {
+            console.error('Error fetching user data:', error);
+            // On error, we still have the cached user data
+          }
+        });
+    }
+    
     return user;
   }
 
