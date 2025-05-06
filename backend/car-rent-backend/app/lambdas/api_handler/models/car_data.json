@@ -1,0 +1,994 @@
+[
+    {
+      "carId": "CAR-TS01AB1234",
+      "model": "Z",
+      "brand": "Nissan",
+      "year": 2024,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.0L V6",
+      "fuelConsumption": "10.5 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 550,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1595527313938-c8ef87ef2b6f",
+        "https://images.unsplash.com/photo-1611821064430-0d40291d0f0b",
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.7,
+      "carNumber": "TS01AB1234",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS02BC5678",
+      "model": "911",
+      "brand": "Porsche",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.0L Flat-6",
+      "fuelConsumption": "11.2 L/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 890,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.7,
+      "carNumber": "TS02BC5678",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS03CD9012",
+      "model": "Model S",
+      "brand": "Tesla",
+      "year": 2024,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "ELECTRIC",
+      "engineCapacity": "Dual Motor",
+      "fuelConsumption": "18 kWh/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "THREE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 620,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1562422221-6546f3bdd3c1",
+        "https://images.unsplash.com/photo-1551952238-2a1b71aeba24",
+        "https://images.unsplash.com/photo-1561580125-028ee3bd62eb"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.5,
+      "carNumber": "TS03CD9012",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS04DE3456",
+      "model": "M4",
+      "brand": "BMW",
+      "year": 2024,
+      "category": "PREMIUM",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.0L Twin-Turbo",
+      "fuelConsumption": "10.8 L/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "THREE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 680,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+        "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+        "https://images.unsplash.com/photo-1553440569-bcc63803a83d"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.5,
+      "carNumber": "TS04DE3456",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS05FG7890",
+      "model": "Sport",
+      "brand": "Range Rover",
+      "year": 2023,
+      "category": "SUV",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.0L V8",
+      "fuelConsumption": "9.2 L/100km",
+      "passengerCapacity": "7",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "NOT_AVAILABLE",
+      "pricePerDay": 750,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1546614042-7df3c24c9e5d",
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf"
+      ],
+      "carRating": 4.6,
+      "serviceRating": 4.4,
+      "carNumber": "TS05FG7890",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS06HI0123",
+      "model": "S-Class",
+      "brand": "Mercedes-Benz",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "4.0L V8",
+      "fuelConsumption": "8.5 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "NOT_AVAILABLE",
+      "pricePerDay": 920,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8",
+        "https://images.unsplash.com/photo-1605515298946-d0573716f0e3",
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8",
+        "https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.7,
+      "carNumber": "TS06HI0123",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS07JK4567",
+      "model": "R8",
+      "brand": "Audi",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.2L V10",
+      "fuelConsumption": "13.1 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 950,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a",
+        "https://images.unsplash.com/photo-1542282088-fe8426682b8f",
+        "https://images.unsplash.com/photo-1580274518238-c5e9c3f13a4d",
+        "https://images.unsplash.com/photo-1544636331-e26879cd4d9b"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.6,
+      "carNumber": "TS07JK4567",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS08LM8901",
+      "model": "Land Cruiser",
+      "brand": "Toyota",
+      "year": 2024,
+      "category": "SUV",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.5L V6",
+      "fuelConsumption": "12.5 L/100km",
+      "passengerCapacity": "7",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 480,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b"
+      ],
+      "carRating": 4.6,
+      "serviceRating": 4.4,
+      "carNumber": "TS08LM8901",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS09NO2345",
+      "model": "Roma",
+      "brand": "Ferrari",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.9L V8",
+      "fuelConsumption": "11.6 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1200,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1592198084033-aade902d1aae",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888",
+        "https://images.unsplash.com/photo-1592198084033-aade902d1aae"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.7,
+      "carNumber": "TS09NO2345",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS10PQ6789",
+      "model": "Huracan",
+      "brand": "Lamborghini",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.2L V10",
+      "fuelConsumption": "14.5 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1350,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1544636331-e26879cd4d9b",
+        "https://images.unsplash.com/photo-1580274518238-c5e9c3f13a4d",
+        "https://images.unsplash.com/photo-1544636331-e26879cd4d9b",
+        "https://images.unsplash.com/photo-1580274518238-c5e9c3f13a4d"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.6,
+      "carNumber": "TS10PQ6789",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS11RS0123",
+      "model": "Continental GT",
+      "brand": "Bentley",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "6.0L W12",
+      "fuelConsumption": "12.2 L/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1100,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.7,
+      "carNumber": "TS11RS0123",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS12TU4567",
+      "model": "F-Type",
+      "brand": "Jaguar",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.0L V8",
+      "fuelConsumption": "10.9 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 650,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+        "https://images.unsplash.com/photo-1542282088-fe8426682b8f",
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+        "https://images.unsplash.com/photo-1542282088-fe8426682b8f"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.5,
+      "carNumber": "TS12TU4567",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS13VW8901",
+      "model": "Vantage",
+      "brand": "Aston Martin",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "4.0L V8",
+      "fuelConsumption": "11.4 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 980,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+        "https://images.unsplash.com/photo-1542362567-b07e54358753",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+        "https://images.unsplash.com/photo-1542362567-b07e54358753"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.6,
+      "carNumber": "TS13VW8901",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS14XY2345",
+      "model": "Ghost",
+      "brand": "Rolls-Royce",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "6.75L V12",
+      "fuelConsumption": "15.0 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1800,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a",
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8",
+        "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a",
+        "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8"
+      ],
+      "carRating": 5.0,
+      "serviceRating": 4.8,
+      "carNumber": "TS14XY2345",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS15ZA6789",
+      "model": "720S",
+      "brand": "McLaren",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "4.0L V8",
+      "fuelConsumption": "12.2 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1450,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1621135802920-133df287f89c",
+        "https://images.unsplash.com/photo-1544636331-e26879cd4d9b",
+        "https://images.unsplash.com/photo-1621135802920-133df287f89c",
+        "https://images.unsplash.com/photo-1544636331-e26879cd4d9b"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.7,
+      "carNumber": "TS15ZA6789",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS16BC0123",
+      "model": "LC 500",
+      "brand": "Lexus",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.0L V8",
+      "fuelConsumption": "9.7 L/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 680,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+        "https://images.unsplash.com/photo-1549399542-7e3f8b79c341",
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.5,
+      "carNumber": "TS16BC0123",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS26PR2602",
+      "model": "Corolla",
+      "brand": "Toyota",
+      "year": 2023,
+      "category": "STANDARD",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "1.8L Gasoline",
+      "fuelConsumption": "5.8 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "ONE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 220,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537"
+      ],
+      "carRating": 4.5,
+      "serviceRating": 4.4,
+      "carNumber": "TS26PR2602",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS37IJ3734",
+      "model": "Wrangler",
+      "brand": "Jeep",
+      "year": 2023,
+      "category": "SUV",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "3.6L V6",
+      "fuelConsumption": "11.2 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 620,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.6,
+      "carNumber": "TS37IJ3734",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS38KL3845",
+      "model": "Mustang",
+      "brand": "Ford",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "5.0L V8",
+      "fuelConsumption": "12.8 L/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 750,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+        "https://images.unsplash.com/photo-1494976388531-d1058494cdd8",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.7,
+      "carNumber": "TS38KL3845",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS39MN3956",
+      "model": "WRX STI",
+      "brand": "Subaru",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "2.5L Boxer",
+      "fuelConsumption": "10.4 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 580,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.6,
+      "carNumber": "TS39MN3956",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS40OP4067",
+      "model": "Golf GTI",
+      "brand": "Volkswagen",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "2.0L Turbo",
+      "fuelConsumption": "7.8 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 480,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+        "https://images.unsplash.com/photo-1556189250-72ba954cfc2b",
+        "https://images.unsplash.com/photo-1617814076668-4af3ff8e5ee8",
+        "https://images.unsplash.com/photo-1556189250-72ba954cfc2b"
+      ],
+      "carRating": 4.6,
+      "serviceRating": 4.5,
+      "carNumber": "TS40OP4067",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS41QR4179",
+      "model": "EQS",
+      "brand": "Mercedes-Benz",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "ELECTRIC",
+      "engineCapacity": "Dual Electric Motors",
+      "fuelConsumption": "16.5 kWh/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1100,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.8,
+      "carNumber": "TS41QR4179",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS42ST4218",
+      "model": "i7",
+      "brand": "BMW",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "ELECTRIC",
+      "engineCapacity": "Dual Electric Motors",
+      "fuelConsumption": "19.2 kWh/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "FOUR_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 1200,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54"
+      ],
+      "carRating": 4.9,
+      "serviceRating": 4.8,
+      "carNumber": "TS42ST4218",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS43UV4309",
+      "model": "e-tron GT",
+      "brand": "Audi",
+      "year": 2023,
+      "category": "LUXURY",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "ELECTRIC",
+      "engineCapacity": "Dual Electric Motors",
+      "fuelConsumption": "20.1 kWh/100km",
+      "passengerCapacity": "4",
+      "climateControlOption": "THREE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 950,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54"
+      ],
+      "carRating": 4.8,
+      "serviceRating": 4.7,
+      "carNumber": "TS43UV4309",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS44WX4431",
+      "model": "Fortuner",
+      "brand": "Toyota",
+      "year": 2023,
+      "category": "SUV",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "2.7L V6",
+      "fuelConsumption": "10.8 L/100km",
+      "passengerCapacity": "7",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 520,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b"
+      ],
+      "carRating": 4.6,
+      "serviceRating": 4.5,
+      "carNumber": "TS44WX4431",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS45YZ4554",
+      "model": "Bronco",
+      "brand": "Ford",
+      "year": 2023,
+      "category": "SUV",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "2.7L EcoBoost",
+      "fuelConsumption": "11.5 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 580,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b",
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf",
+        "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.6,
+      "carNumber": "TS45YZ4554",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS46AB4622",
+      "model": "Baleno",
+      "brand": "Maruti Suzuki",
+      "year": 2023,
+      "category": "STANDARD",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "1.2L Gasoline",
+      "fuelConsumption": "5.4 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "ONE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 210,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537"
+      ],
+      "carRating": 4.3,
+      "serviceRating": 4.2,
+      "carNumber": "TS46AB4622",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS47CD4745",
+      "model": "Creta",
+      "brand": "Hyundai",
+      "year": 2023,
+      "category": "SUV",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "1.5L Gasoline",
+      "fuelConsumption": "7.0 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 350,
+      "locationId": "681474ca1ed3224edf13e799",
+      "location": "Gachibowli, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537"
+      ],
+      "carRating": 4.5,
+      "serviceRating": 4.4,
+      "carNumber": "TS47CD4745",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS48EF4867",
+      "model": "Octavia",
+      "brand": "Skoda",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "PETROL",
+      "engineCapacity": "1.8L TSI",
+      "fuelConsumption": "6.2 L/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "TWO_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 380,
+      "locationId": "681474ca1ed3224edf13e79a",
+      "location": "Hitech City, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537",
+        "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        "https://images.unsplash.com/photo-1580273916550-e323be2ae537"
+      ],
+      "carRating": 4.6,
+      "serviceRating": 4.5,
+      "carNumber": "TS48EF4867",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS49GH4910",
+      "model": "MX-5",
+      "brand": "Mazda",
+      "year": 2023,
+      "category": "PREMIUM",
+      "gearBoxType": "MANUAL",
+      "fuelType": "PETROL",
+      "engineCapacity": "2.0L Skyactiv-G",
+      "fuelConsumption": "6.9 L/100km",
+      "passengerCapacity": "2",
+      "climateControlOption": "ONE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 520,
+      "locationId": "681474ca1ed3224edf13e79c",
+      "location": "Raidurg, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd",
+        "https://images.unsplash.com/photo-1580274455191-1c62238fa333",
+        "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd"
+      ],
+      "carRating": 4.7,
+      "serviceRating": 4.6,
+      "carNumber": "TS49GH4910",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    },
+    {
+      "carId": "CAR-TS50IJ5038",
+      "model": "Leaf",
+      "brand": "Nissan",
+      "year": 2023,
+      "category": "STANDARD",
+      "gearBoxType": "AUTOMATIC",
+      "fuelType": "ELECTRIC",
+      "engineCapacity": "Single Electric Motor",
+      "fuelConsumption": "15 kWh/100km",
+      "passengerCapacity": "5",
+      "climateControlOption": "ONE_ZONE_CLIMATE_CONTROL",
+      "status": "AVAILABLE",
+      "pricePerDay": 380,
+      "locationId": "681474ca1ed3224edf13e79b",
+      "location": "Kondapur, Hyderabad",
+      "images": [
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54",
+        "https://images.unsplash.com/photo-1560958089-b8a1929cea89",
+        "https://images.unsplash.com/photo-1554744512-d6c603f27c54"
+      ],
+      "carRating": 4.4,
+      "serviceRating": 4.3,
+      "carNumber": "TS50IJ5038",
+      "createdAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-01T10:00:00.000Z"
+      }
+    }
+  ]
