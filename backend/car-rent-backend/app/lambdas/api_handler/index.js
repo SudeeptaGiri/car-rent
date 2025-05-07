@@ -154,29 +154,20 @@ const path = event.rawPath || event.path || event.resource || "/";
       return await CarController.getCarClientReviews(event);
     }
 
-    if (path === "/bookings" && method === "POST") {
-      console.log('Handling POST /bookings request');
-      console.log('Request body:', event.body);
-      const result = await bookingController.createBooking(event);
-      console.log('Booking result:', result);
-      return result;
-    }
-
-    if (path === "/bookings" && method === "GET") {
-      const result = await bookingController.getAllBookings(event);
-      return result;
-    }
-
-    if (path.match(/^\/bookings\/[^/]+$/) && method === "GET") {
-      if (!event.pathParameters) {
-        const match = path.match(/\/bookings\/([^/]+)/);
-        if (match) {
-          event.pathParameters = { userId: match[1] };
-        }
-      }
-      const result = await bookingController.getUserBookings(event);
-      return result;
-    }
+     // Route the request to the appropriate handler
+     if (path === '/bookings' && method === 'POST') {
+      return await bookingController.createBooking(event);
+    } 
+    if (path === '/bookings' && method === 'GET') {
+      return await bookingController.getAllBookings(event);
+    } 
+    if (path.match(/^\/bookings\/[^/]+$/) && method === 'GET') {
+      // Extract userId from path
+      const userId = path.split('/')[2];
+      event.pathParameters = { userId };
+      return await bookingController.getUserBookings(event);
+    } 
+    
     if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'GET') {
       return await documentController.getUserDocuments(event);
     }
