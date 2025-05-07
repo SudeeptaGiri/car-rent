@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/userModel');
+const SupportAgentEmail = require('../../models/supportAgentEmail');
 
 // JWT secret - move to env/Secrets Manager in production
 const JWT_SECRET = 'd7f8a2b5c4e9f3a1d6b7c8e9f0a2d3b4c5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0';
@@ -29,6 +30,7 @@ let cachedDb = null;
 
 
 // SignUp Handler
+
 exports.signUp = async (event) => {
   try {
     // await connectToDatabase();
@@ -39,23 +41,37 @@ exports.signUp = async (event) => {
       return response(400, { message: 'All fields are required' });
     }
 
-    const existingUser = await User.findOne({ email });
+    // Convert email to lowercase for consistent comparison
+    const normalizedEmail = email.toLowerCase();
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return response(400, { message: 'User already exists with this email' });
     }
+
+    // Check if the email is in the support agent database
+    const isSupportAgent = await SupportAgentEmail.findOne({ email: normalizedEmail });
+    
+    // Set the role based on whether the email is in the support agent database
+    const role = isSupportAgent ? 'SupportAgent' : 'Client';
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       firstName,
       lastName,
-      email,
-      password: hashedPassword
+      email: normalizedEmail,
+      password: hashedPassword,
+      role: role // Set the role here
     });
 
     await newUser.save();
 
     const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email },
+      { 
+        userId: newUser._id, 
+        email: newUser.email,
+        role: newUser.role // Include role in the JWT token
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -66,7 +82,8 @@ exports.signUp = async (event) => {
         id: newUser._id,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
-        email: newUser.email
+        email: newUser.email,
+        role: newUser.role // Include role in the response
       },
       token
     });
@@ -98,7 +115,7 @@ exports.signIn = async (event) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email ,role: user.role},
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -109,7 +126,8 @@ exports.signIn = async (event) => {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email
+        email: user.email,
+        role: user.role
       },
       token
     });
