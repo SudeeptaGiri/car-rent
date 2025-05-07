@@ -36,7 +36,7 @@ export class CarService {
    private apiBaseUrl = 'https://gvhal0t30j.execute-api.eu-west-3.amazonaws.com/api';
 
    // Bookings API endpoint
-   private bookingsApiUrl = 'https://iotkvsfz48.execute-api.eu-west-3.amazonaws.com/api';
+   private bookingsApiUrl = 'https://2dppsut0x9.execute-api.eu-west-3.amazonaws.com/api';
   
    // Keep JSON URL for fallback during development/transition
    private jsonUrl = 'assets/cars.json';

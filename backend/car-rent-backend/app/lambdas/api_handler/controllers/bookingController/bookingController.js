@@ -133,44 +133,13 @@ exports.getAllBookings = async (event) => {
             return createResponse(200, {});
         }
         
-        const { dateFrom, dateTo, clientId } = event.queryStringParameters || {};
-        
-        const filter = {};
-        
-        if (dateFrom || dateTo) {
-            filter.pickupDateTime = {};
-            if (dateFrom) filter.pickupDateTime.$gte = new Date(dateFrom);
-            if (dateTo) filter.pickupDateTime.$lte = new Date(dateTo);
-        }
-
-        if (clientId) {
-            filter.clientId = clientId;
-        }
-
-        const bookings = await Booking.find(filter)
-            .populate('carId', 'brand model year location')
+        // Simply fetch all bookings from the database
+        const bookings = await Booking.find({})
+            .populate('carId')
             .sort({ createdAt: -1 });
 
-        const formattedBookings = await Promise.all(bookings.map(async (booking) => {
-            const client = await User.findById(booking.clientId);
-            
-            return {
-                bookingId: booking._id,
-                bookingNumber: booking.orderNumber,
-                BookingPeriod: `${new Date(booking.pickupDateTime).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })} - ${new Date(booking.dropOffDateTime).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}`,
-                carModel: `${booking.carId.brand} ${booking.carId.model} ${booking.carId.year}`,
-                clientName: client ? `${client.firstName} ${client.lastName}` : 'Unknown Client',
-                date: new Date(booking.createdAt).toLocaleDateString('en-GB', { 
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: '2-digit'
-                }),
-                location: booking.carId.location,
-                madeBy: booking.bookingStatus.includes('SUPPORT_AGENT') ? 'Support Agent' : 'Client'
-            };
-        }));
-
-        return createResponse(200, { content: formattedBookings });
+        // Return the array of bookings
+        return createResponse(200, bookings);
     } catch (error) {
         console.error('Error getting all bookings:', error);
         return createResponse(500, { message: 'Error retrieving bookings' });
