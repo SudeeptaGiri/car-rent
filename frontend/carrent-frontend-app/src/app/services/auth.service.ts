@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://hgy51gu0vi.execute-api.eu-west-3.amazonaws.com/api'; // Replace with your actual API endpoint
+  private apiUrl = 'https://llsvnkriye.execute-api.eu-west-3.amazonaws.com/api'; // Replace with your actual API endpoint
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
