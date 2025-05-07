@@ -6,20 +6,20 @@ import { Router } from '@angular/router';
 
 interface Car {
   _id: string;
-  make: string;
+  brand: string;
   model: string;
 }
 
 interface Client {
   _id: string;
-  firstName: string;
-  lastName: string;
-  role: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
 }
 
 interface Booking {
   _id: string;
-  carId: string | Car;
+  carId: Car;
   clientId: string | Client;
   pickupDateTime: string;
   dropOffDateTime: string;
@@ -63,6 +63,9 @@ export class BookingsComponent implements OnInit {
     { value: 'Admin', label: 'Admin' }
   ];
 
+  // Map to store client information
+  clientsMap: Map<string, Client> = new Map();
+
   constructor(
     private http: HttpClient,
     private formBuilder: FormBuilder,
@@ -93,11 +96,11 @@ export class BookingsComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     
-    this.http.get<any>('https://hgy51gu0vi.execute-api.eu-west-3.amazonaws.com/api/bookings')
+    this.http.get<any>('https://qixj9pgekd.execute-api.eu-west-3.amazonaws.com/api/bookings')
       .subscribe({
         next: (response) => {
           // Handle different response formats
-          let bookingsData: Booking[] = [];
+          let bookingsData: any[] = [];
           
           if (Array.isArray(response)) {
             bookingsData = response;
@@ -108,8 +111,13 @@ export class BookingsComponent implements OnInit {
             bookingsData = [response];
           }
           
+          console.log('Raw bookings data:', bookingsData);
+          
+          // Load client information for each booking
+          this.loadClientsInfo(bookingsData);
+          
           // Process the bookings data
-          this.bookings = this.processBookingsData(bookingsData);
+          this.bookings = bookingsData;
           this.filteredBookings = [...this.bookings];
           this.isLoading = false;
         },
@@ -121,52 +129,24 @@ export class BookingsComponent implements OnInit {
       });
   }
 
-  processBookingsData(bookingsData: any[]): Booking[] {
-    return bookingsData.map(booking => {
-      // Ensure we have proper car and client objects
-      const processedBooking: Booking = {
-        ...booking,
-        carId: this.processCarData(booking.carId),
-        clientId: this.processClientData(booking.clientId)
-      };
-      
-      return processedBooking;
+  loadClientsInfo(bookings: any[]): void {
+    // Extract unique client IDs
+    const clientIds = [...new Set(bookings
+      .map(booking => booking.clientId)
+      .filter(id => typeof id === 'string'))];
+    
+    // For each client ID, we would normally fetch client info from API
+    // But since we don't have that endpoint, we'll create placeholder data
+    clientIds.forEach(clientId => {
+      // In a real app, you would fetch client details from an API
+      // For now, we'll create a placeholder client
+      this.clientsMap.set(clientId, {
+        _id: clientId,
+        firstName: 'Client',
+        lastName: clientId.substring(0, 5),
+        role: 'Client' // Default role
+      });
     });
-  }
-
-  processCarData(carData: any): Car {
-    // If carId is already populated as an object
-    if (carData && typeof carData === 'object' && carData.make && carData.model) {
-      return carData as Car;
-    }
-    
-    // If it's just an ID or missing data
-    return {
-      _id: typeof carData === 'string' ? carData : 'unknown',
-      make: 'Unknown',
-      model: 'Unknown'
-    };
-  }
-
-  processClientData(clientData: any): Client {
-    // If clientId is already populated as an object
-    if (clientData && typeof clientData === 'object' && 
-        (clientData.firstName || clientData.lastName)) {
-      return {
-        _id: clientData._id || 'unknown',
-        firstName: clientData.firstName || '',
-        lastName: clientData.lastName || '',
-        role: clientData.role || 'Client'
-      };
-    }
-    
-    // If it's just an ID or missing data
-    return {
-      _id: typeof clientData === 'string' ? clientData : 'unknown',
-      firstName: 'Unknown',
-      lastName: 'Client',
-      role: 'Client'
-    };
   }
 
   applyFilters(): void {
@@ -188,20 +168,41 @@ export class BookingsComponent implements OnInit {
       const statusMatch = !filters.bookingStatus || 
         booking.bookingStatus === filters.bookingStatus;
       
+      // Get client info
+      const clientInfo = this.getClientInfo(booking.clientId);
+      
       // Filter by made by (role)
-      const clientObject = booking.clientId as Client;
       const madeByMatch = !filters.madeBy || 
-        (clientObject && clientObject.role === filters.madeBy);
+        (clientInfo && clientInfo.role === filters.madeBy);
       
       // Filter by client name (if provided)
       let clientMatch = true;
-      if (filters.client && clientObject) {
-        const clientName = `${clientObject.firstName} ${clientObject.lastName}`.toLowerCase();
+      if (filters.client && clientInfo) {
+        const clientName = `${clientInfo.firstName || ''} ${clientInfo.lastName || ''}`.toLowerCase();
         clientMatch = clientName.includes(filters.client.toLowerCase());
       }
       
       return dateRangeMatch && statusMatch && madeByMatch && clientMatch;
     });
+  }
+
+  getClientInfo(clientId: string | Client): Client {
+    if (typeof clientId === 'object' && clientId !== null) {
+      return clientId;
+    }
+    
+    // If it's a string ID, look up in our map
+    if (typeof clientId === 'string' && this.clientsMap.has(clientId)) {
+      return this.clientsMap.get(clientId)!;
+    }
+    
+    // Default client info if not found
+    return {
+      _id: typeof clientId === 'string' ? clientId : 'unknown',
+      firstName: 'Unknown',
+      lastName: 'Client',
+      role: 'Client'
+    };
   }
 
   applyFiltersClick(): void {
@@ -245,23 +246,20 @@ export class BookingsComponent implements OnInit {
 
   getCarName(car: any): string {
     if (typeof car === 'object' && car) {
-      return `${car.make || ''} ${car.model || ''}`.trim() || 'Unknown';
+      // Updated to use brand instead of make based on your sample data
+      return `${car.brand || ''} ${car.model || ''}`.trim() || 'Unknown';
     }
     return 'Unknown';
   }
 
-  getClientName(client: any): string {
-    if (typeof client === 'object' && client) {
-      return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Unknown';
-    }
-    return 'Unknown';
+  getClientName(clientId: string | Client): string {
+    const client = this.getClientInfo(clientId);
+    return `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Unknown';
   }
 
-  getClientRole(client: any): string {
-    if (typeof client === 'object' && client && client.role) {
-      return client.role;
-    }
-    return 'Client';
+  getClientRole(clientId: string | Client): string {
+    const client = this.getClientInfo(clientId);
+    return client.role || 'Client';
   }
 
   createNewBooking(): void {
