@@ -103,19 +103,19 @@
     <!-- Bookings Table -->
     <div *ngIf="!isLoading && !error" class="bg-white rounded-lg shadow-sm overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+        <thead class="bg-black">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking number</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Car</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Made by</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking period</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Booking number</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Client</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Car</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Made by</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Booking status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Booking period</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-amber-50 divide-y divide-gray-200">
           <tr *ngFor="let booking of filteredBookings">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
               {{ booking.pickupDateTime | date:'MM.dd.yyyy' }}
