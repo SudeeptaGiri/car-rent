@@ -46,6 +46,10 @@ export class HeaderComponent implements OnInit {
       this.selectedTab = 'bookings';
     } else if (url.startsWith('/dashboard')) {
       this.selectedTab = 'dashboard';
+    } else if (url.startsWith('/bookings')) {
+      this.selectedTab = 'bookings';
+    } else if (url.startsWith('/clients')) {
+      this.selectedTab = 'clients';
     } else {
       this.selectedTab = '';
     }
@@ -73,6 +77,18 @@ export class HeaderComponent implements OnInit {
   
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  isClient(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'Client';
+  }
+
+  isAdmin(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'Admin';
+  }
+
+  isSupportAgent(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'SupportAgent';
   }
   
   toggleMenu() {
