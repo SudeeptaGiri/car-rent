@@ -1,5 +1,5 @@
 // src/app/components/car-booking/car-booking.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { LocationDialogComponent } from '../../components/location-dialog/location-dialog.component';
@@ -10,7 +10,11 @@ import { Subject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CarService, LocationSuggestion } from '../../services/car.service';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
+import { LocationService, LocationData } from '../../services/locations.service';
+import { ClientUser } from '../../models/users';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-car-booking',
@@ -19,6 +23,89 @@ import * as moment from 'moment';
   standalone: false
 })
 export class CarBookingComponent implements OnInit, OnDestroy {
+
+  constructor(
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private carBookingService: CarBookingService,
+    private carService: CarService,
+    private locationService: LocationService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  locations: LocationData[] = []
+  
+  clientsList: ClientUser[] = [];
+  isLoadingClients = false;
+  errorMessage = '';
+
+  isUserSupportAgent: boolean = false; // Set this based on user role
+
+  // Add these properties
+  showLocationDropdown = false;
+  showDropoffLocationDropdown = false;
+  selectedPickupLocationId: string | null = null;
+  selectedDropoffLocationId: string | null = null;
+
+  // Toggle methods
+  toggleLocationDropdown() {
+    this.showLocationDropdown = !this.showLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showLocationDropdown) {
+      this.showDropoffLocationDropdown = false;
+    }
+  }
+
+  toggleDropoffLocationDropdown() {
+    this.showDropoffLocationDropdown = !this.showDropoffLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showDropoffLocationDropdown) {
+      this.showLocationDropdown = false;
+    }
+  }
+
+  // Add this property to your component class
+  locationSelectsBlinking = false;
+
+  // Add this method to your component class
+  toggleLocationBlink(): void {
+    // First remove the class if it's already there (to restart animation)
+    const locationSelects = document.querySelectorAll('.location-select');
+    locationSelects.forEach(select => {
+      select.classList.remove('blink-border');
+    });
+    
+    // Force a reflow to ensure the animation restarts
+    // Cast to HTMLElement to access offsetWidth
+    const firstSelect = document.querySelectorAll('.location-select')[0] as HTMLElement;
+    void firstSelect.offsetWidth;
+    
+    // Add the class back to start the animation
+    locationSelects.forEach(select => {
+      select.classList.add('blink-border');
+    });
+    
+    // Remove the class after animation completes
+    setTimeout(() => {
+      locationSelects.forEach(select => {
+        select.classList.remove('blink-border');
+      });
+    }, 1200); // Match this to the animation duration
+  }
+
+  @ViewChild('pickupSelect') pickupSelect!: ElementRef;
+  @ViewChild('dropoffSelect') dropoffSelect!: ElementRef;
+  
+  // Instead of openLocationModal, use this method
+  openLocationModal(isOpen: boolean) {
+    if (isOpen) {
+      this.toggleLocationDropdown();
+    }
+  }
+
+
   CarDetails = [];
   bookingForm!: FormGroup;
   selectedCar!: CarDetails;
@@ -58,14 +145,6 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   selectedDropoffLocation: string | null = null;
   selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    public dialog: MatDialog,
-    private carBookingService: CarBookingService,
-    private carService: CarService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
 
   ngOnInit(): void {
     // Get user info
@@ -74,9 +153,18 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     
     // Initialize form
     this.initForm();
+    this.loadClients();
     
     // Setup search debouncing for locations
     this.setupLocationSearch();
+    this.locationService.getLocations().subscribe({
+      next: (locations: LocationData[]) => {
+        this.locations = locations;
+      },
+      error: (error) => {
+        console.error('Error fetching locations:', error);
+      }
+    });
 
     // Get car ID and dates from route parameters
     this.route.queryParams.subscribe(params => {
@@ -115,7 +203,57 @@ export class CarBookingComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
+
+  private loadClients(): void {
+    console.log('=== loadClients Started ===');
+    this.isLoadingClients = true;
+    this.userService.getClients().subscribe({
+        next: (clients: ClientUser[]) => {
+            console.log('Received clients:', clients);
+            if (Array.isArray(clients)) {
+                this.clientsList = clients;
+                console.log('Updated clientsList:', this.clientsList);
+            } else {
+                console.error('Invalid clients data:', clients);
+                this.clientsList = [];
+                this.errorMessage = 'Invalid data received from server';
+            }
+            this.isLoadingClients = false;
+        },
+        error: (error) => {
+            console.error('Error fetching clients:', error);
+            this.errorMessage = 'Failed to load clients';
+            this.isLoadingClients = false;
+            this.clientsList = [];
+        }
+    });
+  }
+
+  // Update the selection methods to use the new location model
+  selectPickupLocation(location: LocationData) {
+    this.selectedPickupLocationId = location.locationId;
+    this.bookingForm.get('location.pickupLocation')?.setValue(location.locationId);
+  }
+
+  selectDropoffLocation(location: LocationData) {
+    this.selectedDropoffLocationId = location.locationId;
+    this.bookingForm.get('location.dropoffLocation')?.setValue(location.locationId);
+  }
+
+  // Update the display methods
+  getSelectedPickupLocationName(): string {
+    const locationId = this.selectedPickupLocationId || this.bookingForm.get('location.pickupLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
+  getSelectedDropoffLocationName(): string {
+    const locationId = this.selectedDropoffLocationId || this.bookingForm.get('location.dropoffLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
   // Location validation methods
   isLocationInvalid(controlName: string): boolean {
     const location = controlName === 'pickupLocation' ?
@@ -146,20 +284,9 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
 
-  selectPickupLocation(suggestion: LocationSuggestion): void {
-    this.carService.selectPickupLocation(suggestion, this);
-  }
-
-  selectDropoffLocation(suggestion: LocationSuggestion): void {
-    this.carService.selectDropoffLocation(suggestion, this);
-  }
 
   useCurrentLocation(forPickup: boolean): void {
     this.carService.useCurrentLocation(forPickup, this);
-  }
-
-  openLocationModal(forPickup: boolean): void {
-    this.carService.openLocationModal(forPickup, this);
   }
 
   closeLocationModal(): void {
@@ -196,9 +323,10 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.searchSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  initForm(): void {
+  private initForm(): void {
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
+        clientId: ['', Validators.required],
         fullName: [this.userInfo.fullName, Validators.required],
         email: [this.userInfo.email, [Validators.required, Validators.email]],
         phone: [this.userInfo.phone, Validators.required]
@@ -217,6 +345,11 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.dateFrom = new Date(this.bookingForm.get('dates.dateFrom')?.value);
     this.dateTo = new Date(this.bookingForm.get('dates.dateTo')?.value);
   
+    // Add value change listener to debug
+    this.bookingForm.get('clientId')?.valueChanges.subscribe(value => {
+      console.log('Selected client changed:', value);
+    });
+
     // Subscribe to date changes
     this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
       this.calculateTotalPrice();

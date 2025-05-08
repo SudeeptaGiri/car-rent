@@ -271,6 +271,7 @@ exports.changePassword = async (event) => {
 
 // Get all clients
 exports.getClients = async (event) => {
+  console.log('=== getClients Started ===');
   try {
     // Connect to the database first
     // await connectToDatabase();
@@ -285,6 +286,7 @@ exports.getClients = async (event) => {
         userName: `${client.firstName} ${client.lastName}`
       }))
     };
+    console.log('Fetched clients:', JSON.stringify(clients, null, 2));
 
     return {
       statusCode: 200,
@@ -317,6 +319,7 @@ exports.getAgents = async (event) => {
     // await connectToDatabase();
     
     // Find all support agents
+    console.log('=== getAgents Started ===');
     const agents = await User.find({ role: 'SupportAgent' }).select('_id firstName lastName');
     
     // Format response according to API spec

@@ -30,6 +30,11 @@ const handleCors = () => {
 
 exports.handler = async (event, context) => {
   // Keep connection alive between function calls
+
+  console.log('=== Handler Started ===');
+  console.log('Event:', JSON.stringify(event, null, 2));
+  console.log('Context:', JSON.stringify(context, null, 2));
+  
   console.log('FULL EVENT:', JSON.stringify(event, null, 2));
   
   const extractedPath = event.rawPath || event.path || event.resource || "/";

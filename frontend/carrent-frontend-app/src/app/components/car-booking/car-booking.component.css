@@ -21,8 +21,6 @@ body{
   color: #856404;
 }
 
-
-
 .error-message {
   color: #dc3545;
   font-size: 12px;
@@ -91,7 +89,7 @@ body{
   
   h2 {
     font-size: 18px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-weight: 600;
   }
   
@@ -101,20 +99,113 @@ body{
   .drop-off {
     margin-top: 15px;
   }
+
+  .custom-dropdown {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  
+  .dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .selected-option {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  .dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .option {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .option:hover {
+    background-color: #f5f5f5;
+  }
+  /* Animation class for the blinking effect */
+.blink-border {
+  animation: blinkBorder 1.2s ease;
+}
+
+/* Keyframes for the blinking animation */
+@keyframes blinkBorder {
+  0% {
+    border-color: #e0e0e0;
+  }
+  25% {
+    border-color: #000000;
+  }
+  50% {
+    border-color: #e0e0e0;
+  }
+  75% {
+    border-color: #000000;
+  }
+  100% {
+    border-color: #e0e0e0;
+  }
+}
+
+  .client-select:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #e0e0e0; /* Keep the same border color when focused */
+  }
+  
+  /* If you want to completely remove any focus indication */
+  .client-select {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 60%;
+    min-width: 300px;
+    max-width: 500px;
+    appearance: auto; /* Keeps the dropdown arrow */
+  }
+
+  .form-personal-info {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative;
+  }
   
   .personal-info-card, .location-card, .dates-card {
     border: 1px solid black;
     border-radius: 8px;
     padding: 15px;
     position: relative;
-    background-color: white;
+    /* background-color: white; */
   }
   
+  .pickup-select {
+    margin-bottom: 10px;
+  }
   .form-field label {
     display: block;
     color: #666;
     font-size: 14px;
-    margin-bottom: 5px;
+    margin-left: 3px;
   }
   
   .location-value, .date-value {

@@ -1038,7 +1038,7 @@ export class CarService {
   }
 
   getUserFromLocalStorage(): any {
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = sessionStorage.getItem('currentUser');
     
     if (storedUser) {
       try {

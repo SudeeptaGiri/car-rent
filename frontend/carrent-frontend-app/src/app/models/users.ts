@@ -15,3 +15,8 @@ export interface User {
     };
     createdAt?: string;
 }
+
+export interface ClientUser {
+    userId: string;
+    userName: string;
+}
