@@ -21,6 +21,7 @@ import { BookingSuccessDialogComponent } from '../components/booking-success-dia
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import * as moment from 'moment';
+import { AuthService } from '../services/auth.service';
 
 export interface LocationSuggestion {
   displayName: string;
@@ -32,31 +33,32 @@ export interface LocationSuggestion {
   providedIn: 'root'
 })
 export class CarService {
-   // MongoDB API endpoint - update this with your actual AWS API Gateway URL
-   private apiBaseUrl = 'https://gvhal0t30j.execute-api.eu-west-3.amazonaws.com/api';
+  // MongoDB API endpoint
+  private apiBaseUrl = "https://egvws0hf2k.execute-api.eu-west-3.amazonaws.com/api";
 
-   // Bookings API endpoint
-   private bookingsApiUrl = 'https://2dppsut0x9.execute-api.eu-west-3.amazonaws.com/api';
+  // Bookings API endpoint
+  private bookingsApiUrl = 'https://2dppsut0x9.execute-api.eu-west-3.amazonaws.com/api';
   
-   // Keep JSON URL for fallback during development/transition
-   private jsonUrl = 'assets/cars.json';
-   
-   private readonly STORAGE_KEY = 'bookings';
-   private bookings: Booking[] = [];
-   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-   bookings$ = this.bookingsSubject.asObservable();
-   
-   constructor(
-     private http: HttpClient,
-     private dialog: MatDialog,
-     private router: Router
-   ) {
-     this.loadBookingsForCurrentUser();
-     if (this.bookings.length === 0) {
-       this.loadSampleBookings(); 
-     }
-     interval(1000).subscribe(() => this.updateBookingStatuses());
-   }
+  // Keep JSON URL for fallback during development/transition
+  private jsonUrl = 'assets/cars.json';
+  
+  private readonly STORAGE_KEY = 'bookings';
+  private bookings: Booking[] = [];
+  private bookingsSubject = new BehaviorSubject<Booking[]>([]);
+  bookings$ = this.bookingsSubject.asObservable();
+  
+  constructor(
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.loadBookingsForCurrentUser();
+    if (this.bookings.length === 0) {
+      this.loadSampleBookings(); 
+    }
+    interval(1000).subscribe(() => this.updateBookingStatuses());
+  }
 
   submitFeedback(bookingId: string, rating: number, comment: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
@@ -70,39 +72,41 @@ export class CarService {
       this.bookingsSubject.next([...this.bookings]);
     }
   }
+
   private loadBookingsForCurrentUser(): void {
     const storageKey = this.getStorageKeyForUser();
     const storedBookings = localStorage.getItem(storageKey);
     console.log('Loading bookings with key:', storageKey);
     
     if (storedBookings) {
-        try {
-            const parsedBookings = JSON.parse(storedBookings);
-            this.bookings = parsedBookings.map((booking: any) => ({
-                ...booking,
-                pickupDate: new Date(booking.pickupDate),
-                dropoffDate: new Date(booking.dropoffDate),
-                feedback: booking.feedback ? {
-                    ...booking.feedback,
-                    submittedAt: new Date(booking.feedback.submittedAt)
-                } : undefined
-            }));
-            
-            // Update booking statuses and emit
-            this.updateBookingStatuses();
-            this.bookingsSubject.next(this.bookings);
-            
-            console.log('Loaded bookings:', this.bookings);
-        } catch (error) {
-            console.error('Error parsing bookings:', error);
-            this.bookings = [];
-            this.bookingsSubject.next([]); 
-        }
-    } else {
+      try {
+        const parsedBookings = JSON.parse(storedBookings);
+        this.bookings = parsedBookings.map((booking: any) => ({
+          ...booking,
+          pickupDate: new Date(booking.pickupDate),
+          dropoffDate: new Date(booking.dropoffDate),
+          feedback: booking.feedback ? {
+            ...booking.feedback,
+            submittedAt: new Date(booking.feedback.submittedAt)
+          } : undefined
+        }));
+        
+        // Update booking statuses and emit
+        this.updateBookingStatuses();
+        this.bookingsSubject.next(this.bookings);
+        
+        console.log('Loaded bookings:', this.bookings);
+      } catch (error) {
+        console.error('Error parsing bookings:', error);
         this.bookings = [];
         this.bookingsSubject.next([]); 
+      }
+    } else {
+      this.bookings = [];
+      this.bookingsSubject.next([]); 
     }
-}
+  }
+
   private loadSampleBookings(): void {
     // Booking 4: Cancelled booking
     const pickup4 = new Date('2025-04-15T10:00:00');
@@ -127,8 +131,8 @@ export class CarService {
         pickupDate: pickup4,
         dropoffDate: dropoff4,
         status: BookingStatus.CANCELLED,
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       },
@@ -141,8 +145,8 @@ export class CarService {
         pickupDate: pickup5,
         dropoffDate: dropoff5,
         status: BookingStatus.SERVICE_PROVIDED,
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       },
@@ -160,8 +164,8 @@ export class CarService {
           comment: 'Great car, excellent service!',
           submittedAt: feedbackDate
         },
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       }
@@ -172,7 +176,7 @@ export class CarService {
     
     // Emit the initial bookings
     this.bookingsSubject.next([...this.bookings]);
-}
+  }
 
   getBookings(): Observable<Booking[]> {
     // Simply return the observable without checking localStorage
@@ -242,7 +246,6 @@ export class CarService {
     });
     
     if (updated) {
-      // this.saveBookingsToStorage();
       this.bookingsSubject.next([...this.bookings]);
     }
   }
@@ -255,7 +258,8 @@ export class CarService {
     totalPrice: number, 
     numberOfDays: number, 
     pickupLocation: string, 
-    dropoffLocation: string
+    dropoffLocation: string,
+    clientId?: string | null
   ): void {
     if (!formValid || !selectedCar) {
       console.error('Form is not valid or car is not selected');
@@ -264,13 +268,13 @@ export class CarService {
 
     // Get the current user ID
     const user = this.getUserFromLocalStorage();
-    const clientId = user?.id || 'default-user-id';
+    const userId = clientId || user?.id || 'default-user-id';
     const authToken = user?.token || localStorage.getItem('auth_token');
     
     // Create the booking request object according to backend requirements
     const bookingRequest = {
       carId: selectedCar.id,
-      clientId: clientId,
+      clientId: userId,
       pickupDateTime: dateFrom.toISOString(),
       dropOffDateTime: dateTo.toISOString(),
       pickupLocationId: pickupLocation,
@@ -352,110 +356,6 @@ export class CarService {
       });
   }
 
-  // // Add methods for canceling bookings via API
-  // cancelBookingViaApi(bookingId: string): Observable<any> {
-  //   const user = this.getUserFromLocalStorage();
-  //   const authToken = user?.token || localStorage.getItem('auth_token');
-    
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json'
-  //     })
-  //   };
-    
-  //   if (authToken) {
-  //     httpOptions.headers = httpOptions.headers.set('Authorization', `Bearer ${authToken}`);
-  //   }
-    
-  //   return this.http.patch<any>(`${this.bookingsApiUrl}/bookings/${bookingId}/cancel`, {}, httpOptions)
-  //     .pipe(
-  //       tap(() => {
-  //         // Also update the local booking status
-  //         this.cancelBooking(bookingId);
-  //       }),
-  //       catchError(error => {
-  //         console.error('Error cancelling booking via API:', error);
-          
-  //         // Fall back to local cancellation
-  //         this.cancelBooking(bookingId);
-          
-  //         return throwError(() => new Error('Failed to cancel booking on server, but updated locally'));
-  //       })
-  //     );
-  // }
-
-  // // Add method to get user bookings from API
-  // getUserBookingsFromApi(): Observable<Booking[]> {
-  //   const user = this.getUserFromLocalStorage();
-  //   const userId = user?.id || 'default-user-id';
-  //   const authToken = user?.token || localStorage.getItem('auth_token');
-    
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json'
-  //     })
-  //   };
-    
-  //   if (authToken) {
-  //     httpOptions.headers = httpOptions.headers.set('Authorization', `Bearer ${authToken}`);
-  //   }
-    
-  //   return this.http.get<any[]>(`${this.bookingsApiUrl}/bookings/user/${userId}`, httpOptions)
-  //     .pipe(
-  //       map(apiBookings => {
-  //         // Transform API response to our Booking model format
-  //         return apiBookings.map(booking => ({
-  //           id: booking.bookingId,
-  //           carId: booking.carId,
-  //           carName: booking.carModel || `Car #${booking.carId}`,
-  //           carImage: booking.carImageUrl || 'assets/default-car.png',
-  //           orderNumber: booking.orderNumber || `#${Math.floor(1000 + Math.random() * 9000)}`,
-  //           pickupDate: new Date(booking.pickupDateTime),
-  //           dropoffDate: new Date(booking.dropOffDateTime),
-  //           status: this.mapApiStatusToBookingStatus(booking.bookingStatus),
-  //           totalPrice: booking.totalPrice || 0,
-  //           numberOfDays: this.calculateDays(new Date(booking.pickupDateTime), new Date(booking.dropOffDateTime)),
-  //           pickupLocation: booking.pickupLocationId,
-  //           dropoffLocation: booking.dropOffLocationId,
-  //           feedback: booking.feedback ? {
-  //             rating: booking.feedback.rating,
-  //             comment: booking.feedback.comment,
-  //             submittedAt: new Date(booking.feedback.submittedAt)
-  //           } : undefined
-  //         }));
-  //       }),
-  //       tap(bookings => {
-  //         // Update our internal bookings array with the data from API
-  //         this.bookings = bookings;
-  //         this.bookingsSubject.next([...this.bookings]);
-  //       }),
-  //       catchError(error => {
-  //         console.error('Error fetching user bookings from API:', error);
-  //         // Fall back to local bookings
-  //         return this.getBookings();
-  //       })
-  //     );
-  // }
-
-  // // Helper method to map API booking status to our enum
-  // private mapApiStatusToBookingStatus(apiStatus: string): BookingStatus {
-  //   switch (apiStatus) {
-  //     case 'RESERVED': return BookingStatus.RESERVED;
-  //     case 'CANCELLED': return BookingStatus.CANCELLED;
-  //     case 'STARTED': return BookingStatus.SERVICE_STARTED;
-  //     case 'PROVIDED': return BookingStatus.SERVICE_PROVIDED;
-  //     case 'FINISHED': return BookingStatus.BOOKING_FINISHED;
-  //     default: return BookingStatus.RESERVED;
-  //   }
-  // }
-
-  // // Helper method to calculate days between dates
-  // private calculateDays(start: Date, end: Date): number {
-  //   const diffTime = Math.abs(end.getTime() - start.getTime());
-  //   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  // }
   // ==================== CAR DATA METHODS ====================
 
   private getStorageKeyForUser(): string {
@@ -636,8 +536,6 @@ export class CarService {
               const storageKey = this.getStorageKeyForUser();
               const existingBookingsStr = localStorage.getItem(storageKey);
               const existingBookings: Booking[] = existingBookingsStr ? JSON.parse(existingBookingsStr) : [];
-              
-              // localStorage.setItem(storageKey, JSON.stringify(existingBookings));
             }
             return bookingRequest;
           })
@@ -849,6 +747,7 @@ export class CarService {
     // Recalculate total price
     component.calculateTotalPrice();
   }
+  
   searchLocations(query: string): Observable<LocationSuggestion[]> {
     if (query.trim().length < 2) {
       return of([]);
@@ -964,7 +863,6 @@ export class CarService {
       formValid && 
       !this.isLocationInvalid(pickupLocation) && 
       !this.isLocationInvalid(dropoffLocation)
-      // !this.isDuplicateLocations(pickupLocation, dropoffLocation)
     );
   }
 
@@ -1068,47 +966,41 @@ export class CarService {
     }
   }
 
-
-  // Updated updateBooking method in car.service.ts
-updateBooking(booking: Booking): Observable<Booking> {
-  return new Observable<Booking>(observer => {
-    try {
-      // Find the booking in our internal array
-      const index = this.bookings.findIndex(b => b.id === booking.id);
-      
-      if (index !== -1) {
-        // Update the booking in our array
-        this.bookings[index] = {
-          ...booking,
-          // Ensure dates are Date objects
-          pickupDate: new Date(booking.pickupDate),
-          dropoffDate: new Date(booking.dropoffDate)
-        };
+  updateBooking(booking: Booking): Observable<Booking> {
+    return new Observable<Booking>(observer => {
+      try {
+        // Find the booking in our internal array
+        const index = this.bookings.findIndex(b => b.id === booking.id);
         
-        // Save to localStorage using the correct key
-        // this.saveBookingsToStorage();
-        
-        // Emit updated bookings
-        this.bookingsSubject.next([...this.bookings]);
-        
-        // Return success
-        observer.next(this.bookings[index]);
-        observer.complete();
-      } else {
-        // Booking not found
-        observer.error(new Error('Booking not found'));
+        if (index !== -1) {
+          // Update the booking in our array
+          this.bookings[index] = {
+            ...booking,
+            // Ensure dates are Date objects
+            pickupDate: new Date(booking.pickupDate),
+            dropoffDate: new Date(booking.dropoffDate)
+          };
+          
+          // Emit updated bookings
+          this.bookingsSubject.next([...this.bookings]);
+          
+          // Return success
+          observer.next(this.bookings[index]);
+          observer.complete();
+        } else {
+          // Booking not found
+          observer.error(new Error('Booking not found'));
+        }
+      } catch (error) {
+        console.error('Error updating booking:', error);
+        observer.error(error);
       }
-    } catch (error) {
-      console.error('Error updating booking:', error);
-      observer.error(error);
-    }
-  });
-}
+    });
+  }
 
-// Add this helper method to car.service.ts
-private getBookingIndex(bookingId: string): number {
-  return this.bookings.findIndex(b => b.id === bookingId);
-}
+  private getBookingIndex(bookingId: string): number {
+    return this.bookings.findIndex(b => b.id === bookingId);
+  }
 
   getBookingById(id: string): Observable<Booking | undefined> {
     return this.getBookings().pipe(

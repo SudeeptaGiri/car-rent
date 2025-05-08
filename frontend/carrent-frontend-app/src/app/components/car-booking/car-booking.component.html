@@ -1,199 +1,183 @@
 <div class="car-booking-container">
-  <div class="breadcrumb">
-    <a href="/cars">Cars</a> &gt; Car booking
-  </div>
- 
+  <div class="breadcrumb"><a href="/cars">Cars</a> &gt; Car booking</div>
+
   <h1>Car booking</h1>
- 
+
   <section class="booking-section">
-    <form [formGroup]="bookingForm">
-      <!-- Personal Info Section -->
-      <div class="section">
-        <h2>Personal info</h2>
-        <div class="personal-info-card" formGroupName="personalInfo">
-          <div class="form-field">
-            <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
-            <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
-            <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
-          </div>
-        </div>
-      </div>
- 
-      <!-- Location Section -->
-      <div class="section">
-        <h2>Location</h2>
-        <div class="location-card" formGroupName="location">
-          <div class="form-field">
-            <button type="button" class="change-btn" (click)="openLocationModal(true)">Change</button>
-            <label>Pick-up location<span class="required"></span></label>
-            <div class="select-wrapper" (click)="openLocationModal(true)"
-                 [ngClass]="{'invalid-location': isLocationInvalid('pickupLocation')}">
-              <div class="location-display">
-                {{ selectedPickupLocation || 'Choose location' }}
+    <div class="booking-content">
+      <div class="booking-form">
+        <form [formGroup]="bookingForm">
+          <!-- Personal Info Section -->
+          <div class="section">
+            <!-- For support agent, show "Clients info" with dropdown -->
+            <h2 *ngIf="isSupport">Clients info</h2>
+            <h2 *ngIf="!isSupport">Personal info</h2>
+
+            <!-- Support agent view with client dropdown -->
+            <div class="personal-info-card" *ngIf="isSupport">
+              <div class="form-field">
+                <label>Client</label>
+                <div class="select-wrapper">
+                  <select
+                    class="client-select"
+                    [value]="selectedClient?.id || ''"
+                    (change)="onClientSelected($event)"
+                  >
+                    <option value="" disabled selected>Select a client</option>
+                    <option *ngFor="let client of clients" [value]="client.id">
+                      {{ client.fullName }}
+                    </option>
+                  </select>
+                  <button type="button" class="save-btn">Save</button>
+                </div>
               </div>
             </div>
-           
-          </div>
-          <div class="form-field">
-            <label class="drop-off">Drop-off location<span class="required"></span></label>
-            <div class="select-wrapper" (click)="openLocationModal(false)"
-                 [ngClass]="{'invalid-location': isLocationInvalid('dropoffLocation')}">
-              <div class="location-display">
-                {{ selectedDropoffLocation || 'Choose location' }}
+
+            <!-- Client view with personal info display -->
+            <div
+              class="personal-info-card"
+              *ngIf="!isSupport"
+              formGroupName="personalInfo"
+            >
+              <div class="user-info">
+                <div class="full-name">
+                  {{ bookingForm.get("personalInfo.fullName")?.value }}
+                </div>
+                <div class="email">
+                  {{ bookingForm.get("personalInfo.email")?.value }}
+                </div>
+                <div class="phone">
+                  {{ bookingForm.get("personalInfo.phone")?.value }}
+                </div>
               </div>
             </div>
-           
-            <!-- <div class="error-message duplicate-location" *ngIf="isDuplicateLocations()">
-              Pick-up and drop-off locations cannot be the same
-            </div> -->
           </div>
-          <div class="w-full">
+
+          <!-- Location Section -->
+          <div class="section">
+            <h2>Location</h2>
+            <div class="location-card" formGroupName="location">
+              <div class="form-field">
+                <label>Pick-up location</label>
+                <div class="select-wrapper">
+                  <select 
+                    formControlName="pickupLocation"
+                    class="location-select"
+                    (change)="onPickupLocationChanged($event)"
+                  >
+                    <option value="" disabled selected>Select pick-up location</option>
+                    <option *ngFor="let location of locations" [value]="location.locationId">
+                      {{ location.locationName }}
+                    </option>
+                  </select>
+                  <button type="button" class="save-btn">Save</button>
+                </div>
+                <div *ngIf="isLocationInvalid('pickupLocation')" class="error-message">
+                  Please select a pick-up location
+                </div>
+              </div>
+              
+              <div class="form-field">
+                <label class="drop-off">Drop-off location</label>
+                <div class="select-wrapper">
+                  <select 
+                    formControlName="dropoffLocation"
+                    class="location-select"
+                    (change)="onDropoffLocationChanged($event)"
+                  >
+                    <option value="" disabled selected>Select drop-off location</option>
+                    <option *ngFor="let location of locations" [value]="location.locationId">
+                      {{ location.locationName }}
+                    </option>
+                  </select>
+                  <button type="button" class="save-btn">Save</button>
+                </div>
+                <div *ngIf="isLocationInvalid('dropoffLocation')" class="error-message">
+                  Please select a drop-off location
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+
+          <!-- Dates & Time Section -->
+          <div class="section">
+            <h2>Dates & Time</h2>
+            <div class="dates-card" formGroupName="dates">
+              <div class="date-header">
+                <div class="date-label">Pick-up date</div>
+                <button type="button" class="change-btn" (click)="toggleCalendar()">
+                  Change
+                </button>
+              </div>
+              
+              <div *ngIf="isCalendarOpen" class="calendar-container">
+                <calendar
+                  class="booking-calendar"
+                  [externalToggle]="isCalendarOpen"
+                  [initialStartDate]="dateFrom"
+                  [initialEndDate]="dateTo"
+                  [bookedDates]="bookedDatesFormatted"
+                  (dateRangeSelected)="onDateRangeSelected($event)"
+                >
+                </calendar>
+              </div>
+
+              <div class="date-time-display">
+                <div class="date-time-row">
+                  <div class="date-time-value">
+                    {{ dateFrom | date: 'MMMM d | HH:mm' }}
+                  </div>
+                </div>
+                
+                <div class="date-label drop-off-label">Drop-off date</div>
+                <div class="date-time-row">
+                  <div class="date-time-value">
+                    {{ dateTo | date: 'MMMM d | HH:mm' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
- 
-      <!-- Dates & Time Section -->
-      <div class="section">
-        <h2>Dates & Time</h2>
-        <div class="dates-card" formGroupName="dates">
-          <div class="w-full">
-            <div class="text-[15px] text-gray-500">Pick-up date & Time</div>
-            <button type="button" class="change-btn" (click)="toggleCalendar()">Change</button>
+
+      <!-- Car Details and Confirmation Section -->
+      <div class="car-details-section">
+        <div class="car-details-container" *ngIf="selectedCar">
+          <div class="car-image">
+            <img
+              [src]="selectedCar.images && selectedCar.images.length > 0 ? (selectedCar.images[0].url || selectedCar.images[0]) : 'assets/images/car-placeholder.jpg'"
+              class="image-car"
+              [alt]="selectedCar.brand + ' ' + selectedCar.model"
+            />
           </div>
-          <calendar class="booking-calendar" [externalToggle]="isCalendarOpen" [initialStartDate]="dateFrom"
-          [initialEndDate]="dateTo" [bookedDates]="bookedDatesFormatted"
-          (dateRangeSelected)="onDateRangeSelected($event)">
-          </calendar>
-          <!-- In car-booking.component.html -->
-         
-          <div class="time-display" *ngIf="dateFrom && dateTo">
-            <div class="time-slot mb-2">
-              <span class="time-value">
-                {{ dateFrom | date:'MMM dd' }} | {{ dateFrom | date:'HH:mm' }}
-              </span>
+          <div class="car-info">
+            <h3 class="car-title">
+              {{ selectedCar.brand }} {{ selectedCar.model }} {{ selectedCar.year }}
+            </h3>
+            <p class="car-location">{{ selectedCar.location }}</p>
+
+            <div class="pricing-info">
+              <div class="total-section">
+                <div class="total-label">Total</div>
+                <div class="total-price">$ {{ totalPrice }}</div>
+              </div>
+              <div class="deposit-info">Deposit: $ {{ depositAmount }}</div>
+              <button
+                type="button"
+                class="confirm-btn"
+                (click)="confirmReservation()"
+                [disabled]="!isFormValid() || (isSupport && !selectedClient)"
+                [ngClass]="{
+                  'disabled-btn': !isFormValid() || (isSupport && !selectedClient)
+                }"
+              >
+                {{ getConfirmButtonText() }}
+              </button>
             </div>
-            <span class="time-label text-[15px] text-gray-500">Drop-off date & Time</span>
-            <div class="time-slot">
-              <span class="time-value">
-                {{ dateTo | date:'MMM dd' }} | {{ dateTo | date:'HH:mm' }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
- 
-    <!-- Car Details and Confirmation Section -->
-    <div class="section-car-details-section">
-      <div class="car-details-container" *ngIf="selectedCar">
-        <div class="car-image">
-          <!-- Use the primary image from the car details -->
-          <img [src]="selectedCar.images[0].url || selectedCar.images[0]" class="image-car"
-               [alt]="selectedCar.brand + ' ' + selectedCar.model">
-        </div>
-        <div class="car-info">
-          <h3>{{ selectedCar.brand }} {{ selectedCar.model }} {{ selectedCar.year }}</h3>
-          <p class="location">{{ selectedCar.location }}</p>
-     
-          <div class="pricing-info">
-            <div class="total-section">
-              <div class="total-label">Total</div>
-              <div class="total-price">${{ totalPrice }}</div>
-            </div>
-            <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
-            <button type="button" class="confirm-btn" (click)="confirmReservation()" [disabled]="!isFormValid()" [ngClass]="{'disabled-btn': !isFormValid()}">
-              Confirm reservation
-            </button>
           </div>
         </div>
       </div>
     </div>
   </section>
- 
-  <div class="location-modal" *ngIf="showPickupModal">
-    <div class="location-modal-content">
-      <div class="location-modal-header">
-        <h3>Choose pick-up location</h3>
-        <button class="close-modal" (click)="closeLocationModal()">&times;</button>
-      </div>
-     
-      <div class="location-modal-body">
-        <button class="use-current-location" (click)="useCurrentLocation(true)">
-          <span class="location-icon">📍</span>
-          Use current location
-        </button>
-       
-        <div class="location-search-container">
-          <input
-            type="text"
-            placeholder="Search for a city or address"
-            [(ngModel)]="pickupSearchQuery"
-            (input)="onPickupSearchInput()"
-            class="location-search-input"
-          >
-         
-          <div class="location-suggestions" *ngIf="showPickupSuggestions">
-            <div class="loading-suggestions" *ngIf="isLoadingPickupSuggestions">
-              Searching...
-            </div>
-            <div class="no-suggestions" *ngIf="!isLoadingPickupSuggestions && pickupSuggestions.length === 0 && pickupSearchQuery.length > 1">
-              No locations found
-            </div>
-            <div
-              class="suggestion-item"
-              *ngFor="let suggestion of pickupSuggestions"
-              (click)="selectPickupLocation(suggestion)"
-            >
-              <span class="suggestion-icon">📍</span>
-              <span class="suggestion-text">{{ suggestion.displayName }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
- 
-  <!-- Dropoff Location Modal -->
-  <div class="location-modal" *ngIf="showDropoffModal">
-    <div class="location-modal-content">
-      <div class="location-modal-header">
-        <h3>Choose drop-off location</h3>
-        <button class="close-modal" (click)="closeLocationModal()">&times;</button>
-      </div>
-     
-      <div class="location-modal-body">
-        <button class="use-current-location" (click)="useCurrentLocation(false)">
-          <span class="location-icon">📍</span>
-          Use current location
-        </button>
-       
-        <div class="location-search-container">
-          <input
-            type="text"
-            placeholder="Search for a city or address"
-            [(ngModel)]="dropoffSearchQuery"
-            (input)="onDropoffSearchInput()"
-            class="location-search-input"
-          >
-         
-          <div class="location-suggestions" *ngIf="showDropoffSuggestions">
-            <div class="loading-suggestions" *ngIf="isLoadingDropoffSuggestions">
-              Searching...
-            </div>
-            <div class="no-suggestions" *ngIf="!isLoadingDropoffSuggestions && dropoffSuggestions.length === 0 && dropoffSearchQuery.length > 1">
-              No locations found
-            </div>
-            <div
-              class="suggestion-item"
-              *ngFor="let suggestion of dropoffSuggestions"
-              (click)="selectDropoffLocation(suggestion)"
-            >
-              <span class="suggestion-icon">📍</span>
-              <span class="suggestion-text">{{ suggestion.displayName }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

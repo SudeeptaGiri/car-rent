@@ -74,6 +74,7 @@ export class CarDetailsPopupComponent {
       next: (response) => {
         if (response.car) {
           this.carDetails = response.car;
+          console.log('Car Details:', this.carDetails);
           this.currentCarIndex = response.currentIndex;
           this.totalCars = response.totalCars;
           this.reviews = response.car.reviews.content;

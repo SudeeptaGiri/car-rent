@@ -75,8 +75,31 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: (response) => {
         console.log('Login successful', response);
-        // No need to manually store token and user data as the AuthService now handles this
-        this.router.navigate(['/']);
+        
+        // Get the user's role from the response or from the auth service
+        const user = this.authService.getCurrentUser();
+        
+        if (user) {
+          // Redirect based on user role
+          switch (user.role) {
+            case 'Client':
+              this.router.navigate(['/main']);
+              break;
+            case 'SupportAgent':
+              this.router.navigate(['/bookings']);
+              break;
+            case 'Admin':
+              this.router.navigate(['/dashboard']);
+              break;
+            default:
+              // Default redirect if role is unknown
+              this.router.navigate(['/']);
+              break;
+          }
+        } else {
+          // Fallback if user info is not immediately available
+          this.router.navigate(['/']);
+        }
       },
       error: (error) => {
         console.error('Login failed', error);
