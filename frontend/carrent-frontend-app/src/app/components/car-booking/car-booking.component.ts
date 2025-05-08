@@ -1,44 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+// src/app/components/car-booking/car-booking.component.ts
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { LocationDialogComponent } from '../../components/location-dialog/location-dialog.component';
+import { CarBookingService } from '../../services/car-booking.service';
+import { UserInfo, LocationInfo } from '../../models/booking.model';
+import { CarDetails } from '../../models/car.interface';
+import { Subject, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { CarService, LocationSuggestion } from '../../services/car.service';
+import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
-import * as momentImport from 'moment';
-const moment = momentImport.default || momentImport; 
-
-interface Client {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-}
-
-interface Location {
-  locationId: string;
-  locationName: string;
-  locationAddress: string;
-  locationImageUrl?: string;
-  mapEmbedUrl: string;
-}
-
-interface UserInfo {
-  fullName: string;
-  email: string;
-  phone: string;
-}
-
-interface CarDetails {
-  _id: string;
-  carId: string;
-  brand: string;
-  model: string;
-  year: number;
-  pricePerDay: number;
-  images: any[];
-  location: string;
-  bookedDates?: {startDate: string, endDate: string}[];
-}
+import * as moment from 'moment';
+import { LocationService, LocationData } from '../../services/locations.service';
+import { ClientUser } from '../../models/users';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-car-booking',
@@ -47,10 +23,95 @@ interface CarDetails {
   standalone: false
 })
 export class CarBookingComponent implements OnInit, OnDestroy {
+
+  constructor(
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private carBookingService: CarBookingService,
+    private carService: CarService,
+    private locationService: LocationService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  locations: LocationData[] = []
+  
+  clientsList: ClientUser[] = [];
+  isLoadingClients = false;
+  errorMessage = '';
+
+  isUserSupportAgent: boolean = false; // Set this based on user role
+
+  // Add these properties
+  showLocationDropdown = false;
+  showDropoffLocationDropdown = false;
+  selectedPickupLocationId: string | null = null;
+  selectedDropoffLocationId: string | null = null;
+
+  // Toggle methods
+  toggleLocationDropdown() {
+    this.showLocationDropdown = !this.showLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showLocationDropdown) {
+      this.showDropoffLocationDropdown = false;
+    }
+  }
+
+  toggleDropoffLocationDropdown() {
+    this.showDropoffLocationDropdown = !this.showDropoffLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showDropoffLocationDropdown) {
+      this.showLocationDropdown = false;
+    }
+  }
+
+  // Add this property to your component class
+  locationSelectsBlinking = false;
+
+  // Add this method to your component class
+  toggleLocationBlink(): void {
+    // First remove the class if it's already there (to restart animation)
+    const locationSelects = document.querySelectorAll('.location-select');
+    locationSelects.forEach(select => {
+      select.classList.remove('blink-border');
+    });
+    
+    // Force a reflow to ensure the animation restarts
+    // Cast to HTMLElement to access offsetWidth
+    const firstSelect = document.querySelectorAll('.location-select')[0] as HTMLElement;
+    void firstSelect.offsetWidth;
+    
+    // Add the class back to start the animation
+    locationSelects.forEach(select => {
+      select.classList.add('blink-border');
+    });
+    
+    // Remove the class after animation completes
+    setTimeout(() => {
+      locationSelects.forEach(select => {
+        select.classList.remove('blink-border');
+      });
+    }, 1200); // Match this to the animation duration
+  }
+
+  @ViewChild('pickupSelect') pickupSelect!: ElementRef;
+  @ViewChild('dropoffSelect') dropoffSelect!: ElementRef;
+  
+  // Instead of openLocationModal, use this method
+  openLocationModal(isOpen: boolean) {
+    if (isOpen) {
+      this.toggleLocationDropdown();
+    }
+  }
+
+
+  CarDetails = [];
   bookingForm!: FormGroup;
   selectedCar!: CarDetails;
-  userInfo: UserInfo = { fullName: '', email: '', phone: '' };
-  isReserved = false;
+  userInfo!: UserInfo;
+  locationInfo!: LocationInfo;
+  isReserved = false;     // change this to display reserved dialog
 
   totalPrice = 0;
   depositAmount = 2000;
@@ -59,248 +120,224 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   dateTo!: Date;
   isCalendarOpen = false;
 
-  // User role related properties
-  isSupport = false;
-  clients: Client[] = [];
-  selectedClient: Client | null = null;
+  // Location search properties
+  pickupSearchQuery = '';
+  dropoffSearchQuery = '';
+  pickupSuggestions: LocationSuggestion[] = [];
+  dropoffSuggestions: LocationSuggestion[] = [];
+  showPickupSuggestions = false;
+  showDropoffSuggestions = false;
+  isLoadingPickupSuggestions = false;
+  isLoadingDropoffSuggestions = false;
+   
+  // Location modal state
+  showPickupModal = false;
+  showDropoffModal = false;
 
-  // Locations from database
-  locations: Location[] = [];
+  // Search subjects for debouncing
+  private pickupSearchSubject = new Subject<string>();
+  private dropoffSearchSubject = new Subject<string>();
+  private searchSubscriptions: Subscription[] = [];
+  
+  // Selected locations
   selectedPickupLocation: string | null = null;
+  selectedPickupCoordinates: { lat: number; lon: number } | null = null;
   selectedDropoffLocation: string | null = null;
-  
-  // Subscriptions
-  private subscriptions: Subscription[] = [];
-  
-  // API URL
-  private apiUrl = "https://egvws0hf2k.execute-api.eu-west-3.amazonaws.com/api";
+  selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    public dialog: MatDialog,
-    private http: HttpClient,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
 
   ngOnInit(): void {
-    // Check user role from sessionStorage
-    const userString = sessionStorage.getItem('currentUser');
-    if (userString) {
-      const user = JSON.parse(userString);
-      this.isSupport = user.role === 'SupportAgent';
-      
-      // Set user info
-      this.userInfo = {
-        fullName: `${user.firstName} ${user.lastName}`,
-        email: user.email,
-        phone: user.phoneNumber || ''
-      };
-    }
-    
-    // If support agent, load clients
-    if (this.isSupport) {
-      this.loadClients();
-    }
-    
-    // Load locations from database
-    this.loadLocations();
+    // Get user info
+    this.userInfo = this.carService.getUserInfo();
+    this.locationInfo = this.carService.getMockLocationInfo();
     
     // Initialize form
     this.initForm();
+    this.loadClients();
+    
+    // Setup search debouncing for locations
+    this.setupLocationSearch();
+    this.locationService.getLocations().subscribe({
+      next: (locations: LocationData[]) => {
+        this.locations = locations;
+      },
+      error: (error) => {
+        console.error('Error fetching locations:', error);
+      }
+    });
 
     // Get car ID and dates from route parameters
-    this.subscriptions.push(
-      this.route.queryParams.subscribe(params => {
-        if (params['carId']) {
-          // Get car details
-          this.loadCarDetails(params['carId']);
-          
-          // If dates are provided in the URL, use them
-          if (params['startDate'] && params['endDate']) {
-            const startDate = new Date(`${params['startDate']} ${params['startTime'] || '10:00'}`);
-            const endDate = new Date(`${params['endDate']} ${params['endTime'] || '16:00'}`);
-            
-            this.dateFrom = startDate;
-            this.dateTo = endDate;
-            
-            // Update form with these dates
-            this.bookingForm.patchValue({
-              dates: {
-                dateFrom: startDate.toISOString(),
-                dateTo: endDate.toISOString()
+    this.route.queryParams.subscribe(params => {
+      if (params['carId']) {
+        // Get car details using CarService
+        this.carService.getCarDetails(params['carId']).subscribe({
+          next: (car) => {
+            if (car) {
+              this.selectedCar = car;
+              
+              // If dates are provided in the URL, use them
+              if (params['startDate'] && params['endDate']) {
+                const startDate = new Date(`${params['startDate']} ${params['startTime']}`);
+                const endDate = new Date(`${params['endDate']} ${params['endTime']}`);
+                
+                this.dateFrom = startDate;
+                this.dateTo = endDate;
+                
+                // Update form with these dates
+                this.bookingForm.patchValue({
+                  dates: {
+                    dateFrom: startDate.toISOString(),
+                    dateTo: endDate.toISOString()
+                  }
+                });
+                
+                // Calculate total price
+                this.calculateTotalPrice();
               }
-            });
+            }
+          },
+          error: (error) => {
+            console.error('Error loading car details:', error);
           }
-        }
-      })
-    );
-  }
-  
-  // Load car details
-  loadCarDetails(carId: string): void {
-    this.subscriptions.push(
-      this.http.get<CarDetails>(`${this.apiUrl}/cars/${carId}`).subscribe({
-        next: (car) => {
-          this.selectedCar = car;
-          this.calculateTotalPrice();
-        },
-        error: (error) => {
-          console.error('Error loading car details:', error);
-          
-          // Mock car data for testing if API fails
-          this.selectedCar = {
-            _id: '1',
-            carId: carId,
-            brand: 'Audi',
-            model: 'A6 Quattro',
-            year: 2023,
-            pricePerDay: 150,
-            images: [
-              { url: 'https://images.unsplash.com/photo-1541348263662-e068662d82af?q=80&w=1974&auto=format&fit=crop' }
-            ],
-            location: 'Ukraine, Kyiv'
-          };
-          this.calculateTotalPrice();
-        }
-      })
-    );
-  }
-  
-  // Load locations from database
-  loadLocations(): void {
-    this.subscriptions.push(
-      this.http.get<any>(`${this.apiUrl}/home/locations`).subscribe({
-        next: (response) => {
-          // Check if response has content property (based on the provided response)
-          if (response && response.content && Array.isArray(response.content)) {
-            this.locations = response.content;
-          } else {
-            this.locations = response; // In case the response is directly an array
-          }
-          console.log('Locations loaded:', this.locations);
-        },
-        error: (error) => {
-          console.error('Error loading locations:', error);
-        }
-      })
-    );
-  }
-  
-  // Load clients for support agent
-  loadClients(): void {
-    this.subscriptions.push(
-      this.http.get<Client[]>(`${this.apiUrl}/users/clients`).subscribe({
-        next: (clients) => {
-          this.clients = clients;
-        },
-        error: (error) => {
-          console.error('Error loading clients:', error);
-          
-          // Mock data for testing
-          this.clients = [
-            { id: '1', fullName: 'Anastasiya Dobrota', email: 'dobrota@gmail.com', phone: '+38 111 111 11 11' },
-            { id: '2', fullName: 'John Smith', email: 'john.smith@example.com', phone: '+38 222 222 22 22' }
-          ];
-        }
-      })
-    );
-  }
-  
-  // Handle client selection
-  onClientSelected(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedIndex = selectElement.selectedIndex;
-    
-    // Skip if the first option (placeholder) is selected
-    if (selectedIndex <= 0) return;
-    
-    // Get the selected client (subtract 1 because of the placeholder option)
-    const client = this.clients[selectedIndex - 1];
-    this.selectedClient = client;
-    
-    // Update form with selected client info
-    this.bookingForm.get('personalInfo')?.patchValue({
-      fullName: client.fullName,
-      email: client.email,
-      phone: client.phone
+        });
+      }
     });
   }
-  
-  // Handle pickup location change
-  onPickupLocationChanged(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const locationId = selectElement.value;
-    
-    if (locationId) {
-      this.selectedPickupLocation = locationId;
-      const selectedLocation = this.locations.find(loc => loc.locationId === locationId);
-      
-      if (selectedLocation) {
-        // Update form value
-        this.bookingForm.get('location.pickupLocation')?.setValue(locationId);
-      }
-    }
+
+
+  private loadClients(): void {
+    console.log('=== loadClients Started ===');
+    this.isLoadingClients = true;
+    this.userService.getClients().subscribe({
+        next: (clients: ClientUser[]) => {
+            console.log('Received clients:', clients);
+            if (Array.isArray(clients)) {
+                this.clientsList = clients;
+                console.log('Updated clientsList:', this.clientsList);
+            } else {
+                console.error('Invalid clients data:', clients);
+                this.clientsList = [];
+                this.errorMessage = 'Invalid data received from server';
+            }
+            this.isLoadingClients = false;
+        },
+        error: (error) => {
+            console.error('Error fetching clients:', error);
+            this.errorMessage = 'Failed to load clients';
+            this.isLoadingClients = false;
+            this.clientsList = [];
+        }
+    });
   }
-  
-  // Handle dropoff location change
-  onDropoffLocationChanged(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const locationId = selectElement.value;
-    
-    if (locationId) {
-      this.selectedDropoffLocation = locationId;
-      const selectedLocation = this.locations.find(loc => loc.locationId === locationId);
-      
-      if (selectedLocation) {
-        // Update form value
-        this.bookingForm.get('location.dropoffLocation')?.setValue(locationId);
-      }
-    }
+
+  // Update the selection methods to use the new location model
+  selectPickupLocation(location: LocationData) {
+    this.selectedPickupLocationId = location.locationId;
+    this.bookingForm.get('location.pickupLocation')?.setValue(location.locationId);
   }
-  
+
+  selectDropoffLocation(location: LocationData) {
+    this.selectedDropoffLocationId = location.locationId;
+    this.bookingForm.get('location.dropoffLocation')?.setValue(location.locationId);
+  }
+
+  // Update the display methods
+  getSelectedPickupLocationName(): string {
+    const locationId = this.selectedPickupLocationId || this.bookingForm.get('location.pickupLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
+  getSelectedDropoffLocationName(): string {
+    const locationId = this.selectedDropoffLocationId || this.bookingForm.get('location.dropoffLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
   // Location validation methods
   isLocationInvalid(controlName: string): boolean {
-    const control = this.bookingForm.get(`location.${controlName}`);
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    const location = controlName === 'pickupLocation' ?
+      this.selectedPickupLocation : this.selectedDropoffLocation;
+    return this.carService.isLocationInvalid(location);
   }
 
   isDuplicateLocations(): boolean {
-    const pickupLocation = this.bookingForm.get('location.pickupLocation')?.value;
-    const dropoffLocation = this.bookingForm.get('location.dropoffLocation')?.value;
-    return pickupLocation && dropoffLocation && pickupLocation === dropoffLocation;
+    return this.carService.isDuplicateLocations(this.selectedPickupLocation, this.selectedDropoffLocation);
   }
 
   isFormValid(): boolean {
-    return this.bookingForm.valid && 
-           !this.isDuplicateLocations() && 
-           !!this.selectedPickupLocation && 
-           !!this.selectedDropoffLocation;
+    return this.carService.isFormValid(
+      this.bookingForm.valid,
+      this.selectedPickupLocation,
+      this.selectedDropoffLocation
+    );
+  }
+
+  // Location search methods - delegating to service
+  onPickupSearchInput(): void {
+    this.showPickupSuggestions = true;
+    this.pickupSearchSubject.next(this.pickupSearchQuery);
+  }
+
+  onDropoffSearchInput(): void {
+    this.showDropoffSuggestions = true;
+    this.dropoffSearchSubject.next(this.dropoffSearchQuery);
+  }
+
+
+  useCurrentLocation(forPickup: boolean): void {
+    this.carService.useCurrentLocation(forPickup, this);
+  }
+
+  closeLocationModal(): void {
+    this.carService.closeLocationModal(this);
   }
 
   toggleCalendar(): void {
-    this.isCalendarOpen = !this.isCalendarOpen;
+    this.carService.toggleCalendar(this);
+  }
+
+  // Setup location search with debouncing
+  setupLocationSearch(): void {
+    // Setup pickup location search
+    this.searchSubscriptions.push(
+      this.carService.setupLocationSearch(
+        this.pickupSearchSubject,
+        (results) => this.pickupSuggestions = results,
+        (isLoading) => this.isLoadingPickupSuggestions = isLoading
+      )
+    );
+    
+    // Setup dropoff location search
+    this.searchSubscriptions.push(
+      this.carService.setupLocationSearch(
+        this.dropoffSearchSubject,
+        (results) => this.dropoffSuggestions = results,
+        (isLoading) => this.isLoadingDropoffSuggestions = isLoading
+      )
+    );
   }
 
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.searchSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  initForm(): void {
+  private initForm(): void {
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
+        clientId: ['', Validators.required],
         fullName: [this.userInfo.fullName, Validators.required],
         email: [this.userInfo.email, [Validators.required, Validators.email]],
         phone: [this.userInfo.phone, Validators.required]
       }),
       location: this.fb.group({
-        pickupLocation: ['', Validators.required],
-        dropoffLocation: ['', Validators.required]
+        pickupLocation: [this.locationInfo.pickupLocation, Validators.required],
+        dropoffLocation: [this.locationInfo.dropoffLocation, Validators.required]
       }),
       dates: this.fb.group({
-        dateFrom: [new Date().toISOString(), Validators.required],
-        dateTo: [this.addDays(new Date(), 3).toISOString(), Validators.required]
+        dateFrom: ['2023-11-12T10:00', Validators.required],
+        dateTo: ['2023-11-16T16:00', Validators.required]
       })
     });
   
@@ -308,21 +345,15 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.dateFrom = new Date(this.bookingForm.get('dates.dateFrom')?.value);
     this.dateTo = new Date(this.bookingForm.get('dates.dateTo')?.value);
   
+    // Add value change listener to debug
+    this.bookingForm.get('clientId')?.valueChanges.subscribe(value => {
+      console.log('Selected client changed:', value);
+    });
+
     // Subscribe to date changes
-    const dateSubscription = this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
+    this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
     });
-    
-    if (dateSubscription) {
-      this.subscriptions.push(dateSubscription);
-    }
-  }
-
-  // Helper method to add days to a date
-  addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
   }
 
   calculateTotalPrice(): void {
@@ -334,131 +365,57 @@ export class CarBookingComponent implements OnInit, OnDestroy {
       this.dateFrom = new Date(dateFromStr);
       this.dateTo = new Date(dateToStr);
   
-      // Calculate number of days
-      const diffTime = Math.abs(this.dateTo.getTime() - this.dateFrom.getTime());
-      this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      // Use service to calculate price
+      const result = this.carService.calculateTotalPrice(
+        this.dateFrom, 
+        this.dateTo, 
+        this.selectedCar.price
+      );
       
-      // Calculate total price
-      this.totalPrice = this.numberOfDays * this.selectedCar.pricePerDay;
+      this.numberOfDays = result.numberOfDays;
+      this.totalPrice = result.totalPrice;
     }
   }
 
   confirmReservation(): void {
-    if (!this.isFormValid()) return;
-    
-    // Get selected location details
-    const pickupLocationObj = this.locations.find(loc => loc.locationId === this.selectedPickupLocation);
-    const dropoffLocationObj = this.locations.find(loc => loc.locationId === this.selectedDropoffLocation);
-    
-    if (!pickupLocationObj || !dropoffLocationObj) {
-      console.error('Location not found');
-      return;
-    }
-    
-    // Get current user ID from sessionStorage
-    let clientId: string | null = null;
-    
-    if (this.isSupport && this.selectedClient) {
-      // If support agent is making booking for a client
-      clientId = this.selectedClient.id;
-    } else {
-      // Get current user ID
-      const userString = sessionStorage.getItem('currentUser');
-      if (userString) {
-        const user = JSON.parse(userString);
-        clientId = user._id || user.id;
+    this.carService.confirmReservation(
+      this.isFormValid(),
+      this.selectedCar,
+      this.dateFrom,
+      this.dateTo,
+      this.totalPrice,
+      this.numberOfDays,
+      this.bookingForm.get('location.pickupLocation')?.value,
+      this.bookingForm.get('location.dropoffLocation')?.value,
+      // this.isReserved
+    );
+  }
+  
+  openLocationChange(): void {
+    const dialogRef = this.dialog.open(LocationDialogComponent, {
+      width: '500px',
+      data: {
+        pickupLocation: this.bookingForm.get('location.pickupLocation')?.value,
+        dropoffLocation: this.bookingForm.get('location.dropoffLocation')?.value
       }
-    }
-    
-    if (!clientId) {
-      console.error('Client ID not found');
-      return;
-    }
-    
-    // Create booking request
-    const bookingData = {
-      carId: this.selectedCar.carId || this.selectedCar._id,
-      clientId: clientId,
-      pickupDateTime: this.dateFrom.toISOString(),
-      dropOffDateTime: this.dateTo.toISOString(),
-      pickupLocationId: pickupLocationObj.locationId,
-      dropOffLocationId: dropoffLocationObj.locationId
-    };
-    
-    // Call API to create booking
-    this.http.post<any>(`${this.apiUrl}/bookings`, bookingData).subscribe({
-      next: (response) => {
-        console.log('Booking created successfully:', response);
-        
-        // Navigate to confirmation page or show success message
-        this.router.navigate(['/booking-confirmation'], { 
-          queryParams: { 
-            bookingId: response.bookingId,
-            orderNumber: response.orderNumber
-          }
+    });
+
+    dialogRef.afterClosed().subscribe((result: { pickupLocation: string, dropoffLocation: string } | undefined) => {
+      if (result) {
+        this.bookingForm.get('location')?.patchValue({
+          pickupLocation: result.pickupLocation,
+          dropoffLocation: result.dropoffLocation
         });
-      },
-      error: (error) => {
-        console.error('Error creating booking:', error);
-        // Show error message to user
-        alert('Failed to create booking. Please try again.');
       }
     });
   }
 
   onDateRangeSelected(event: {startDate: moment.Moment, endDate: moment.Moment}): void {
-    if (event.startDate && event.endDate) {
-      // Set time to 10:00 for start date and 16:00 for end date
-      const startDate = event.startDate.hour(10).minute(0).second(0).toDate();
-      const endDate = event.endDate.hour(16).minute(0).second(0).toDate();
-      
-      this.dateFrom = startDate;
-      this.dateTo = endDate;
-      
-      // Update form
-      this.bookingForm.patchValue({
-        dates: {
-          dateFrom: startDate.toISOString(),
-          dateTo: endDate.toISOString()
-        }
-      });
-      
-      // Calculate total price
-      this.calculateTotalPrice();
-    }
+    this.carService.onDateRangeSelected(event, this);
   }
 
   // Add a getter for formatted booked dates
   get bookedDatesFormatted(): { startDate: string; endDate: string; }[] {
-    if (!this.selectedCar?.bookedDates) return [];
-    
-    return this.selectedCar.bookedDates.map(date => ({
-      startDate: moment(date.startDate).format('YYYY-MM-DD'),
-      endDate: moment(date.endDate).format('YYYY-MM-DD')
-    }));
-  }
-  
-  // Helper method to get button text based on user role
-  getConfirmButtonText(): string {
-    return this.isSupport ? 'Confirm booking' : 'Confirm reservation';
-  }
-  
-  // Helper method to get current user from sessionStorage
-  getCurrentUser(): any {
-    const userString = sessionStorage.getItem('currentUser');
-    if (userString) {
-      return JSON.parse(userString);
-    }
-    return null;
-  }
-  
-  // Helper method to get formatted date string
-  getFormattedDate(date: Date): string {
-    return `${date.toLocaleString('default', { month: 'long' })} ${date.getDate()} | ${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
-  }
-  
-  // Helper method to pad zero
-  padZero(num: number): string {
-    return num < 10 ? `0${num}` : `${num}`;
+    return this.carService.formatBookedDates(this.selectedCar?.bookedDates);
   }
 }
