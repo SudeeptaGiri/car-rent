@@ -1,5 +1,5 @@
 // src/app/components/car-booking/car-booking.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { LocationDialogComponent } from '../../components/location-dialog/location-dialog.component';
@@ -10,6 +10,7 @@ import { Subject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { CarService, LocationSuggestion } from '../../services/car.service';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
 
 @Component({
@@ -19,6 +20,89 @@ import * as moment from 'moment';
   standalone: false
 })
 export class CarBookingComponent implements OnInit, OnDestroy {
+
+  constructor(
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private carBookingService: CarBookingService,
+    private carService: CarService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  locations = [
+    { id: 'location1', name: 'New York City' },
+    { id: 'location2', name: 'Los Angeles' },
+    { id: 'location3', name: 'Chicago' },
+    { id: 'location4', name: 'Miami' }
+  ];
+  isUserSupportAgent: boolean = true; // Set this based on user role
+  clientsList = [
+    { id: 1, fullName: 'Anastasiya Dobrota', email: 'anastasiya@example.com', phone: '+1234567890' },
+    { id: 2, fullName: 'John Smith', email: 'john@example.com', phone: '+1987654321' },
+    { id: 3, fullName: 'Maria Garcia', email: 'maria@example.com', phone: '+1122334455' },
+    { id: 4, fullName: 'David Johnson', email: 'david@example.com', phone: '+1567890123' },
+    { id: 5, fullName: 'Sarah Williams', email: 'sarah@example.com', phone: '+1345678901' }
+  ];
+
+    // Add these properties
+  showLocationDropdown = false;
+  showDropoffLocationDropdown = false;
+  selectedPickupLocationId: string | null = null;
+  selectedDropoffLocationId: string | null = null;
+
+  // Toggle methods
+  toggleLocationDropdown() {
+    this.showLocationDropdown = !this.showLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showLocationDropdown) {
+      this.showDropoffLocationDropdown = false;
+    }
+  }
+
+  toggleDropoffLocationDropdown() {
+    this.showDropoffLocationDropdown = !this.showDropoffLocationDropdown;
+    // Close the other dropdown if open
+    if (this.showDropoffLocationDropdown) {
+      this.showLocationDropdown = false;
+    }
+  }
+
+  // Selection methods
+  selectPickupLocation(location: any) {
+    this.selectedPickupLocationId = location.id;
+    this.bookingForm.get('location.pickupLocation')?.setValue(location.id);
+  }
+
+  selectDropoffLocation(location: any) {
+    this.selectedDropoffLocationId = location.id;
+    this.bookingForm.get('location.dropoffLocation')?.setValue(location.id);
+  }
+
+  // Display methods
+  getSelectedPickupLocationName(): string {
+    const locationId = this.selectedPickupLocationId || this.bookingForm.get('location.pickupLocation')?.value;
+    const location = this.locations.find(loc => loc.id === locationId);
+    return location ? location.name : '';
+  }
+
+  getSelectedDropoffLocationName(): string {
+    const locationId = this.selectedDropoffLocationId || this.bookingForm.get('location.dropoffLocation')?.value;
+    const location = this.locations.find(loc => loc.id === locationId);
+    return location ? location.name : '';
+  }
+
+  @ViewChild('pickupSelect') pickupSelect!: ElementRef;
+  @ViewChild('dropoffSelect') dropoffSelect!: ElementRef;
+  
+  // Instead of openLocationModal, use this method
+  openLocationModal(isOpen: boolean) {
+    if (isOpen) {
+      this.toggleLocationDropdown();
+    }
+  }
+
+
   CarDetails = [];
   bookingForm!: FormGroup;
   selectedCar!: CarDetails;
@@ -58,14 +142,6 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   selectedDropoffLocation: string | null = null;
   selectedDropoffCoordinates: { lat: number; lon: number } | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    public dialog: MatDialog,
-    private carBookingService: CarBookingService,
-    private carService: CarService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
 
   ngOnInit(): void {
     // Get user info
@@ -146,20 +222,9 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.dropoffSearchSubject.next(this.dropoffSearchQuery);
   }
 
-  selectPickupLocation(suggestion: LocationSuggestion): void {
-    this.carService.selectPickupLocation(suggestion, this);
-  }
-
-  selectDropoffLocation(suggestion: LocationSuggestion): void {
-    this.carService.selectDropoffLocation(suggestion, this);
-  }
 
   useCurrentLocation(forPickup: boolean): void {
     this.carService.useCurrentLocation(forPickup, this);
-  }
-
-  openLocationModal(forPickup: boolean): void {
-    this.carService.openLocationModal(forPickup, this);
   }
 
   closeLocationModal(): void {
