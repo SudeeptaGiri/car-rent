@@ -14,12 +14,11 @@
         <!-- Support Agent View -->
         <div *ngIf="isUserSupportAgent" class="support-agent-client-selector">
           <h2>Clients info</h2>
-          <div class="form-field">
+          <div class="form-field form-personal-info">
             <label for="clientSelect">Client:</label>
             <select id="clientSelect" class="client-select">
-
-              <option *ngFor="let client of clientsList" [value]="client.fullName">
-                {{ client.fullName }}
+              <option *ngFor="let client of clientsList" [value]="client.userId">
+                {{ client.userName }}
               </option>
             </select>
             <button type="button" class="change-btn">Save</button>
@@ -42,27 +41,27 @@
         <h2>Location</h2>
         <div class="location-card" formGroupName="location">
           <button type="button" class="change-btn">
-            <div *ngIf="!isUserSupportAgent">
+            <div *ngIf="!isUserSupportAgent" (click)="toggleLocationBlink()">
               Change
             </div>
-            <div *ngIf="isUserSupportAgent">
+            <div *ngIf="isUserSupportAgent" (click)="toggleLocationBlink()">
               Save
             </div>
           </button>
           <div class="form-field">
             <label for="pickupLocation">Pick-up Location:</label>
-            <select class="location-select pickup-select">
-              <option *ngFor="let location of locations" [value]="location.id">
-                {{ location.name }}
+            <select class="location-select pickup-select client-select">
+              <option *ngFor="let location of locations" [value]="location.locationId">
+                {{ location.locationName }}
               </option>
             </select>
           </div>
           
           <div class="form-field">
             <label for="pickupLocation">Drop-off Location:</label>
-            <select class="location-select">
-              <option *ngFor="let location of locations" [value]="location.id">
-                {{ location.name }}
+            <select class="location-select client-select">
+              <option *ngFor="let location of locations" [value]="location.locationId">
+                {{ location.locationName }}
               </option>
             </select>
           </div>

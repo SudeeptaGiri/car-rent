@@ -12,6 +12,9 @@ import { CarService, LocationSuggestion } from '../../services/car.service';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
+import { LocationService, LocationData } from '../../services/locations.service';
+import { ClientUser } from '../../models/users';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-car-booking',
@@ -26,26 +29,21 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private carBookingService: CarBookingService,
     private carService: CarService,
+    private locationService: LocationService,
+    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
-  locations = [
-    { id: 'location1', name: 'New York City' },
-    { id: 'location2', name: 'Los Angeles' },
-    { id: 'location3', name: 'Chicago' },
-    { id: 'location4', name: 'Miami' }
-  ];
-  isUserSupportAgent: boolean = true; // Set this based on user role
-  clientsList = [
-    { id: 1, fullName: 'Anastasiya Dobrota', email: 'anastasiya@example.com', phone: '+1234567890' },
-    { id: 2, fullName: 'John Smith', email: 'john@example.com', phone: '+1987654321' },
-    { id: 3, fullName: 'Maria Garcia', email: 'maria@example.com', phone: '+1122334455' },
-    { id: 4, fullName: 'David Johnson', email: 'david@example.com', phone: '+1567890123' },
-    { id: 5, fullName: 'Sarah Williams', email: 'sarah@example.com', phone: '+1345678901' }
-  ];
+  locations: LocationData[] = []
+  
+  clientsList: ClientUser[] = [];
+  isLoadingClients = false;
+  errorMessage = '';
 
-    // Add these properties
+  isUserSupportAgent: boolean = false; // Set this based on user role
+
+  // Add these properties
   showLocationDropdown = false;
   showDropoffLocationDropdown = false;
   selectedPickupLocationId: string | null = null;
@@ -68,28 +66,33 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Selection methods
-  selectPickupLocation(location: any) {
-    this.selectedPickupLocationId = location.id;
-    this.bookingForm.get('location.pickupLocation')?.setValue(location.id);
-  }
+  // Add this property to your component class
+  locationSelectsBlinking = false;
 
-  selectDropoffLocation(location: any) {
-    this.selectedDropoffLocationId = location.id;
-    this.bookingForm.get('location.dropoffLocation')?.setValue(location.id);
-  }
-
-  // Display methods
-  getSelectedPickupLocationName(): string {
-    const locationId = this.selectedPickupLocationId || this.bookingForm.get('location.pickupLocation')?.value;
-    const location = this.locations.find(loc => loc.id === locationId);
-    return location ? location.name : '';
-  }
-
-  getSelectedDropoffLocationName(): string {
-    const locationId = this.selectedDropoffLocationId || this.bookingForm.get('location.dropoffLocation')?.value;
-    const location = this.locations.find(loc => loc.id === locationId);
-    return location ? location.name : '';
+  // Add this method to your component class
+  toggleLocationBlink(): void {
+    // First remove the class if it's already there (to restart animation)
+    const locationSelects = document.querySelectorAll('.location-select');
+    locationSelects.forEach(select => {
+      select.classList.remove('blink-border');
+    });
+    
+    // Force a reflow to ensure the animation restarts
+    // Cast to HTMLElement to access offsetWidth
+    const firstSelect = document.querySelectorAll('.location-select')[0] as HTMLElement;
+    void firstSelect.offsetWidth;
+    
+    // Add the class back to start the animation
+    locationSelects.forEach(select => {
+      select.classList.add('blink-border');
+    });
+    
+    // Remove the class after animation completes
+    setTimeout(() => {
+      locationSelects.forEach(select => {
+        select.classList.remove('blink-border');
+      });
+    }, 1200); // Match this to the animation duration
   }
 
   @ViewChild('pickupSelect') pickupSelect!: ElementRef;
@@ -150,9 +153,18 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     
     // Initialize form
     this.initForm();
+    this.loadClients();
     
     // Setup search debouncing for locations
     this.setupLocationSearch();
+    this.locationService.getLocations().subscribe({
+      next: (locations: LocationData[]) => {
+        this.locations = locations;
+      },
+      error: (error) => {
+        console.error('Error fetching locations:', error);
+      }
+    });
 
     // Get car ID and dates from route parameters
     this.route.queryParams.subscribe(params => {
@@ -191,7 +203,57 @@ export class CarBookingComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
+
+  private loadClients(): void {
+    console.log('=== loadClients Started ===');
+    this.isLoadingClients = true;
+    this.userService.getClients().subscribe({
+        next: (clients: ClientUser[]) => {
+            console.log('Received clients:', clients);
+            if (Array.isArray(clients)) {
+                this.clientsList = clients;
+                console.log('Updated clientsList:', this.clientsList);
+            } else {
+                console.error('Invalid clients data:', clients);
+                this.clientsList = [];
+                this.errorMessage = 'Invalid data received from server';
+            }
+            this.isLoadingClients = false;
+        },
+        error: (error) => {
+            console.error('Error fetching clients:', error);
+            this.errorMessage = 'Failed to load clients';
+            this.isLoadingClients = false;
+            this.clientsList = [];
+        }
+    });
+  }
+
+  // Update the selection methods to use the new location model
+  selectPickupLocation(location: LocationData) {
+    this.selectedPickupLocationId = location.locationId;
+    this.bookingForm.get('location.pickupLocation')?.setValue(location.locationId);
+  }
+
+  selectDropoffLocation(location: LocationData) {
+    this.selectedDropoffLocationId = location.locationId;
+    this.bookingForm.get('location.dropoffLocation')?.setValue(location.locationId);
+  }
+
+  // Update the display methods
+  getSelectedPickupLocationName(): string {
+    const locationId = this.selectedPickupLocationId || this.bookingForm.get('location.pickupLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
+  getSelectedDropoffLocationName(): string {
+    const locationId = this.selectedDropoffLocationId || this.bookingForm.get('location.dropoffLocation')?.value;
+    const location = this.locations.find(loc => loc.locationId === locationId);
+    return location ? location.locationName : '';
+  }
+
   // Location validation methods
   isLocationInvalid(controlName: string): boolean {
     const location = controlName === 'pickupLocation' ?
@@ -261,9 +323,10 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.searchSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  initForm(): void {
+  private initForm(): void {
     this.bookingForm = this.fb.group({
       personalInfo: this.fb.group({
+        clientId: ['', Validators.required],
         fullName: [this.userInfo.fullName, Validators.required],
         email: [this.userInfo.email, [Validators.required, Validators.email]],
         phone: [this.userInfo.phone, Validators.required]
@@ -282,6 +345,11 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     this.dateFrom = new Date(this.bookingForm.get('dates.dateFrom')?.value);
     this.dateTo = new Date(this.bookingForm.get('dates.dateTo')?.value);
   
+    // Add value change listener to debug
+    this.bookingForm.get('clientId')?.valueChanges.subscribe(value => {
+      console.log('Selected client changed:', value);
+    });
+
     // Subscribe to date changes
     this.bookingForm.get('dates')?.valueChanges.subscribe(() => {
       this.calculateTotalPrice();
