@@ -4,7 +4,7 @@ const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
 const bookingController = require("./controllers/bookingController/bookingController");
-
+const feedbackController = require("./controllers/feedbacksController/feedbacksController"); 
 const homepageController = require('./controllers/homepageController/homepageController');
 
 // Add this at the top of your index.js
@@ -192,6 +192,21 @@ const path = event.rawPath || event.path || event.resource || "/";
       }
       return await CarController.getCarById(event);
     }
+
+
+     // Feedback routes - Add these new routes
+     if (path === "/feedbacks" && method === "POST") {
+      return await feedbackController.createFeedback(event);
+    }
+    
+    if (path === "/feedbacks" && method === "GET") {
+      return await feedbackController.getAllFeedback(event);
+    }
+    
+    if (path === "/feedbacks/recent" && method === "GET") {
+      return await feedbackController.getRecentFeedback(event);
+    }
+    
 
     // Homepage routes - Adding logging to debug the issue
     console.log(`Checking if path '${path}' matches homepage routes`);
