@@ -23,19 +23,19 @@ export class MapviewComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     // Use LocationService instead of direct HttpClient
-    this.locationService.getLocations().subscribe({
-      next: (locations: Location[]) => { // Added explicit type annotation
-        this.locations = locations;
-        if (locations.length > 0) {
-          this.selectLocation(locations[0]);
-        }
-        this.loading = false;
-      },
-      error: (error: any) => { // Added explicit type
-        console.error('Error loading locations:', error);
-        this.loading = false;
-      }
-    });
+    // this.locationService.getLocations().subscribe({
+    //   next: (locations: Location[]) => { // Added explicit type annotation
+    //     this.locations = locations;
+    //     if (locations.length > 0) {
+    //       this.selectLocation(locations[0]);
+    //     }
+    //     this.loading = false;
+    //   },
+    //   error: (error: any) => { // Added explicit type
+    //     console.error('Error loading locations:', error);
+    //     this.loading = false;
+    //   }
+    // });
   }
 
   selectLocation(location: Location): void {

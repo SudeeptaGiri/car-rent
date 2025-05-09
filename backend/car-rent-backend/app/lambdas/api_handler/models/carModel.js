@@ -1,6 +1,13 @@
+// carModel.js
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const carSchema = new mongoose.Schema({
+const carSchema = new Schema({
+  carId: {
+    type: String,
+    required: true,
+    unique: true
+  },
   model: {
     type: String,
     required: true
@@ -15,17 +22,14 @@ const carSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['ECONOMY', 'COMFORT', 'BUSINESS', 'PREMIUM', 'CROSSOVER', 'MINIVAN', 'ELECTRIC'],
     required: true
   },
   gearBoxType: {
     type: String,
-    enum: ['MANUAL', 'AUTOMATIC'],
     required: true
   },
   fuelType: {
     type: String,
-    enum: ['PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'],
     required: true
   },
   engineCapacity: {
@@ -42,7 +46,6 @@ const carSchema = new mongoose.Schema({
   },
   climateControlOption: {
     type: String,
-    enum: ['NONE', 'AIR_CONDITIONER', 'CLIMATE_CONTROL', 'TWO_ZONE_CLIMATE_CONTROL'],
     required: true
   },
   status: {
@@ -55,18 +58,16 @@ const carSchema = new mongoose.Schema({
     required: true
   },
   locationId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Location',
+    type: String,
     required: true
   },
   location: {
     type: String,
     required: true
   },
-  images: {
-    type: [String],
-    default: []
-  },
+  images: [{
+    type: String
+  }],
   carRating: {
     type: Number,
     default: 0
@@ -79,23 +80,18 @@ const carSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
+  bookings: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Booking'
+  }]
+}, {
+  timestamps: true
 });
 
-// Create indexes for better query performance
-carSchema.index({ category: 1 });
-carSchema.index({ status: 1 });
-carSchema.index({ locationId: 1 });
-carSchema.index({ pricePerDay: 1 });
-carSchema.index({ carRating: -1 });
+// Create indexes
+carSchema.index({ carId: 1 }, { unique: true });
+carSchema.index({ locationId: 1, status: 1 });
+carSchema.index({ category: 1, pricePerDay: 1 });
+carSchema.index({ status: 1, pricePerDay: 1 });
 
-const Car = mongoose.model('Car', carSchema);
-
-module.exports = Car;
+module.exports = mongoose.model('Car', carSchema);

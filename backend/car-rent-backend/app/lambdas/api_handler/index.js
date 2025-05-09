@@ -1,9 +1,16 @@
-const authController = require("./controllers/authController/authController");
-const userController = require("./controllers/userController/userController");
+const authController = require("./controllers/authcontroller/authcontroller");
+const userController = require("./controllers/usercontroller/usercontroller");
 const { connectToDatabase } = require('./utils/database');
 const { createResponse } = require('./utils/responseUtil');
 const CarController = require("./controllers/carController/index");
+const bookingController = require("./controllers/bookingController/bookingController");
+const feedbackController = require("./controllers/feedbacksController/feedbacksController"); 
 const homepageController = require('./controllers/homepageController/homepageController');
+
+// Add this at the top of your index.js
+console.log('Loading function');
+console.log('Current working directory:', process.cwd());
+console.log('Directory contents:', require('fs').readdirSync('.'));
 
 // Initialize database connection
 let dbConnection;
@@ -23,6 +30,19 @@ const handleCors = () => {
 
 exports.handler = async (event, context) => {
   // Keep connection alive between function calls
+
+  console.log('=== Handler Started ===');
+  console.log('Event:', JSON.stringify(event, null, 2));
+  console.log('Context:', JSON.stringify(context, null, 2));
+  
+  console.log('FULL EVENT:', JSON.stringify(event, null, 2));
+  
+  const extractedPath = event.rawPath || event.path || event.resource || "/";
+  console.log('EXTRACTED PATH:', extractedPath);
+  console.log('EVENT.PATH:', event.path);
+  console.log('EVENT.RAWPATH:', event.rawPath);
+  console.log('EVENT.RESOURCE:', event.resource);
+  
   context.callbackWaitsForEmptyEventLoop = false;
   // Handle CORS preflight requests
   if (event.httpMethod === "OPTIONS") {
@@ -33,7 +53,8 @@ exports.handler = async (event, context) => {
   }
 
   // Get the path and method from the event
-  const path = event.rawPath || event.path || "/";
+  // Modify this line in your handler function
+const path = event.rawPath || event.path || event.resource || "/";
   const method =
     event.requestContext?.http?.method || event.httpMethod || "UNKNOWN";
 
@@ -138,6 +159,33 @@ exports.handler = async (event, context) => {
       return await CarController.getCarClientReviews(event);
     }
 
+     // Route the request to the appropriate handler
+     if (path === '/bookings' && method === 'POST') {
+      return await bookingController.createBooking(event);
+    } 
+    if (path === '/bookings' && method === 'GET') {
+      return await bookingController.getAllBookings(event);
+    } 
+    if (path.match(/^\/bookings\/[^/]+$/) && method === 'GET') {
+      // Extract userId from path
+      const userId = path.split('/')[2];
+      event.pathParameters = { userId };
+      return await bookingController.getUserBookings(event);
+    } 
+    
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'GET') {
+      return await documentController.getUserDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents$/i) && method === 'POST') {
+      return await documentController.uploadDocuments(event);
+    }
+    
+    if (path.match(/^\/users\/[^\/]+\/documents\/[^\/]+\/[^\/]+$/i) && method === 'DELETE') {
+      return await documentController.deleteDocument(event);
+    }
+    
+
     // This route must come after the specific /cars/... routes
     if (path.match(/^\/cars\/[^/]+$/) && method === "GET") {
       // Extract carId from path if pathParameters is not available
@@ -149,6 +197,21 @@ exports.handler = async (event, context) => {
       }
       return await CarController.getCarById(event);
     }
+
+
+     // Feedback routes - Add these new routes
+     if (path === "/feedbacks" && method === "POST") {
+      return await feedbackController.createFeedback(event);
+    }
+    
+    if (path === "/feedbacks" && method === "GET") {
+      return await feedbackController.getAllFeedback(event);
+    }
+    
+    if (path === "/feedbacks/recent" && method === "GET") {
+      return await feedbackController.getRecentFeedback(event);
+    }
+    
 
     // Homepage routes - Adding logging to debug the issue
     console.log(`Checking if path '${path}' matches homepage routes`);
@@ -200,7 +263,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers: headers,
       body: JSON.stringify({
-        message: "Something went wrong",
+        message: "Internal Server Error",
         error: error.message,
       }),
     };

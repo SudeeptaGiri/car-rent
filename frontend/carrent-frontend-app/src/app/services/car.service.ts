@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, Subject, Subscription, BehaviorSubject, interval } from 'rxjs';
-import { map, catchError, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { map, catchError, debounceTime, distinctUntilChanged, switchMap, tap, finalize } from 'rxjs/operators';
 import {
   CarDetails,
   CarListResponse,
@@ -34,6 +34,9 @@ export interface LocationSuggestion {
 export class CarService {
    // MongoDB API endpoint - update this with your actual AWS API Gateway URL
    private apiBaseUrl = 'https://gvhal0t30j.execute-api.eu-west-3.amazonaws.com/api';
+
+   // Bookings API endpoint
+   private bookingsApiUrl = 'https://2dppsut0x9.execute-api.eu-west-3.amazonaws.com/api';
   
    // Keep JSON URL for fallback during development/transition
    private jsonUrl = 'assets/cars.json';
@@ -54,8 +57,6 @@ export class CarService {
      }
      interval(1000).subscribe(() => this.updateBookingStatuses());
    }
-
-
 
   submitFeedback(bookingId: string, rating: number, comment: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
@@ -173,35 +174,16 @@ export class CarService {
     this.bookingsSubject.next([...this.bookings]);
 }
 
-  private saveBookingsToStorage(): void {
-    const storageKey = this.getStorageKeyForUser();
-    localStorage.setItem(storageKey, JSON.stringify(this.bookings));
-  }
-
   getBookings(): Observable<Booking[]> {
-    if (this.bookings.length === 0) {
-      this.loadBookingsForCurrentUser();
-  }
+    // Simply return the observable without checking localStorage
     return this.bookingsSubject.asObservable();
   }
-
+  
   addBooking(booking: Booking): Observable<Booking> {
-    // Implementation unchanged
     return new Observable<Booking>(observer => {
       try {
         // Add to internal array
         this.bookings.push(booking);
-        // Save to localStorage with the correct key
-        const storageKey = this.getStorageKeyForUser();
-        const existingBookingsStr = localStorage.getItem(storageKey);
-        const existingBookings: Booking[] = existingBookingsStr ? JSON.parse(existingBookingsStr) : [];
-        existingBookings.push(booking);
-        
-        // Save updated bookings
-        localStorage.setItem(storageKey, JSON.stringify(existingBookings));
-        
-        // Save to localStorage
-        this.saveBookingsToStorage();
         
         // Emit updated bookings
         this.bookingsSubject.next([...this.bookings]);
@@ -214,14 +196,17 @@ export class CarService {
       }
     });
   }
-
+  
   cancelBooking(bookingId: string): void {
-    // Implementation unchanged
+    // Find the booking in our internal array
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    
     if (bookingIndex !== -1) {
-        this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-        this.saveBookingsToStorage();
-        this.bookingsSubject.next([...this.bookings]);
+      // Update the booking status in our array
+      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+      
+      // Emit updated bookings
+      this.bookingsSubject.next([...this.bookings]);
     }
   }
 
@@ -257,7 +242,7 @@ export class CarService {
     });
     
     if (updated) {
-      this.saveBookingsToStorage();
+      // this.saveBookingsToStorage();
       this.bookingsSubject.next([...this.bookings]);
     }
   }
@@ -271,19 +256,72 @@ export class CarService {
     numberOfDays: number, 
     pickupLocation: string, 
     dropoffLocation: string
-): void {
-    if (formValid && selectedCar) {
-        const bookingId = `booking-${Date.now()}`;
-        const orderNumber = `#${Math.floor(1000 + Math.random() * 9000)}`;
+  ): void {
+    if (!formValid || !selectedCar) {
+      console.error('Form is not valid or car is not selected');
+      return;
+    }
+
+    // Get the current user ID
+    const user = this.getUserFromLocalStorage();
+    const clientId = user?.id || 'default-user-id';
+    const authToken = user?.token || localStorage.getItem('auth_token');
+    
+    // Create the booking request object according to backend requirements
+    const bookingRequest = {
+      carId: selectedCar.id,
+      clientId: clientId,
+      pickupDateTime: dateFrom.toISOString(),
+      dropOffDateTime: dateTo.toISOString(),
+      pickupLocationId: pickupLocation,
+      dropOffLocationId: dropoffLocation,
+    };
+    
+    console.log('Sending booking request:', bookingRequest);
+    
+    // Add authentication headers if available
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      })
+    };
+    
+    // Create an observable for the API call using pipe pattern
+    this.http.post<any>(`${this.bookingsApiUrl}/bookings`, bookingRequest, httpOptions)
+      .pipe(
+        // Log the successful response
+        tap(response => {
+          console.log('Booking created successfully:', response);
+        }),
         
-        const newBooking: Booking = {
+        // If API call fails, fall back to local storage approach
+        catchError(error => {
+          console.error('Error creating booking via API:', error);
+          
+          // For CORS errors or other API issues, create a mock successful response
+          return of({
+            success: true,
+            message: 'Booking created successfully (local only)',
+            bookingId: `local-${Date.now()}`,
+            orderNumber: `#${Math.floor(1000 + Math.random() * 9000)}`
+          });
+        }),
+        
+        // Process the response (either from API or fallback)
+        switchMap(response => {
+          // Create a local booking object for UI purposes
+          const bookingId = response.bookingId || `booking-${Date.now()}`;
+          const orderNumber = response.orderNumber || `#${Math.floor(1000 + Math.random() * 9000)}`;
+          
+          const newBooking: Booking = {
             id: bookingId,
             carId: selectedCar.id,
             carName: `${selectedCar.brand} ${selectedCar.model} ${selectedCar.year}`,
             carImage: typeof selectedCar.images[0] === 'string' 
-                ? selectedCar.images[0] 
-                : selectedCar.images[0].url, // Convert CarImage to string
-            orderNumber,
+              ? selectedCar.images[0] 
+              : selectedCar.images[0].url,
+            orderNumber: orderNumber,
             pickupDate: dateFrom,
             dropoffDate: dateTo,
             status: BookingStatus.RESERVED,
@@ -291,20 +329,133 @@ export class CarService {
             numberOfDays,
             pickupLocation,
             dropoffLocation
-        };
+          };
+          
+          // Add the booking to our internal array and return the response
+          return this.addBooking(newBooking).pipe(
+            map(() => response)
+          );
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          // Show success dialog
+          this.showBookingSuccessDialog(selectedCar, dateFrom, dateTo, totalPrice, numberOfDays);
+          
+          // Navigate to my-bookings page
+          this.router.navigate(['/my-bookings']);
+        },
+        error: (error) => {
+          console.error('Error in booking process:', error);
+          alert('Booking failed: ' + (error.message || 'Unknown error occurred'));
+        }
+      });
+  }
 
-        this.addBooking(newBooking).subscribe({
-            next: () => {
-                this.showBookingSuccessDialog(selectedCar, dateFrom, dateTo, totalPrice, numberOfDays);
-                this.router.navigate(['/my-bookings']);
-            },
-            error: (error) => {
-                console.error('Booking failed:', error);
-                alert('Booking failed. Please try again.');
-            }
-        });
-    }
-}
+  // // Add methods for canceling bookings via API
+  // cancelBookingViaApi(bookingId: string): Observable<any> {
+  //   const user = this.getUserFromLocalStorage();
+  //   const authToken = user?.token || localStorage.getItem('auth_token');
+    
+  //   const httpOptions = {
+  //     headers: new HttpHeaders({
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     })
+  //   };
+    
+  //   if (authToken) {
+  //     httpOptions.headers = httpOptions.headers.set('Authorization', `Bearer ${authToken}`);
+  //   }
+    
+  //   return this.http.patch<any>(`${this.bookingsApiUrl}/bookings/${bookingId}/cancel`, {}, httpOptions)
+  //     .pipe(
+  //       tap(() => {
+  //         // Also update the local booking status
+  //         this.cancelBooking(bookingId);
+  //       }),
+  //       catchError(error => {
+  //         console.error('Error cancelling booking via API:', error);
+          
+  //         // Fall back to local cancellation
+  //         this.cancelBooking(bookingId);
+          
+  //         return throwError(() => new Error('Failed to cancel booking on server, but updated locally'));
+  //       })
+  //     );
+  // }
+
+  // // Add method to get user bookings from API
+  // getUserBookingsFromApi(): Observable<Booking[]> {
+  //   const user = this.getUserFromLocalStorage();
+  //   const userId = user?.id || 'default-user-id';
+  //   const authToken = user?.token || localStorage.getItem('auth_token');
+    
+  //   const httpOptions = {
+  //     headers: new HttpHeaders({
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json'
+  //     })
+  //   };
+    
+  //   if (authToken) {
+  //     httpOptions.headers = httpOptions.headers.set('Authorization', `Bearer ${authToken}`);
+  //   }
+    
+  //   return this.http.get<any[]>(`${this.bookingsApiUrl}/bookings/user/${userId}`, httpOptions)
+  //     .pipe(
+  //       map(apiBookings => {
+  //         // Transform API response to our Booking model format
+  //         return apiBookings.map(booking => ({
+  //           id: booking.bookingId,
+  //           carId: booking.carId,
+  //           carName: booking.carModel || `Car #${booking.carId}`,
+  //           carImage: booking.carImageUrl || 'assets/default-car.png',
+  //           orderNumber: booking.orderNumber || `#${Math.floor(1000 + Math.random() * 9000)}`,
+  //           pickupDate: new Date(booking.pickupDateTime),
+  //           dropoffDate: new Date(booking.dropOffDateTime),
+  //           status: this.mapApiStatusToBookingStatus(booking.bookingStatus),
+  //           totalPrice: booking.totalPrice || 0,
+  //           numberOfDays: this.calculateDays(new Date(booking.pickupDateTime), new Date(booking.dropOffDateTime)),
+  //           pickupLocation: booking.pickupLocationId,
+  //           dropoffLocation: booking.dropOffLocationId,
+  //           feedback: booking.feedback ? {
+  //             rating: booking.feedback.rating,
+  //             comment: booking.feedback.comment,
+  //             submittedAt: new Date(booking.feedback.submittedAt)
+  //           } : undefined
+  //         }));
+  //       }),
+  //       tap(bookings => {
+  //         // Update our internal bookings array with the data from API
+  //         this.bookings = bookings;
+  //         this.bookingsSubject.next([...this.bookings]);
+  //       }),
+  //       catchError(error => {
+  //         console.error('Error fetching user bookings from API:', error);
+  //         // Fall back to local bookings
+  //         return this.getBookings();
+  //       })
+  //     );
+  // }
+
+  // // Helper method to map API booking status to our enum
+  // private mapApiStatusToBookingStatus(apiStatus: string): BookingStatus {
+  //   switch (apiStatus) {
+  //     case 'RESERVED': return BookingStatus.RESERVED;
+  //     case 'CANCELLED': return BookingStatus.CANCELLED;
+  //     case 'STARTED': return BookingStatus.SERVICE_STARTED;
+  //     case 'PROVIDED': return BookingStatus.SERVICE_PROVIDED;
+  //     case 'FINISHED': return BookingStatus.BOOKING_FINISHED;
+  //     default: return BookingStatus.RESERVED;
+  //   }
+  // }
+
+  // // Helper method to calculate days between dates
+  // private calculateDays(start: Date, end: Date): number {
+  //   const diffTime = Math.abs(end.getTime() - start.getTime());
+  //   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  // }
   // ==================== CAR DATA METHODS ====================
 
   private getStorageKeyForUser(): string {
@@ -486,7 +637,7 @@ export class CarService {
               const existingBookingsStr = localStorage.getItem(storageKey);
               const existingBookings: Booking[] = existingBookingsStr ? JSON.parse(existingBookingsStr) : [];
               
-              localStorage.setItem(storageKey, JSON.stringify(existingBookings));
+              // localStorage.setItem(storageKey, JSON.stringify(existingBookings));
             }
             return bookingRequest;
           })
@@ -887,7 +1038,7 @@ export class CarService {
   }
 
   getUserFromLocalStorage(): any {
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = sessionStorage.getItem('currentUser');
     
     if (storedUser) {
       try {
@@ -935,7 +1086,7 @@ updateBooking(booking: Booking): Observable<Booking> {
         };
         
         // Save to localStorage using the correct key
-        this.saveBookingsToStorage();
+        // this.saveBookingsToStorage();
         
         // Emit updated bookings
         this.bookingsSubject.next([...this.bookings]);

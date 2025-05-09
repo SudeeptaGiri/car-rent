@@ -15,13 +15,15 @@ import { authGuard } from './guards/auth.guard';
 import { CarsComponent } from './pages/cars/cars.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { adminGuard } from './guards/admin.guard';
+import { BookingsComponent } from './pages/bookings/bookings.component';
+
 
 const routes: Routes = [
   {path:"login", component:LoginComponent},
   {path:"register", component:RegisterComponent},
   {
     path: "profile", 
-    component: ProfileComponent,
+    component: ProfileComponent, canActivate: [authGuard],
     children: [
       { path: 'reviews', component: ReviewsComponent },
       { path: 'personal-info', component: PersonalInfoComponent },
@@ -43,6 +45,7 @@ const routes: Routes = [
   { path: 'edit-booking/:id', component: EditBookingPageComponent },
   { path: 'cars', component: CarsComponent, pathMatch: 'full' },
   { path: 'reports', component: ReportsComponent, pathMatch: 'full', canActivate: [authGuard, adminGuard] },
+  { path: 'bookings', component: BookingsComponent  },
 ];
 
 @NgModule({

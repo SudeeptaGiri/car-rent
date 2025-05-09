@@ -70,6 +70,9 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { CarsComponent } from './pages/cars/cars.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 
+import { ToastrModule } from 'ngx-toastr';
+import { BookingsComponent } from './pages/bookings/bookings.component';
+
 
 @NgModule({
   declarations: [
@@ -110,7 +113,9 @@ import { ReportsComponent } from './pages/reports/reports.component';
     ChangePasswordComponent,
     TruncatePipe,
     CarsComponent,
-    ReportsComponent
+    ReportsComponent,
+    BookingsComponent
+
   ],
   imports: [
     BrowserModule,
@@ -131,7 +136,12 @@ import { ReportsComponent } from './pages/reports/reports.component';
     MatNativeDateModule,
     MatCardModule,
     MatSelectModule,
-    FeedbackComponent
+    FeedbackComponent,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
   providers: [ provideHttpClient(),LocationService,FilterService],
   bootstrap: [AppComponent],

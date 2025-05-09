@@ -17,15 +17,12 @@ export class HeaderComponent implements OnInit {
   dropdownOpen = false;
   selectedTab!: string;
 
-  constructor(
-    private authService: AuthService, 
-    private roleService: RoleAssignmentService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     // Get user from AuthService instead of directly from sessionStorage
     this.user = this.authService.getCurrentUser();
+    
     // Subscribe to user changes
     this.authService.user$.subscribe(user => {
       this.user = user;
@@ -48,8 +45,12 @@ export class HeaderComponent implements OnInit {
       this.selectedTab = 'cars';
     } else if (url.startsWith('/my-bookings')) {
       this.selectedTab = 'bookings';
-    } else if (url.startsWith('/reports')) {
-      this.selectedTab = 'reports';
+    } else if (url.startsWith('/dashboard')) {
+      this.selectedTab = 'dashboard';
+    } else if (url.startsWith('/bookings')) {
+      this.selectedTab = 'bookings';
+    } else if (url.startsWith('/clients')) {
+      this.selectedTab = 'clients';
     } else {
       this.selectedTab = '';
     }
@@ -72,8 +73,8 @@ export class HeaderComponent implements OnInit {
       case 'bookings':
         this.router.navigate(['/my-bookings']);
         break;
-      case 'reports':
-        this.router.navigate(['/reports']);
+      case 'dashboard':
+        this.router.navigate(['/dashboard']);
         break;
       default:
         this.router.navigate(['/']);
@@ -84,10 +85,18 @@ export class HeaderComponent implements OnInit {
     return this.authService.isAuthenticated();
   }
 
-  isAdmin(): boolean {
-    return this.roleService.isAdmin();
+  isClient(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'Client';
   }
 
+  isAdmin(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'Admin';
+  }
+
+  isSupportAgent(): boolean {
+    return this.isAuthenticated() && this.user?.role === 'SupportAgent';
+  }
+  
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
@@ -99,10 +108,19 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.user = null;
+    this.router.navigate(['/']);
   }
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  
+  // Get the first letter of the user's first name for the avatar
+  getInitial(): string {
+    if (this.user && this.user.firstName) {
+      return this.user.firstName.charAt(0).toUpperCase();
+    }
+    return '?';
   }
 
   @HostListener('window:resize', [])

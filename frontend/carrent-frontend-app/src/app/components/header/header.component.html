@@ -1,117 +1,180 @@
-<header>
-  <!-- Logo -->
-  <figure class="logo">
-    <img src="assets/Logo.svg" alt="Page Logo" class="logo" routerLink="/" />
-  </figure>
-
-  <!-- Centered nav for tablet/desktop -->
-  <div class="center-nav">
-    <nav class="nav-bar">
-      <ul>
-        <li>
-          <a 
-            [ngClass]="{ 'active-tab': selectedTab === 'home' }"
-            (click)="setActiveTab('home')"
-          >Home</a>
-        </li>
-        <li>
-          <a 
-            [ngClass]="{ 'active-tab': selectedTab === 'cars' }"
-            (click)="setActiveTab('cars')"
-          >Cars</a>
-        </li>
-        <li *ngIf="isAuthenticated()">
-          <a [ngClass]="{ 'active-tab': selectedTab === 'bookings' }"
-             (click)="setActiveTab('bookings')">My Bookings</a>
-        </li>
-        <li *ngIf="isAdmin()">
-          <a [ngClass]="{ 'active-tab': selectedTab === 'reports' }"
-             (click)="setActiveTab('reports')">Reports</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-
-  <!-- Hamburger button (visible only on mobile) -->
-  <button class="hamburger" (click)="toggleMenu()" aria-label="Toggle menu">
-    {{ menuOpen ? '✕' : '☰' }}
-  </button>
-
-  <!-- Mobile dropdown -->
-  <div class="mobile-menu" [class.active]="menuOpen">
-    <nav class="nav-bar">
-      <ul>
-        <li><a routerLink="/">Home</a></li>
-        <li><a href="/car">Cars</a></li>
-        <li *ngIf="isAuthenticated()"><a routerLink="/my-bookings">My Bookings</a></li>
-        <li *ngIf="isAdmin()"><a routerLink="/reports">Reports</a></li>
-      </ul>
-    </nav>
-    <div class="login-side" *ngIf="isAuthenticated(); else mobileGuest">
-      <div class="user-dropdown">
-        <span (click)="toggleDropdown()" class="user-name">
-         {{ user?.firstName }} ▼
-        </span>
-        <ul [class.expanded]="dropdownOpen" class="dropdown-menu-mobile">
-          <li (click)="goToProfile()">Profile</li>
-          <li (click)="logout()">Logout</li>
-        </ul>        
-      </div>
-      <select>
-        <option value="en" selected>En</option>
-        <option value="fr">Fr</option>
-        <option value="es">Es</option>
-      </select>
+<header class="border-b-gray-500 bg-amber-50 w-full">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <div class="flex items-center">
+      <a href="/" class="text-xl font-bold text-gray-800">
+        <span class="text-black">Flexi</span><span class="text-red-500">Ride</span>
+      </a>
     </div>
-    <ng-template #mobileGuest>
-      <app-user-role></app-user-role>
-      <select aria-label="Language selection" >
-        <option value="en" selected>En</option>
-        <option value="fr">Fr</option>
-        <option value="es">Es</option>
-      </select>
-    </ng-template>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center space-x-6">
+      <!-- Always visible navigation items -->
+      <ng-container *ngIf="!isAdmin() && !isSupportAgent()">
+        <a [routerLink]="['/']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'home', 'text-gray-600 hover:text-red-500': selectedTab !== 'home'}" 
+           class="py-2 px-1 font-medium">Home</a>
+        <a [routerLink]="['/cars']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'cars', 'text-gray-600 hover:text-red-500': selectedTab !== 'cars'}" 
+           class="py-2 px-1 font-medium">Cars</a>
+      </ng-container>
+      
+      <!-- Client-specific navigation -->
+      <ng-container *ngIf="isClient()">
+        <a [routerLink]="['/my-bookings']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'bookings', 'text-gray-600 hover:text-red-500': selectedTab !== 'bookings'}" 
+           class="py-2 px-1 font-medium">My Bookings</a>
+      </ng-container>
+      
+      <!-- Admin-specific navigation -->
+      <ng-container *ngIf="isAdmin()">
+        <a [routerLink]="['/dashboard']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'dashboard', 'text-gray-600 hover:text-red-500': selectedTab !== 'dashboard'}" 
+           class="py-2 px-1 font-medium">Dashboard</a>
+      </ng-container>
+      
+      <!-- Support agent-specific navigation -->
+      <ng-container *ngIf="isSupportAgent()">
+        <a [routerLink]="['/bookings']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'bookings', 'text-gray-600 hover:text-red-500': selectedTab !== 'bookings'}" 
+           class="py-2 px-1 font-medium">Bookings</a>
+        <a [routerLink]="['/cars']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'cars', 'text-gray-600 hover:text-red-500': selectedTab !== 'cars'}" 
+           class="py-2 px-1 font-medium">Cars</a>
+        <a [routerLink]="['/clients']" 
+           [ngClass]="{'text-red-500 border-b-2 border-red-500': selectedTab === 'clients', 'text-gray-600 hover:text-red-500': selectedTab !== 'clients'}" 
+           class="py-2 px-1 font-medium">Clients</a>
+      </ng-container>
+    </nav>
+
+    <!-- User Profile Section -->
+    <div class="hidden md:flex items-center space-x-4">
+      <!-- Not logged in -->
+      <ng-container *ngIf="!isAuthenticated()">
+        <a [routerLink]="['/login']" class="text-gray-600 hover:text-red-500">Log in</a>
+        <select class="bg-transparent text-gray-600 border-none focus:outline-none">
+          <option value="en" selected>En</option>
+          <option value="fr">Fr</option>
+          <option value="es">Es</option>
+        </select>
+      </ng-container>
+      
+      <!-- Logged in -->
+      <ng-container *ngIf="isAuthenticated()">
+        <div class="relative">
+          <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleDropdown()">
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              <ng-container *ngIf="user?.imageUrl && user?.imageUrl !== 'null'; else nameInitial">
+                <img [src]="user?.imageUrl" alt="Profile" class="w-full h-full object-cover" />
+              </ng-container>
+              <ng-template #nameInitial>
+                <span class="text-gray-700 font-medium">{{ getInitial() }}</span>
+              </ng-template>
+            </div>
+            <span class="text-gray-700">Hello, {{ user?.firstName }} 
+              <span class="text-gray-500 text-sm">{{ user?.role ? '(' + user?.role + ')' : '' }}</span>
+            </span>
+          </div>
+          
+          <!-- Dropdown menu -->
+          <div *ngIf="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+            <a [routerLink]="['/profile']" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+            <a (click)="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Logout</a>
+          </div>
+        </div>
+        
+        <select class="bg-transparent text-gray-600 border-none focus:outline-none">
+          <option value="en" selected>En</option>
+          <option value="fr">Fr</option>
+          <option value="es">Es</option>
+        </select>
+      </ng-container>
+    </div>
+
+    <!-- Mobile menu button -->
+    <button class="md:hidden text-gray-500 focus:outline-none" (click)="toggleMenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path *ngIf="!menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <path *ngIf="menuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
   </div>
 
-  <!-- Desktop login: only visible on screens wider than 640px -->
-  <div class="desktop-only">
-    <ng-container *ngIf="isAuthenticated(); else desktopGuestLinks">
-      <div class="login-side">
-        <div class="user-dropdown" style="display: contents; justify-content: center;">
-          <div class="profile-avatar">
-            <ng-container *ngIf="user?.imageUrl; else nameInitial">
-              <img [src]="user?.firstName" alt="Profile" class="profile-icon" />
-            </ng-container>
-            <ng-template #nameInitial>
-              <div class="initial-avatar">{{ user?.firstName?.charAt(0) }}</div>
-            </ng-template>
+  <!-- Mobile menu -->
+  <div *ngIf="menuOpen" class="md:hidden bg-white border-t">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <!-- Always visible mobile navigation items -->
+      <ng-container *ngIf="!isAdmin() && !isSupportAgent()">
+        <a [routerLink]="['/']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'home', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'home'}">Home</a>
+        <a [routerLink]="['/cars']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'cars', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'cars'}">Cars</a>
+      </ng-container>
+      
+      <!-- Client-specific mobile navigation -->
+      <ng-container *ngIf="isClient()">
+        <a [routerLink]="['/my-bookings']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'bookings', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'bookings'}">My Bookings</a>
+      </ng-container>
+      
+      <!-- Admin-specific mobile navigation -->
+      <ng-container *ngIf="isAdmin()">
+        <a [routerLink]="['/dashboard']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'dashboard', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'dashboard'}">Dashboard</a>
+      </ng-container>
+      
+      <!-- Support agent-specific mobile navigation -->
+      <ng-container *ngIf="isSupportAgent()">
+        <a [routerLink]="['/bookings']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'bookings', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'bookings'}">Bookings</a>
+        <a [routerLink]="['/cars']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'cars', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'cars'}">Cars</a>
+        <a [routerLink]="['/clients']" (click)="menuOpen = false"
+           class="block px-3 py-2 rounded-md text-base font-medium"
+           [ngClass]="{'bg-red-50 text-red-500': selectedTab === 'clients', 'text-gray-600 hover:bg-gray-50': selectedTab !== 'clients'}">Clients</a>
+      </ng-container>
+      
+      <!-- Mobile user section -->
+      <div class="pt-4 pb-3 border-t border-gray-200">
+        <ng-container *ngIf="isAuthenticated()">
+          <div class="flex items-center px-3">
+            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+              <ng-container *ngIf="user?.imageUrl && user?.imageUrl !== 'null'; else mobileNameInitial">
+                <img [src]="user?.imageUrl" alt="Profile" class="w-full h-full object-cover" />
+              </ng-container>
+              <ng-template #mobileNameInitial>
+                <span class="text-gray-700 font-medium">{{ getInitial() }}</span>
+              </ng-template>
+            </div>
+            <div class="ml-3">
+              <div class="text-base font-medium text-gray-800">{{ user?.firstName }} {{ user?.lastName }}</div>
+              <div class="text-sm font-medium text-gray-500">{{ user?.role }}</div>
+            </div>
           </div>
-          <span (click)="toggleDropdown()" class="user-name">
-            Hello, {{ user?.firstName }} {{ user?.role ? '(' + user?.role + ')' : '' }}
-          </span>
-          <ul *ngIf="dropdownOpen" class="dropdown-menu">
-            <li (click)="goToProfile()">Profile</li>
-            <li (click)="logout()">Logout</li>
-            <li *ngIf="isAdmin()" (click)="goToReports()">Reports</li>
-          </ul>
+          <div class="mt-3 space-y-1">
+            <a [routerLink]="['/profile']" (click)="menuOpen = false" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Profile</a>
+            <a (click)="logout(); menuOpen = false" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Logout</a>
+          </div>
+        </ng-container>
+        
+        <ng-container *ngIf="!isAuthenticated()">
+          <a [routerLink]="['/login']" (click)="menuOpen = false" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">Log in</a>
+        </ng-container>
+        
+        <div class="px-4 py-2">
+          <select class="w-full bg-gray-50 py-2 px-3 rounded-md text-gray-600 focus:outline-none">
+            <option value="en" selected>English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+          </select>
         </div>
-        <select aria-label="Language selection">
-          <option value="en" selected>En</option>
-          <option value="fr">Fr</option>
-          <option value="es">Es</option>
-        </select>
       </div>
-    </ng-container>
-    
-    <ng-template #desktopGuestLinks>
-      <div class="login-side">
-        <app-user-role></app-user-role>
-        <select aria-label="Language selection">
-          <option value="en" selected>En</option>
-          <option value="fr">Fr</option>
-          <option value="es">Es</option>
-        </select>
-      </div>
-    </ng-template>
+    </div>
   </div>
 </header>

@@ -111,7 +111,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -123,7 +123,7 @@
         },
         "POST": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -138,7 +138,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -228,7 +228,19 @@
         "enable_cors": true,
         "POST": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
+          "integration_type": "lambda",
+          "lambda_name": "api_handler",
+          "api_key_required": false,
+          "method_request_parameters": {},
+          "integration_request_body_template": {},
+          "responses": [],
+          "integration_responses": [],
+          "default_error_pattern": true
+        },
+        "GET": {
+          "enable_proxy": true,
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -303,7 +315,7 @@
         "enable_cors": true,
         "GET": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
@@ -318,7 +330,7 @@
         "enable_cors": true,
         "POST": {
           "enable_proxy": true,
-          "authorization_type": "cognito-authorizer",
+          "authorization_type": "NONE",
           "integration_type": "lambda",
           "lambda_name": "api_handler",
           "api_key_required": false,
