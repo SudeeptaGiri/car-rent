@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = "https://egvws0hf2k.execute-api.eu-west-3.amazonaws.com/api";// Set your API URL here
+  private apiUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api";// Set your API URL here
 
   constructor(private http: HttpClient) { }
 

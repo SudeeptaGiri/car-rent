@@ -60,6 +60,10 @@ exports.signUp = async (event) => {
     if(firstName.length > 50  || lastName.length > 50) {
       return response(400, { message: 'First name and last name must be less than 50 characters' });
     }
+    if (/[^a-zA-Z]/.test(firstName) || /[^a-zA-Z]/.test(lastName)) {
+      return response(400, { message: 'First name and last name must only contain letters' });
+    }
+    
     // Check if the email is in the support agent database
     const isSupportAgent = await SupportAgentEmail.findOne({ email: normalizedEmail });
     

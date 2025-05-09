@@ -6,7 +6,7 @@ const CarController = require("./controllers/carController/index");
 const bookingController = require("./controllers/bookingController/bookingController");
 const feedbackController = require("./controllers/feedbacksController/feedbacksController"); 
 const homepageController = require('./controllers/homepageController/homepageController');
-
+const reportController = require('./controllers/reportController/reportController')
 // Add this at the top of your index.js
 console.log('Loading function');
 console.log('Current working directory:', process.cwd());
@@ -81,7 +81,7 @@ const path = event.rawPath || event.path || event.resource || "/";
     }
 
     if (path === "/users" && method === "GET") {
-      return await userController.getPersonalInfoo(event);
+      return await userController.getPersonalInfo(event);
     }
     if (path.match(/\/users\/[^\/]+\/personal-info$/) && method === "GET") {
       // Extract ID from path if pathParameters is not available
@@ -245,7 +245,72 @@ const path = event.rawPath || event.path || event.resource || "/";
         throw error;
       }
     }
+    // Reports routes
+    if (path === "/reports" && method === "GET") {
+      console.log("Matched /reports route, calling reportController.getReports");
+      try {
+        return await reportController.getReports(event);
+      } catch (error) {
+        console.error("Error in getReports:", error);
+        throw error;
+      }
+    }
 
+    if (path === "/reports/sales" && method === "GET") {
+      console.log("Matched /reports/sales GET route, calling reportController.getSalesReports");
+      try {
+        return await reportController.getSalesReports(event);
+      } catch (error) {
+        console.error("Error in getSalesReports:", error);
+        throw error;
+      }
+    }
+
+    if (path === "/reports/performance" && method === "GET") {
+      console.log("Matched /reports/performance GET route, calling reportController.getPerformanceReports");
+      try {
+        return await reportController.getPerformanceReports(event);
+      } catch (error) {
+        console.error("Error in getPerformanceReports:", error);
+        throw error;
+      }
+    }
+
+    if (path === "/reports/sales" && method === "POST") {
+      console.log("Matched /reports/sales POST route, calling reportController.saveSalesReport");
+      try {
+        return await reportController.saveSalesReport(event);
+      } catch (error) {
+        console.error("Error in saveSalesReport:", error);
+        throw error;
+      }
+    }
+
+    if (path === "/reports/performance" && method === "POST") {
+      console.log("Matched /reports/performance POST route, calling reportController.savePerformanceReport");
+      try {
+        return await reportController.savePerformanceReport(event);
+      } catch (error) {
+        console.error("Error in savePerformanceReport:", error);
+        throw error;
+      }
+    }
+   
+    // Add support for report exports
+    if (path.match(/^\/reports\/export\/[^\/]+$/) && method === "GET") {
+      console.log("Matched /reports/export route");
+      try {
+        // Extract format from path
+        const match = path.match(/\/reports\/export\/([^\/]+)$/);
+        if (match) {
+          event.pathParameters = { format: match[1] };
+        }
+        return await reportController.exportReports(event);
+      } catch (error) {
+        console.error("Error in exportReports:", error);
+        throw error;
+      }
+    }
     // If no routes match, return 404 Not Found
     console.log(`No route matched for: ${method} ${path}`);
     return {

@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './change-password.component.html'
 })
 export class ChangePasswordComponent implements OnInit {
-  apiUrl = 'https://qixj9pgekd.execute-api.eu-west-3.amazonaws.com/api';
+  apiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api';
   passwordForm: FormGroup;
   showCurrentPassword = false;
   showNewPassword = false;

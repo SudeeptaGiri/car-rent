@@ -1,70 +1,56 @@
-// models/reportsModel.js
 const mongoose = require('mongoose');
-
-const reportSchema = new mongoose.Schema({
-  reportId: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  bookingId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Booking',
+ 
+// Schema for Sales Reports
+const salesReportSchema = new mongoose.Schema({
+  periodStart: {
+    type: Date,
     required: true
   },
-  bookingPeriod: {
-    type: String,
+  periodEnd: {
+    type: Date,
     required: true
   },
-  carId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Car',
+  location: {
+    type: String,
     required: true
   },
   carModel: {
     type: String,
     required: true
   },
-  carNumber: {
+  carId: {
     type: String,
     required: true
   },
-  carMillageStart: {
+  daysOfRent: {
     type: Number,
-    required: true
+    required: true,
+    min: 0
   },
-  carMillageEnd: {
+  reservations: {
     type: Number,
-    required: true
+    required: true,
+    min: 0
   },
-  locationId: {
-    type: String,
-    required: true
+  mileageStart: {
+    type: Number,
+    required: true,
+    min: 0
   },
-  supportAgentId: {
-    type: String,
-    required: false
+  mileageEnd: {
+    type: Number,
+    required: true,
+    min: 0
   },
-  supportAgent: {
-    type: String,
-    required: false
+  totalMileage: {
+    type: Number,
+    required: true,
+    min: 0
   },
-  clientId: {
-    type: String,
-    required: true
-  },
-  madeBy: {
-    type: String,
-    required: true
-  },
-  carServiceRating: {
-    type: String,
-    default: null
-  },
-  exportedFileUrls: {
-    pdf: String,
-    csv: String,
-    excel: String
+  averageMileage: {
+    type: Number,
+    required: true,
+    min: 0
   },
   createdAt: {
     type: Date,
@@ -74,22 +60,79 @@ const reportSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
-
-// Add pre-save middleware to update the 'updatedAt' timestamp
-reportSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
+}, { collection: 'salesreports' });
+ 
+// Pre-save hook to calculate derived values
+salesReportSchema.pre('save', function(next) {
+  // Calculate total mileage if not set
+  if (!this.totalMileage) {
+    this.totalMileage = this.mileageEnd - this.mileageStart;
+  }
+ 
+  // Calculate average mileage if not set
+  if (!this.averageMileage && this.reservations > 0) {
+    this.averageMileage = Math.round(this.totalMileage / this.reservations);
+  }
+ 
   next();
 });
-
-// Create indexes for better query performance
-reportSchema.index({ reportId: 1 });
-reportSchema.index({ carId: 1 });
-reportSchema.index({ locationId: 1 });
-reportSchema.index({ supportAgentId: 1 });
-reportSchema.index({ clientId: 1 });
-reportSchema.index({ createdAt: 1 });
-
-const Report = mongoose.model('Report', reportSchema);
-
-module.exports = Report;
+ 
+// Schema for Staff Performance Reports
+const performanceReportSchema = new mongoose.Schema({
+  staffMember: {
+    type: String,
+    required: true
+  },
+  position: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  totalBookings: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  totalRevenue: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  customerRating: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 5
+  },
+  responseTime: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  completionRate: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 100
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+}, { collection: 'performancereports' });
+ 
+// Create the models
+const SalesReport = mongoose.model('SalesReport', salesReportSchema);
+const PerformanceReport = mongoose.model('PerformanceReport', performanceReportSchema);
+ 
+module.exports = {
+  SalesReport,
+  PerformanceReport
+};

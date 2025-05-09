@@ -41,7 +41,7 @@ export class CarBookingComponent implements OnInit, OnDestroy {
   isLoadingClients = false;
   errorMessage = '';
 
-  isUserSupportAgent: boolean = false; // Set this based on user role
+  isUserSupportAgent!: boolean ; // Set this based on user role
 
   // Add these properties
   showLocationDropdown = false;
@@ -150,6 +150,8 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     // Get user info
     this.userInfo = this.carService.getUserInfo();
     this.locationInfo = this.carService.getMockLocationInfo();
+    this.isUserSupportAgent = this.userInfo.role === 'SupportAgent';
+    console.log('User is Support Agent:', this.isUserSupportAgent);
     
     // Initialize form
     this.initForm();

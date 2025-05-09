@@ -34,10 +34,10 @@ export interface LocationSuggestion {
 })
 export class CarService {
   // MongoDB API endpoint
-  private apiBaseUrl = "https://egvws0hf2k.execute-api.eu-west-3.amazonaws.com/api";
+  private apiBaseUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api";
 
   // Bookings API endpoint
-  private bookingsApiUrl = 'https://2dppsut0x9.execute-api.eu-west-3.amazonaws.com/api';
+  private bookingsApiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api';
   
   // Keep JSON URL for fallback during development/transition
   private jsonUrl = 'assets/cars.json';
@@ -924,7 +924,8 @@ export class CarService {
     return {
       fullName: 'John Doe',
       email: 'john.doe@example.com',
-      phone: '+38 067 123 45 67'
+      phone: '+38 067 123 45 67',
+      role: "Visitor"
     };
   }
 
@@ -958,7 +959,8 @@ export class CarService {
           `${user.firstName} ${user.lastName}` : 
           (user.fullName || user.name || 'User'),
         email: user.email || '',
-        phone: user.phone || this.getMockUserInfo().phone
+        phone: user.phone || this.getMockUserInfo().phone,
+        role: user.role || 'Visitor'
       };
     } else {
       // If no user in localStorage, use mock data
