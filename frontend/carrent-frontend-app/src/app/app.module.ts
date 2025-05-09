@@ -68,8 +68,11 @@ import { DocumentsComponent } from './components/profile/documents/documents.com
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { CarsComponent } from './pages/cars/cars.component';
+import { ReportsComponent } from './pages/reports/reports.component';
+
 import { ToastrModule } from 'ngx-toastr';
 import { BookingsComponent } from './pages/bookings/bookings.component';
+
 
 @NgModule({
   declarations: [
@@ -110,7 +113,9 @@ import { BookingsComponent } from './pages/bookings/bookings.component';
     ChangePasswordComponent,
     TruncatePipe,
     CarsComponent,
+    ReportsComponent,
     BookingsComponent
+
   ],
   imports: [
     BrowserModule,
