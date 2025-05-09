@@ -13,6 +13,8 @@ import { DocumentsComponent } from './components/profile/documents/documents.com
 import { ChangePasswordComponent } from './components/profile/change-password/change-password.component';
 import { authGuard } from './guards/auth.guard';
 import { CarsComponent } from './pages/cars/cars.component';
+import { ReportsComponent } from './pages/reports/reports.component';
+import { adminGuard } from './guards/admin.guard';
 import { BookingsComponent } from './pages/bookings/bookings.component';
 
 
@@ -42,6 +44,7 @@ const routes: Routes = [
   { path: 'my-bookings', component: MyBookingsPageComponent, pathMatch: 'full' }, 
   { path: 'edit-booking/:id', component: EditBookingPageComponent },
   { path: 'cars', component: CarsComponent, pathMatch: 'full' },
+  { path: 'reports', component: ReportsComponent, pathMatch: 'full', canActivate: [authGuard, adminGuard] },
   { path: 'bookings', component: BookingsComponent  },
 ];
 

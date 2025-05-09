@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { RoleAssignmentService } from '../../services/role-assignment.service';
 import { User } from '../../models/users';
 
 @Component({
@@ -26,17 +27,17 @@ export class HeaderComponent implements OnInit {
     this.authService.user$.subscribe(user => {
       this.user = user;
     });
-  
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.updateSelectedTab(event.urlAfterRedirects);
       });
-  
+
     // Set initially based on current URL
     this.updateSelectedTab(this.router.url);
   }
-  
+
   updateSelectedTab(url: string) {
     if (url === '/' || url === '/main') {
       this.selectedTab = 'home';
@@ -54,7 +55,12 @@ export class HeaderComponent implements OnInit {
       this.selectedTab = '';
     }
   }
-  
+
+  goToReports(): void {
+    this.router.navigate(['/reports']);
+    this.dropdownOpen = false; // Close the dropdown after navigation
+  }
+
   setActiveTab(tab: string) {
     this.selectedTab = tab;
     switch (tab) {
@@ -74,7 +80,7 @@ export class HeaderComponent implements OnInit {
         this.router.navigate(['/']);
     }
   }
-  
+
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
   }

@@ -1,0 +1,231 @@
+<app-header></app-header>
+<div class="reports-container">
+  <div class="reports-header">
+    <h1>Reports Management</h1>
+    <div class="actions">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Search reports..." 
+          [(ngModel)]="searchTerm" 
+          (input)="filterReports()"
+        >
+      </div>
+      <button 
+        class="add-report-btn" 
+        (click)="toggleAddReport()" 
+        [disabled]="isLoading"
+      >
+        {{ isAddingReport ? 'Cancel' : 'Add New Report' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message Display -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+    <button (click)="errorMessage = ''">×</button>
+  </div>
+
+  <!-- Add Report Form -->
+  <div *ngIf="isAddingReport" class="add-report-form">
+    <h2>Add New Report</h2>
+    <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="reportId">Report ID</label>
+          <input type="text" id="reportId" formControlName="reportId">
+          <div *ngIf="reportForm.get('reportId')?.invalid && reportForm.get('reportId')?.touched" class="error">
+            Report ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bookingId">Booking ID</label>
+          <input type="text" id="bookingId" formControlName="bookingId">
+          <div *ngIf="reportForm.get('bookingId')?.invalid && reportForm.get('bookingId')?.touched" class="error">
+            Booking ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bookingPeriod">Booking Period</label>
+          <input type="text" id="bookingPeriod" formControlName="bookingPeriod">
+          <div *ngIf="reportForm.get('bookingPeriod')?.invalid && reportForm.get('bookingPeriod')?.touched" class="error">
+            Booking Period is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carId">Car ID</label>
+          <input type="text" id="carId" formControlName="carId">
+          <div *ngIf="reportForm.get('carId')?.invalid && reportForm.get('carId')?.touched" class="error">
+            Car ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carModel">Car Model</label>
+          <input type="text" id="carModel" formControlName="carModel">
+          <div *ngIf="reportForm.get('carModel')?.invalid && reportForm.get('carModel')?.touched" class="error">
+            Car Model is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carNumber">Car Number</label>
+          <input type="text" id="carNumber" formControlName="carNumber">
+          <div *ngIf="reportForm.get('carNumber')?.invalid && reportForm.get('carNumber')?.touched" class="error">
+            Car Number is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carMillageStart">Millage Start</label>
+          <input type="number" id="carMillageStart" formControlName="carMillageStart" (input)="validateMilage()">
+          <div *ngIf="reportForm.get('carMillageStart')?.invalid && reportForm.get('carMillageStart')?.touched" class="error">
+            Valid Millage Start is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carMillageEnd">Millage End</label>
+          <input type="number" id="carMillageEnd" formControlName="carMillageEnd" (input)="validateMilage()">
+          <div *ngIf="reportForm.get('carMillageEnd')?.invalid && reportForm.get('carMillageEnd')?.touched" class="error">
+            <span *ngIf="reportForm.get('carMillageEnd')?.errors?.['required']">Millage End is required</span>
+            <span *ngIf="reportForm.get('carMillageEnd')?.errors?.['invalidMilage']">Must be greater than Millage Start</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="locationId">Location ID</label>
+          <input type="text" id="locationId" formControlName="locationId">
+          <div *ngIf="reportForm.get('locationId')?.invalid && reportForm.get('locationId')?.touched" class="error">
+            Location ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="supportAgentId">Support Agent ID</label>
+          <input type="text" id="supportAgentId" formControlName="supportAgentId">
+        </div>
+
+        <div class="form-group">
+          <label for="supportAgent">Support Agent</label>
+          <input type="text" id="supportAgent" formControlName="supportAgent">
+        </div>
+
+        <div class="form-group">
+          <label for="clientId">Client ID</label>
+          <input type="text" id="clientId" formControlName="clientId">
+          <div *ngIf="reportForm.get('clientId')?.invalid && reportForm.get('clientId')?.touched" class="error">
+            Client ID is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="madeBy">Made By</label>
+          <input type="text" id="madeBy" formControlName="madeBy">
+          <div *ngIf="reportForm.get('madeBy')?.invalid && reportForm.get('madeBy')?.touched" class="error">
+            Made By is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carServiceRating">Car Service Rating</label>
+          <select id="carServiceRating" formControlName="carServiceRating">
+            <option value="">Select Rating</option>
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+            <option value="Average">Average</option>
+            <option value="Poor">Poor</option>
+            <option value="Very Poor">Very Poor</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="toggleAddReport()" [disabled]="isLoading" class="cancel-btn">Cancel</button>
+        <button type="submit" [disabled]="reportForm.invalid || isLoading" class="submit-btn">Save Report</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
+
+  <!-- Reports Table -->
+  <div *ngIf="!isLoading && reports.length > 0" class="reports-table-container">
+    <table class="reports-table">
+      <thead>
+        <tr>
+          <th>Report ID</th>
+          <th>Car Model</th>
+          <th>Car Number</th>
+          <th>Booking Period</th>
+          <th>Mileage</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of paginatedReports">
+          <td>{{ report.reportId }}</td>
+          <td>{{ report.carModel }}</td>
+          <td>{{ report.carNumber }}</td>
+          <td>{{ report.bookingPeriod }}</td>
+          <td>{{ report.carMillageStart }} - {{ report.carMillageEnd }} km</td>
+          <td>{{ report.createdAt | date:'short' }}</td>
+          <td class="actions-cell">
+            <div class="report-actions">
+              <button class="export-btn" (click)="exportReport(report.reportId, 'pdf')" title="Export as PDF">
+                PDF
+              </button>
+              <button class="export-btn" (click)="exportReport(report.reportId, 'csv')" title="Export as CSV">
+                CSV
+              </button>
+              <button class="export-btn" (click)="exportReport(report.reportId, 'excel')" title="Export as Excel">
+                XLS
+              </button>
+              <button class="delete-btn" (click)="deleteReport(report.reportId)" title="Delete Report">
+                ×
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  <!-- Replace the problematic pagination span with this: -->
+<div class="pagination" *ngIf="totalReports > pageSize">
+    <button 
+      [disabled]="currentPage === 1" 
+      (click)="onPageChange(currentPage - 1)" 
+      class="page-btn"
+    >Previous</button>
+    
+    <span *ngFor="let page of pageNumbers">
+      <button 
+        [class.active]="currentPage === page"
+        (click)="onPageChange(page)"
+        class="page-number"
+      >{{ page }}</button>
+    </span>
+    
+    <button 
+      [disabled]="currentPage === pageNumbers.length" 
+      (click)="onPageChange(currentPage + 1)"
+      class="page-btn"
+    >Next</button>
+  </div>
+
+  <!-- No Reports Message -->
+  <div *ngIf="!isLoading && (!reports || reports.length === 0)" class="no-reports">
+    <p>No reports found. Create a new report to get started.</p>
+    <button (click)="toggleAddReport()" class="add-report-btn">Create First Report</button>
+  </div>
+</div>
+<app-footer></app-footer>
