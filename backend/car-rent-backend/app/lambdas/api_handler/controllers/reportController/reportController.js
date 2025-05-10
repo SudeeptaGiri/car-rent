@@ -1,395 +1,366 @@
-const { connectToDatabase } = require('../../utils/database');
+const mongoose = require('mongoose');
 const { createResponse } = require('../../utils/responseUtil');
-const Report = require('../../models/reportsModel');
-const Car = require('../../models/carModel');
-const Booking = require('../../models/bookingModel');
-const { v4: uuidv4 } = require('uuid');
-const AWS = require('aws-sdk');
-const json2csv = require('json2csv').Parser;
-const ExcelJS = require('exceljs');
-const PDFDocument = require('pdfkit');
-
-// Initialize S3 client
-const s3 = new AWS.S3({
-  region: process.env.AWS_REGION || 'eu-west-3',
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  sessionToken: process.env.AWS_SESSION_TOKEN
-});
-
-// S3 bucket name
-const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'team03backendbucket';
-
+const { connectToDatabase } = require('../../utils/database');
+const { SalesReport, PerformanceReport } = require('../../models/reportsModel');
+ 
 /**
- * Get reports based on filter criteria
+ * Get reports data
+ * @route GET /reports
  */
 exports.getReports = async (event) => {
   try {
+    console.log('Getting reports data');
     await connectToDatabase();
-    
-    // Extract query parameters
+   
     const queryParams = event.queryStringParameters || {};
-    const { dateFrom, dateTo, locationId, carId, supportAgentId } = queryParams;
-    
-    // Build filter criteria
-    const filter = {};
-    
-    if (dateFrom && dateTo) {
-      filter.createdAt = {
-        $gte: new Date(dateFrom),
-        $lte: new Date(dateTo)
+    const { location, periodStart, periodEnd, type = 'all' } = queryParams;
+   
+    console.log('Query parameters:', { location, periodStart, periodEnd, type });
+   
+    // Create filter objects for both report types
+    const salesFilter = {};
+    const performanceFilter = {};
+   
+    // Add location filter if provided
+    if (location) {
+      salesFilter.location = location;
+      performanceFilter.location = location;
+    }
+   
+    // Add date range filter if provided for sales reports
+    if (periodStart) {
+      salesFilter.periodStart = { $gte: new Date(periodStart) };
+    }
+   
+    if (periodEnd) {
+      salesFilter.periodEnd = {
+        ...(salesFilter.periodEnd || {}),
+        $lte: new Date(periodEnd)
       };
-    } else if (dateFrom) {
-      filter.createdAt = { $gte: new Date(dateFrom) };
-    } else if (dateTo) {
-      filter.createdAt = { $lte: new Date(dateTo) };
     }
-    
-    if (locationId) filter.locationId = locationId;
-    if (carId) filter.carId = carId;
-    if (supportAgentId) filter.supportAgentId = supportAgentId;
-    
-    // Query the database
-    const reports = await Report.find(filter).sort({ createdAt: -1 });
-    
-    // Format the response
-    const formattedReports = reports.map(report => ({
-      reportId: report.reportId,
-      bookingPeriod: report.bookingPeriod,
-      carMillageStart: report.carMillageStart,
-      carMillageEnd: report.carMillageEnd,
-      carModel: report.carModel,
-      carNumber: report.carNumber,
-      carServiceRating: report.carServiceRating,
-      madeBy: report.madeBy,
-      supportAgent: report.supportAgent
-    }));
-    
-    return createResponse(200, { content: formattedReports });
-  } catch (error) {
-    console.error('Error retrieving reports:', error);
-    return createResponse(500, { message: 'Error retrieving reports', error: error.message });
-  }
-};
-
-/**
- * Export reports in specified format
- */
-exports.exportReports = async (event) => {
-  try {
-    await connectToDatabase();
-    
-    // Get extension from path parameters
-    const extension = event.pathParameters.extension.toLowerCase();
-    
-    // Check if format is supported
-    if (!['pdf', 'csv', 'excel'].includes(extension)) {
-      return createResponse(400, { message: 'Unsupported export format. Supported formats: pdf, csv, excel' });
-    }
-    
-    // Extract query parameters
-    const queryParams = event.queryStringParameters || {};
-    const { dateFrom, dateTo, locationId, carId, supportAgentId } = queryParams;
-    
-    // Build filter criteria
-    const filter = {};
-    
-    if (dateFrom && dateTo) {
-      filter.createdAt = {
-        $gte: new Date(dateFrom),
-        $lte: new Date(dateTo)
-      };
-    } else if (dateFrom) {
-      filter.createdAt = { $gte: new Date(dateFrom) };
-    } else if (dateTo) {
-      filter.createdAt = { $lte: new Date(dateTo) };
-    }
-    
-    if (locationId) filter.locationId = locationId;
-    if (carId) filter.carId = carId;
-    if (supportAgentId) filter.supportAgentId = supportAgentId;
-    
-    // Query the database
-    const reports = await Report.find(filter).sort({ createdAt: -1 });
-    
-    if (reports.length === 0) {
-      return createResponse(404, { message: 'No reports found matching the criteria' });
-    }
-    
-    // Format the report data
-    const reportData = reports.map(report => ({
-      reportId: report.reportId,
-      bookingPeriod: report.bookingPeriod,
-      carMillageStart: report.carMillageStart,
-      carMillageEnd: report.carMillageEnd,
-      carModel: report.carModel,
-      carNumber: report.carNumber,
-      carServiceRating: report.carServiceRating || 'N/A',
-      madeBy: report.madeBy,
-      supportAgent: report.supportAgent || 'N/A',
-      createdAt: report.createdAt.toISOString().split('T')[0]
-    }));
-    
-    // Generate the report in the requested format
-    let content;
-    let contentType;
-    let fileExtension;
-    
-    switch (extension) {
-      case 'csv':
-        content = await generateCsvReport(reportData);
-        contentType = 'text/csv';
-        fileExtension = 'csv';
-        break;
-      case 'excel':
-        content = await generateExcelReport(reportData);
-        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-        fileExtension = 'xlsx';
-        break;
-      case 'pdf':
-        content = await generatePdfReport(reportData);
-        contentType = 'application/pdf';
-        fileExtension = 'pdf';
-        break;
-    }
-    
-    // Upload to S3
-    const timestamp = Date.now();
-    const fileName = `aggregated_report_${timestamp}.${fileExtension}`;
-    
-    const uploadParams = {
-      Bucket: BUCKET_NAME,
-      Key: `reports/${fileName}`,
-      Body: content,
-      ContentType: contentType,
-      ACL: 'public-read'
-    };
-    
-    const s3UploadResult = await s3.upload(uploadParams).promise();
-    
-    return createResponse(201, {
-      url: s3UploadResult.Location
+   
+    console.log('Applying filters:', {
+      salesFilter,
+      performanceFilter,
+      type
     });
+   
+    let salesReports = [];
+    let performanceReports = [];
+   
+    // Fetch reports based on type requested
+    if (type === 'all' || type === 'sales') {
+      salesReports = await SalesReport.find(salesFilter).sort({ periodStart: -1 });
+      console.log(`Found ${salesReports.length} sales reports`);
+    }
+   
+    if (type === 'all' || type === 'performance') {
+      performanceReports = await PerformanceReport.find(performanceFilter).sort({ customerRating: -1 });
+      console.log(`Found ${performanceReports.length} performance reports`);
+    }
+ 
+    // Format dates for frontend if using MongoDB data
+    salesReports = salesReports.map(report => {
+      if (report.toObject) {
+        const reportObj = report.toObject();
+        return {
+          ...reportObj,
+          periodStart: reportObj.periodStart ? reportObj.periodStart.toISOString().split('T')[0] : null,
+          periodEnd: reportObj.periodEnd ? reportObj.periodEnd.toISOString().split('T')[0] : null
+        };
+      }
+      return report;
+    });
+ 
+    // Return response
+    return createResponse(200, {
+      salesReports: salesReports || [],
+      performanceReports: performanceReports || []
+    });
+   
   } catch (error) {
-    console.error(`Error exporting report:`, error);
-    return createResponse(500, { message: 'Error exporting report', error: error.message });
+    console.error('Error getting reports data:', error);
+    return createResponse(500, {
+      message: 'Server error while retrieving reports data',
+      error: error.message
+    });
   }
 };
-
+ 
 /**
- * Generate CSV report
+ * Get sales reports data
+ * @route GET /reports/sales
  */
-async function generateCsvReport(data) {
+exports.getSalesReports = async (event) => {
   try {
-    const fields = ['reportId', 'bookingPeriod', 'carModel', 'carNumber', 
-                    'carMillageStart', 'carMillageEnd', 'carServiceRating', 
-                    'madeBy', 'supportAgent', 'createdAt'];
-    
-    const json2csvParser = new json2csv({ fields });
-    return json2csvParser.parse(data);
+    console.log('Getting sales reports data');
+    await connectToDatabase();
+   
+    const queryParams = event.queryStringParameters || {};
+    const { location, periodStart, periodEnd } = queryParams;
+   
+    // Create filter object
+    const filter = {};
+   
+    // Add location filter if provided
+    if (location) {
+      filter.location = location;
+    }
+   
+    // Add date range filter if provided
+    if (periodStart) {
+      filter.periodStart = { $gte: new Date(periodStart) };
+    }
+   
+    if (periodEnd) {
+      filter.periodEnd = {
+        ...(filter.periodEnd || {}),
+        $lte: new Date(periodEnd)
+      };
+    }
+   
+    console.log('Applying filters:', filter);
+   
+    // Fetch sales reports
+    const salesReports = await SalesReport.find(filter).sort({ periodStart: -1 });
+    console.log(`Found ${salesReports.length} sales reports`);
+ 
+    // Format dates for frontend
+    const formattedReports = salesReports.map(report => {
+      if (report.toObject) {
+        const reportObj = report.toObject();
+        return {
+          ...reportObj,
+          periodStart: reportObj.periodStart ? reportObj.periodStart.toISOString().split('T')[0] : null,
+          periodEnd: reportObj.periodEnd ? reportObj.periodEnd.toISOString().split('T')[0] : null
+        };
+      }
+      return report;
+    });
+ 
+    // Return response
+    return createResponse(200, { salesReports: formattedReports });
+   
   } catch (error) {
-    console.error('Error generating CSV:', error);
-    throw error;
+    console.error('Error getting sales reports data:', error);
+    return createResponse(500, {
+      message: 'Server error while retrieving sales reports data',
+      error: error.message
+    });
   }
-}
-
+};
+ 
 /**
- * Generate Excel report
+ * Get performance reports data
+ * @route GET /reports/performance
  */
-async function generateExcelReport(data) {
+exports.getPerformanceReports = async (event) => {
   try {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Car Rental Reports');
-    
-    // Add headers
-    worksheet.columns = [
-      { header: 'Report ID', key: 'reportId', width: 36 },
-      { header: 'Booking Period', key: 'bookingPeriod', width: 20 },
-      { header: 'Car Model', key: 'carModel', width: 20 },
-      { header: 'Car Number', key: 'carNumber', width: 15 },
-      { header: 'Mileage Start', key: 'carMillageStart', width: 15 },
-      { header: 'Mileage End', key: 'carMillageEnd', width: 15 },
-      { header: 'Service Rating', key: 'carServiceRating', width: 15 },
-      { header: 'Made By', key: 'madeBy', width: 20 },
-      { header: 'Support Agent', key: 'supportAgent', width: 20 },
-      { header: 'Created Date', key: 'createdAt', width: 15 }
-    ];
-    
-    // Add rows
-    worksheet.addRows(data);
-    
-    // Style header row
-    worksheet.getRow(1).font = { bold: true };
-    worksheet.getRow(1).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FFD3D3D3' }
-    };
-    
-    // Write to buffer
-    return await workbook.xlsx.writeBuffer();
+    console.log('Getting performance reports data');
+    await connectToDatabase();
+   
+    const queryParams = event.queryStringParameters || {};
+    const { location } = queryParams;
+   
+    // Create filter object
+    const filter = {};
+   
+    // Add location filter if provided
+    if (location) {
+      filter.location = location;
+    }
+   
+    console.log('Applying filters:', filter);
+   
+    // Fetch performance reports
+    const performanceReports = await PerformanceReport.find(filter).sort({ customerRating: -1 });
+    console.log(`Found ${performanceReports.length} performance reports`);
+ 
+    // Return response
+    return createResponse(200, { performanceReports });
+   
   } catch (error) {
-    console.error('Error generating Excel:', error);
-    throw error;
+    console.error('Error getting performance reports data:', error);
+    return createResponse(500, {
+      message: 'Server error while retrieving performance reports data',
+      error: error.message
+    });
   }
-}
-
+};
+ 
 /**
- * Generate PDF report
+ * Save a new sales report
+ * @route POST /reports/sales
  */
-async function generatePdfReport(data) {
-  return new Promise((resolve, reject) => {
+exports.saveSalesReport = async (event) => {
+  try {
+    console.log('Saving new sales report');
+    await connectToDatabase();
+   
+    // Parse request body
+    let reportData;
     try {
-      const pdfDoc = new PDFDocument({ margin: 30, size: 'A4' });
-      const buffers = [];
-      
-      pdfDoc.on('data', buffers.push.bind(buffers));
-      pdfDoc.on('end', () => {
-        const pdfData = Buffer.concat(buffers);
-        resolve(pdfData);
+      reportData = JSON.parse(event.body);
+      console.log('Received sales report data:', reportData);
+    } catch (e) {
+      console.error('Failed to parse request body:', e, 'Raw body:', event.body);
+      return createResponse(400, {
+        message: 'Invalid request body format',
+        error: e.message,
+        success: false
       });
-      
-      // Add title
-      pdfDoc.fontSize(18).text('Car Rental Report', { align: 'center' });
-      pdfDoc.moveDown();
-      
-      // Add date range if available
-      const currentDate = new Date().toLocaleDateString();
-      pdfDoc.fontSize(10).text(`Generated on: ${currentDate}`, { align: 'right' });
-      pdfDoc.moveDown();
-      
-      // Create table headers
-      const tableTop = 150;
-      const headers = ['Booking Period', 'Car', 'Mileage Start', 'Mileage End', 'Rating', 'Made By'];
-      const columnWidths = [100, 120, 80, 80, 60, 120];
-      
-      let currentX = 30;
-      
-      // Draw header cells
-      headers.forEach((header, i) => {
-        pdfDoc
-          .rect(currentX, tableTop, columnWidths[i], 20)
-          .fillAndStroke('#D3D3D3', '#000000');
-        
-        pdfDoc
-          .fontSize(10)
-          .fillColor('#000000')
-          .text(header, currentX + 5, tableTop + 5, { width: columnWidths[i] - 10 });
-        
-        currentX += columnWidths[i];
-      });
-      
-      // Draw data rows
-      let currentY = tableTop + 20;
-      
-      data.forEach((report, index) => {
-        if (currentY > 700) {
-          pdfDoc.addPage();
-          currentY = 50;
-          
-          // Redraw headers on new page
-          currentX = 30;
-          headers.forEach((header, i) => {
-            pdfDoc
-              .rect(currentX, currentY, columnWidths[i], 20)
-              .fillAndStroke('#D3D3D3', '#000000');
-            
-            pdfDoc
-              .fontSize(10)
-              .fillColor('#000000')
-              .text(header, currentX + 5, currentY + 5, { width: columnWidths[i] - 10 });
-            
-            currentX += columnWidths[i];
-          });
-          
-          currentY += 20;
-        }
-        
-        // Row background color alternating
-        const rowColor = index % 2 === 0 ? '#FFFFFF' : '#F9F9F9';
-        
-        currentX = 30;
-        
-        // Draw row cells
-        const rowValues = [
-          report.bookingPeriod,
-          `${report.carModel} (${report.carNumber})`,
-          report.carMillageStart.toString(),
-          report.carMillageEnd.toString(),
-          report.carServiceRating,
-          report.madeBy
-        ];
-        
-        rowValues.forEach((value, i) => {
-          pdfDoc
-            .rect(currentX, currentY, columnWidths[i], 20)
-            .fillAndStroke(rowColor, '#CCCCCC');
-          
-          pdfDoc
-            .fontSize(9)
-            .fillColor('#000000')
-            .text(value, currentX + 5, currentY + 5, { width: columnWidths[i] - 10 });
-          
-          currentX += columnWidths[i];
-        });
-        
-        currentY += 20;
-      });
-      
-      // Add footer
-      pdfDoc.fontSize(10).text('End of Report', { align: 'center' });
-      
-      pdfDoc.end();
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      reject(error);
     }
-  });
-}
-
-/**
- * Create a new report
- * (Helper function for internal use)
- */
-exports.createReport = async (bookingData, carData, userData) => {
-  try {
-    const reportId = uuidv4();
-    
-    // Calculate booking period
-    const pickupDate = new Date(bookingData.pickupDateTime);
-    const dropoffDate = new Date(bookingData.dropOffDateTime);
-    
-    const formatDate = (date) => {
-      const options = { month: 'short', day: 'numeric' };
-      return date.toLocaleDateString('en-US', options);
-    };
-    
-    const bookingPeriod = `${formatDate(pickupDate)} - ${formatDate(dropoffDate)}`;
-    
-    // Create new report
-    const report = new Report({
-      reportId,
-      bookingId: bookingData._id,
-      bookingPeriod,
-      carId: carData._id,
-      carModel: `${carData.brand} ${carData.model}`,
-      carNumber: carData.carNumber,
-      carMillageStart: carData.initialMileage || 0,
-      carMillageEnd: carData.currentMileage || 0,
-      locationId: bookingData.pickupLocationId,
-      supportAgentId: bookingData.supportAgentId || null,
-      supportAgent: bookingData.supportAgentName || null,
-      clientId: userData._id,
-      madeBy: `${userData.firstName} ${userData.lastName} (Client)`,
-      carServiceRating: bookingData.rating || null
+   
+    // Format dates if they're provided as strings
+    if (reportData.periodStart && typeof reportData.periodStart === 'string') {
+      reportData.periodStart = new Date(reportData.periodStart);
+    }
+   
+    if (reportData.periodEnd && typeof reportData.periodEnd === 'string') {
+      reportData.periodEnd = new Date(reportData.periodEnd);
+    }
+   
+    // Ensure numbers are correctly typed
+    reportData.daysOfRent = Number(reportData.daysOfRent || 0);
+    reportData.reservations = Number(reportData.reservations || 0);
+    reportData.mileageStart = Number(reportData.mileageStart || 0);
+    reportData.mileageEnd = Number(reportData.mileageEnd || 0);
+    reportData.totalMileage = Number(reportData.totalMileage || 0);
+    reportData.averageMileage = Number(reportData.averageMileage || 0);
+   
+    // Validate required fields
+    const requiredFields = ['periodStart', 'periodEnd', 'location', 'carModel', 'carId', 'daysOfRent',
+      'reservations', 'mileageStart', 'mileageEnd', 'totalMileage', 'averageMileage'];
+    const missingFields = requiredFields.filter(field => reportData[field] === undefined || reportData[field] === null || reportData[field] === '');
+   
+    if (missingFields.length > 0) {
+      console.error('Missing required fields:', missingFields);
+      return createResponse(400, {
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+        success: false
+      });
+    }
+   
+    // Create and save new report
+    const newReport = new SalesReport({
+      ...reportData,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
-    
-    await report.save();
-    return report;
+   
+    console.log('Saving sales report to database');
+   
+    const savedReport = await newReport.save();
+    console.log('Sales report saved with ID:', savedReport._id);
+   
+    return createResponse(201, {
+      message: 'Sales report saved successfully',
+      report: {
+        ...savedReport.toObject(),
+        periodStart: savedReport.periodStart.toISOString().split('T')[0],
+        periodEnd: savedReport.periodEnd.toISOString().split('T')[0]
+      },
+      success: true
+    });
+   
   } catch (error) {
-    console.error('Error creating report:', error);
-    throw error;
+    console.error('Error saving sales report:', error);
+    return createResponse(500, {
+      message: 'Server error while saving sales report',
+      error: error.message,
+      success: false
+    });
   }
 };
-
-module.exports = exports;
+ 
+/**
+ * Save a new performance report
+ * @route POST /reports/performance
+ */
+exports.savePerformanceReport = async (event) => {
+  try {
+    console.log('Saving new performance report');
+    await connectToDatabase();
+   
+    // Parse request body
+    let reportData;
+    try {
+      reportData = JSON.parse(event.body);
+      console.log('Received performance report data:', reportData);
+    } catch (e) {
+      console.error('Failed to parse request body:', e, 'Raw body:', event.body);
+      return createResponse(400, {
+        message: 'Invalid request body format',
+        error: e.message,
+        success: false
+      });
+    }
+   
+    // Ensure numbers are correctly typed
+    reportData.totalBookings = Number(reportData.totalBookings || 0);
+    reportData.totalRevenue = Number(reportData.totalRevenue || 0);
+    reportData.customerRating = Number(reportData.customerRating || 0);
+    reportData.responseTime = Number(reportData.responseTime || 0);
+    reportData.completionRate = Number(reportData.completionRate || 0);
+   
+    // Validate required fields
+    const requiredFields = ['staffMember', 'position', 'location', 'totalBookings',
+      'totalRevenue', 'customerRating', 'responseTime', 'completionRate'];
+    const missingFields = requiredFields.filter(field => reportData[field] === undefined || reportData[field] === null || reportData[field] === '');
+   
+    if (missingFields.length > 0) {
+      console.error('Missing required fields:', missingFields);
+      return createResponse(400, {
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+        success: false
+      });
+    }
+   
+    // Create and save new report
+    const newReport = new PerformanceReport({
+      ...reportData,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+   
+    console.log('Saving performance report to database');
+   
+    const savedReport = await newReport.save();
+    console.log('Performance report saved with ID:', savedReport._id);
+   
+    return createResponse(201, {
+      message: 'Performance report saved successfully',
+      report: savedReport.toObject(),
+      success: true
+    });
+   
+  } catch (error) {
+    console.error('Error saving performance report:', error);
+    return createResponse(500, {
+      message: 'Server error while saving performance report',
+      error: error.message,
+      success: false
+    });
+  }
+};
+ 
+/**
+ * Generate a PDF report
+ * @route GET /reports/{format}
+ */
+exports.generateReport = async (event) => {
+  try {
+    console.log('Generate report request received');
+    return createResponse(200, {
+      message: 'Report generation is handled client-side',
+      success: true
+    });
+  } catch (error) {
+    console.error('Error in report generation endpoint:', error);
+    return createResponse(500, {
+      message: 'Server error in report generation endpoint',
+      error: error.message,
+      success: false
+    });
+  }
+};

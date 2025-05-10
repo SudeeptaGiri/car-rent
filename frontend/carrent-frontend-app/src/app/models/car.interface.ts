@@ -181,7 +181,7 @@ export function mongoDBCarToCarDetails(mongoDBCar: MongoDBCar): CarDetails {
     url,
     isPrimary: index === 0
   }));
-
+  console.log('Mongo DB CARRRRRRRR :', mongoDBCar);
   return {
     id: mongoDBCar._id || mongoDBCar.carId || '',
     brand: mongoDBCar.brand,

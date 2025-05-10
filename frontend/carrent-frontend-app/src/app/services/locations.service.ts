@@ -18,7 +18,7 @@ interface LocationResponse {
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = 'https://nckijnfmi0.execute-api.eu-west-3.amazonaws.com/api/home/locations';
+  private apiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api/home/locations';
 
   constructor(private http: HttpClient) {}
 

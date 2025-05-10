@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class PersonalInfoComponent implements OnInit {
-  apiUrl = 'https://qixj9pgekd.execute-api.eu-west-3.amazonaws.com/api'; 
+  apiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api'; 
   userProfile: User = {
     firstName: '',
     lastName: '',
