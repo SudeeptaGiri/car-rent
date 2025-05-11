@@ -156,61 +156,149 @@ export interface PaginationParams {
 }
 
 // Helper function to convert MongoDB car to frontend CarDetails
-export function mongoDBCarToCarDetails(mongoDBCar: MongoDBCar): CarDetails {
+export function mongoDBCarToCarDetails(mongoDBCar: any): CarDetails {
+  // Check if we're getting the simplified list format or detailed car format
+  const isSimplifiedFormat = mongoDBCar.hasOwnProperty('imageUrl') && !mongoDBCar.hasOwnProperty('images');
+  
+  // Extract car ID from the appropriate field
+  const id = mongoDBCar._id || mongoDBCar.carId || '';
+  
+  // Parse model string to extract brand, model and year
+  let brand = '', model = '', year = new Date().getFullYear();
+  if (isSimplifiedFormat && mongoDBCar.model) {
+    const modelParts = mongoDBCar.model.split(' ');
+    if (modelParts.length >= 3) {
+      // Last part is year
+      const lastPart = modelParts[modelParts.length - 1];
+      if (!isNaN(parseInt(lastPart))) {
+        year = parseInt(lastPart);
+        // First part is typically brand
+        brand = modelParts[0];
+        // Middle parts are model
+        model = modelParts.slice(1, modelParts.length - 1).join(' ');
+      } else {
+        // No year in the string
+        brand = modelParts[0];
+        model = modelParts.slice(1).join(' ');
+      }
+    } else if (modelParts.length === 2) {
+      // Assume first part is brand, second is model
+      brand = modelParts[0];
+      model = modelParts[1];
+    } else {
+      // Just use the whole string as model
+      model = mongoDBCar.model;
+    }
+  } else {
+    // Use direct fields if available
+    brand = mongoDBCar.brand || '';
+    model = mongoDBCar.model || '';
+    year = mongoDBCar.year || new Date().getFullYear();
+  }
+
   // Map status from MongoDB to frontend format
   const statusMap: { [key: string]: 'Available' | 'Not Available' | 'Reserved' } = {
     'AVAILABLE': 'Available',
     'BOOKED': 'Reserved',
     'UNAVAILABLE': 'Not Available'
   };
+  
+  // Get status or default to Available
+  const status = mongoDBCar.status ? statusMap[mongoDBCar.status] || 'Not Available' : 'Available';
 
-  // Map category from MongoDB to frontend format
-  const categoryMap: { [key: string]: string } = {
-    'ECONOMY': 'Passenger car',
-    'COMFORT': 'Passenger car',
-    'BUSINESS': 'Luxury car',
-    'PREMIUM': 'Luxury car',
-    'CROSSOVER': 'Off-road car',
-    'MINIVAN': 'Passenger car',
-    'ELECTRIC': 'Passenger car'
+  // Handle images - could be array of strings, array of objects, or single imageUrl
+  let carImages: CarImage[] = [];
+  if (isSimplifiedFormat && mongoDBCar.imageUrl) {
+    carImages = [{
+      id: '0',
+      url: mongoDBCar.imageUrl,
+      isPrimary: true
+    }];
+  } else if (Array.isArray(mongoDBCar.images)) {
+    carImages = mongoDBCar.images.map((img: any, index: number) => {
+      if (typeof img === 'string') {
+        return {
+          id: index.toString(),
+          url: img,
+          isPrimary: index === 0
+        };
+      } else if (img && img.url) {
+        return {
+          id: img.id || index.toString(),
+          url: img.url,
+          isPrimary: img.isPrimary || index === 0
+        };
+      }
+      return {
+        id: index.toString(),
+        url: 'assets/placeholder-car.svg',
+        isPrimary: index === 0
+      };
+    });
+  }
+  
+  // If no images were found, add a placeholder
+  if (carImages.length === 0) {
+    carImages = [{
+      id: '0',
+      url: 'assets/placeholder-car.svg',
+      isPrimary: true
+    }];
+  }
+
+  // Get price from appropriate field
+  const price = mongoDBCar.pricePerDay ? 
+    (typeof mongoDBCar.pricePerDay === 'string' ? 
+      parseFloat(mongoDBCar.pricePerDay) : mongoDBCar.pricePerDay) : 
+    (mongoDBCar.price || 0);
+
+  // Get rating from appropriate field
+  const rating = mongoDBCar.carRating ? 
+    (typeof mongoDBCar.carRating === 'string' ? 
+      parseFloat(mongoDBCar.carRating) : mongoDBCar.carRating) : 
+    (mongoDBCar.rating || 0);
+
+  // Create specifications object with available data
+  const specifications = {
+    transmission: mongoDBCar.gearBoxType === 'AUTOMATIC' ? 'Automatic' : 'Manual',
+    engine: mongoDBCar.fuelType ? 
+      `${mongoDBCar.engineCapacity || ''} ${mongoDBCar.fuelType.charAt(0).toUpperCase() + mongoDBCar.fuelType.slice(1).toLowerCase()}` : 
+      (mongoDBCar.specifications?.engine || ''),
+    fuelType: mongoDBCar.fuelType ? 
+      mongoDBCar.fuelType.charAt(0).toUpperCase() + mongoDBCar.fuelType.slice(1).toLowerCase() : 
+      (mongoDBCar.specifications?.fuelType || ''),
+    seats: mongoDBCar.passengerCapacity ? 
+      parseInt(mongoDBCar.passengerCapacity) : 
+      (mongoDBCar.specifications?.seats || 5),
+    fuelConsumption: mongoDBCar.fuelConsumption || 
+      (mongoDBCar.specifications?.fuelConsumption || ''),
+    engineCapacity: mongoDBCar.engineCapacity || '',
+    climateControl: mongoDBCar.climateControlOption ? 
+      mongoDBCar.climateControlOption.replace(/_/g, ' ').toLowerCase() : '',
+    features: mongoDBCar.specifications?.features || []
   };
 
-  // Convert string array of images to CarImage objects
-  const carImages: CarImage[] = mongoDBCar.images.map((url, index) => ({
-    id: index.toString(),
-    url,
-    isPrimary: index === 0
-  }));
-  console.log('Mongo DB CARRRRRRRR :', mongoDBCar);
+  // Create and return the car details object
   return {
-    id: mongoDBCar._id || mongoDBCar.carId || '',
-    brand: mongoDBCar.brand,
-    model: mongoDBCar.model,
-    year: mongoDBCar.year,
-    location: mongoDBCar.location,
-    rating: mongoDBCar.carRating,
-    price: mongoDBCar.pricePerDay,
-    category: categoryMap[mongoDBCar.category] || 'Passenger car',
-    status: statusMap[mongoDBCar.status] || 'Not Available',
+    id: id,
+    brand: brand,
+    model: model,
+    year: year,
+    location: mongoDBCar.location || '',
+    rating: rating,
+    price: price,
+    category: mongoDBCar.category || 'Passenger car',
+    status: status,
     images: carImages,
-    specifications: {
-      transmission: mongoDBCar.gearBoxType === 'AUTOMATIC' ? 'Automatic' : 'Manual',
-      engine: `${mongoDBCar.engineCapacity} ${mongoDBCar.fuelType.charAt(0) + mongoDBCar.fuelType.slice(1).toLowerCase()}`,
-      fuelType: mongoDBCar.fuelType.charAt(0) + mongoDBCar.fuelType.slice(1).toLowerCase(),
-      seats: parseInt(mongoDBCar.passengerCapacity) || 5,
-      fuelConsumption: mongoDBCar.fuelConsumption,
-      engineCapacity: mongoDBCar.engineCapacity,
-      climateControl: mongoDBCar.climateControlOption.replace(/_/g, ' ').toLowerCase(),
-      features: []
-    },
-    bookedDates: [],
-    reviews: {
+    specifications: specifications,
+    bookedDates: mongoDBCar.bookedDates || [],
+    reviews: mongoDBCar.reviews || {
       content: [],
       totalPages: 0,
       currentPage: 0,
       totalElements: 0
     },
-    popularity: {
+    popularity: mongoDBCar.popularity || {
       rentCount: 0,
       viewCount: 0,
       favoriteCount: 0,
@@ -219,12 +307,38 @@ export function mongoDBCarToCarDetails(mongoDBCar: MongoDBCar): CarDetails {
   };
 }
 
-// Helper function to convert MongoDB car list response to frontend format
-export function convertMongoDBResponse(response: MongoDBCarListResponse): CarListResponse {
+// In convertMongoDBResponse function
+export function convertMongoDBResponse(response: any): CarListResponse {
+  console.log('Converting MongoDB response:', response);
+  
+  // Handle both direct array and paginated response formats
+  let content = [];
+  let totalPages = 1;
+  let currentPage = 1;
+  let totalElements = 0;
+  
+  if (response) {
+    if (Array.isArray(response.content)) {
+      content = response.content;
+      totalPages = response.totalPages || 1;
+      currentPage = response.currentPage || 1;
+      totalElements = response.totalElements || content.length;
+    } else if (Array.isArray(response)) {
+      content = response;
+      totalElements = content.length;
+    }
+  }
+  
+  const convertedCars = content.map((car: any) => {
+    const convertedCar = mongoDBCarToCarDetails(car);
+    console.log(`Converted car ${car.carId || car._id}: Brand=${convertedCar.brand}, Model=${convertedCar.model}`);
+    return convertedCar;
+  });
+  
   return {
-    content: response.content.map(mongoDBCarToCarDetails),
-    totalPages: response.totalPages,
-    currentPage: response.currentPage,
-    totalElements: response.totalElements
+    content: convertedCars,
+    totalPages,
+    currentPage,
+    totalElements
   };
 }

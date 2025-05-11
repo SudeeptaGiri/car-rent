@@ -34,19 +34,19 @@ export interface LocationSuggestion {
 })
 export class CarService {
   // MongoDB API endpoint
-  private apiBaseUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api";
+  private apiBaseUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api";
 
   // Bookings API endpoint
   private bookingsApiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api';
-  
+
   // Keep JSON URL for fallback during development/transition
   private jsonUrl = 'assets/cars.json';
-  
+
   private readonly STORAGE_KEY = 'bookings';
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
   bookings$ = this.bookingsSubject.asObservable();
-  
+
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
@@ -55,7 +55,7 @@ export class CarService {
   ) {
     this.loadBookingsForCurrentUser();
     if (this.bookings.length === 0) {
-      this.loadSampleBookings(); 
+      this.loadSampleBookings();
     }
     interval(1000).subscribe(() => this.updateBookingStatuses());
   }
@@ -77,7 +77,7 @@ export class CarService {
     const storageKey = this.getStorageKeyForUser();
     const storedBookings = localStorage.getItem(storageKey);
     console.log('Loading bookings with key:', storageKey);
-    
+
     if (storedBookings) {
       try {
         const parsedBookings = JSON.parse(storedBookings);
@@ -90,20 +90,20 @@ export class CarService {
             submittedAt: new Date(booking.feedback.submittedAt)
           } : undefined
         }));
-        
+
         // Update booking statuses and emit
         this.updateBookingStatuses();
         this.bookingsSubject.next(this.bookings);
-        
+
         console.log('Loaded bookings:', this.bookings);
       } catch (error) {
         console.error('Error parsing bookings:', error);
         this.bookings = [];
-        this.bookingsSubject.next([]); 
+        this.bookingsSubject.next([]);
       }
     } else {
       this.bookings = [];
-      this.bookingsSubject.next([]); 
+      this.bookingsSubject.next([]);
     }
   }
 
@@ -111,16 +111,16 @@ export class CarService {
     // Booking 4: Cancelled booking
     const pickup4 = new Date('2025-04-15T10:00:00');
     const dropoff4 = new Date('2025-04-20T16:00:00');
-    
+
     // Booking 5: Service provided (both dates in past)
     const pickup5 = new Date('2025-04-12T15:00:00');
     const dropoff5 = new Date('2025-04-17T16:00:00');
-    
+
     // Booking 6: Booking finished with feedback
     const pickup6 = new Date('2025-04-07T10:00:00');
     const dropoff6 = new Date('2025-04-12T16:00:00');
     const feedbackDate = new Date('2025-04-13T12:00:00');
-    
+
     this.bookings = [
       {
         id: '4',
@@ -170,10 +170,10 @@ export class CarService {
         dropoffLocation: 'Chennai'
       }
     ];
-    
+
     // Initialize the status based on current date
     this.updateBookingStatuses();
-    
+
     // Emit the initial bookings
     this.bookingsSubject.next([...this.bookings]);
   }
@@ -182,16 +182,16 @@ export class CarService {
     // Simply return the observable without checking localStorage
     return this.bookingsSubject.asObservable();
   }
-  
+
   addBooking(booking: Booking): Observable<Booking> {
     return new Observable<Booking>(observer => {
       try {
         // Add to internal array
         this.bookings.push(booking);
-        
+
         // Emit updated bookings
         this.bookingsSubject.next([...this.bookings]);
-        
+
         observer.next(booking);
         observer.complete();
       } catch (error) {
@@ -200,15 +200,15 @@ export class CarService {
       }
     });
   }
-  
+
   cancelBooking(bookingId: string): void {
     // Find the booking in our internal array
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
-    
+
     if (bookingIndex !== -1) {
       // Update the booking status in our array
       this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-      
+
       // Emit updated bookings
       this.bookingsSubject.next([...this.bookings]);
     }
@@ -217,10 +217,10 @@ export class CarService {
   private updateBookingStatuses(): void {
     const now = new Date();
     let updated = false;
-    
+
     this.bookings.forEach(booking => {
       if (booking.status === BookingStatus.CANCELLED) return;
-      
+
       if (now < booking.pickupDate) {
         if (booking.status !== BookingStatus.RESERVED) {
           booking.status = BookingStatus.RESERVED;
@@ -232,32 +232,32 @@ export class CarService {
           updated = true;
         }
       } else if (now >= booking.dropoffDate) {
-        if (booking.status !== BookingStatus.SERVICE_PROVIDED && 
-            booking.status !== BookingStatus.BOOKING_FINISHED) {
+        if (booking.status !== BookingStatus.SERVICE_PROVIDED &&
+          booking.status !== BookingStatus.BOOKING_FINISHED) {
           booking.status = BookingStatus.SERVICE_PROVIDED;
           updated = true;
         }
       }
-      
+
       if (booking.status === BookingStatus.SERVICE_PROVIDED && booking.feedback) {
         booking.status = BookingStatus.BOOKING_FINISHED;
         updated = true;
       }
     });
-    
+
     if (updated) {
       this.bookingsSubject.next([...this.bookings]);
     }
   }
 
   confirmReservation(
-    formValid: boolean, 
-    selectedCar: CarDetails, 
-    dateFrom: Date, 
-    dateTo: Date, 
-    totalPrice: number, 
-    numberOfDays: number, 
-    pickupLocation: string, 
+    formValid: boolean,
+    selectedCar: CarDetails,
+    dateFrom: Date,
+    dateTo: Date,
+    totalPrice: number,
+    numberOfDays: number,
+    pickupLocation: string,
     dropoffLocation: string,
     clientId?: string | null
   ): void {
@@ -270,7 +270,7 @@ export class CarService {
     const user = this.getUserFromLocalStorage();
     const userId = clientId || user?.id || 'default-user-id';
     const authToken = user?.token || localStorage.getItem('auth_token');
-    
+
     // Create the booking request object according to backend requirements
     const bookingRequest = {
       carId: selectedCar.id,
@@ -280,9 +280,9 @@ export class CarService {
       pickupLocationId: pickupLocation,
       dropOffLocationId: dropoffLocation,
     };
-    
+
     console.log('Sending booking request:', bookingRequest);
-    
+
     // Add authentication headers if available
     const httpOptions = {
       headers: new HttpHeaders({
@@ -290,7 +290,7 @@ export class CarService {
         'Accept': 'application/json'
       })
     };
-    
+
     // Create an observable for the API call using pipe pattern
     this.http.post<any>(`${this.bookingsApiUrl}/bookings`, bookingRequest, httpOptions)
       .pipe(
@@ -298,11 +298,11 @@ export class CarService {
         tap(response => {
           console.log('Booking created successfully:', response);
         }),
-        
+
         // If API call fails, fall back to local storage approach
         catchError(error => {
           console.error('Error creating booking via API:', error);
-          
+
           // For CORS errors or other API issues, create a mock successful response
           return of({
             success: true,
@@ -311,19 +311,19 @@ export class CarService {
             orderNumber: `#${Math.floor(1000 + Math.random() * 9000)}`
           });
         }),
-        
+
         // Process the response (either from API or fallback)
         switchMap(response => {
           // Create a local booking object for UI purposes
           const bookingId = response.bookingId || `booking-${Date.now()}`;
           const orderNumber = response.orderNumber || `#${Math.floor(1000 + Math.random() * 9000)}`;
-          
+
           const newBooking: Booking = {
             id: bookingId,
             carId: selectedCar.id,
             carName: `${selectedCar.brand} ${selectedCar.model} ${selectedCar.year}`,
-            carImage: typeof selectedCar.images[0] === 'string' 
-              ? selectedCar.images[0] 
+            carImage: typeof selectedCar.images[0] === 'string'
+              ? selectedCar.images[0]
               : selectedCar.images[0].url,
             orderNumber: orderNumber,
             pickupDate: dateFrom,
@@ -334,7 +334,7 @@ export class CarService {
             pickupLocation,
             dropoffLocation
           };
-          
+
           // Add the booking to our internal array and return the response
           return this.addBooking(newBooking).pipe(
             map(() => response)
@@ -345,7 +345,7 @@ export class CarService {
         next: (response) => {
           // Show success dialog
           this.showBookingSuccessDialog(selectedCar, dateFrom, dateTo, totalPrice, numberOfDays);
-          
+
           // Navigate to my-bookings page
           this.router.navigate(['/my-bookings']);
         },
@@ -364,16 +364,20 @@ export class CarService {
     return userEmail ? `${this.STORAGE_KEY}_${userEmail}` : this.STORAGE_KEY;
   }
 
-  getAllCars(page: number = 0, size: number = 50): Observable<CarListResponse> {
+  getAllCars(page: number = 1, size: number = 8): Observable<CarListResponse> {
+    // Note: MongoDB API uses 1-based pagination, not 0-based
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
     return this.http.get<MongoDBCarListResponse>(`${this.apiBaseUrl}/cars`, { params }).pipe(
-      map(response => convertMongoDBResponse(response)),
+      map(response => {
+        console.log('Raw API response:', response);
+        return convertMongoDBResponse(response);
+      }),
       catchError(error => {
         console.error('Error fetching cars from API:', error);
-        // Fallback to local JSON if API fails (temporary during migration)
+        // Only fallback if there's a real error, not just empty data
         return this.http.get<CarsResponse>(this.jsonUrl).pipe(
           map(response => ({
             content: response.cars,
@@ -386,8 +390,11 @@ export class CarService {
     );
   }
 
+  // In car.service.ts
   getCarDetails(carId: string): Observable<CarDetails | undefined> {
+    console.log(`Fetching car details for ID: ${carId}`);
     return this.http.get<MongoDBCar>(`${this.apiBaseUrl}/cars/${carId}`).pipe(
+      tap(response => console.log('Raw car details response:', response)),
       map(car => mongoDBCarToCarDetails(car)),
       catchError(error => {
         console.error(`Error fetching car details for ID ${carId}:`, error);
@@ -398,7 +405,7 @@ export class CarService {
       })
     );
   }
- 
+
   getCarDetailsWithNavigation(carId: string): Observable<{
     car: CarDetails | undefined,
     totalCars: number,
@@ -410,7 +417,7 @@ export class CarService {
           map(allCarsResponse => {
             const allCars = allCarsResponse.content;
             const currentIndex = allCars.findIndex(c => c.id === carId);
-            
+
             return {
               car: mongoDBCarToCarDetails(car),
               totalCars: allCars.length,
@@ -427,7 +434,7 @@ export class CarService {
             const allCars = response.cars;
             const currentIndex = allCars.findIndex(car => car.id === carId);
             const car = currentIndex >= 0 ? allCars[currentIndex] : undefined;
-            
+
             return {
               car,
               totalCars: allCars.length,
@@ -496,8 +503,16 @@ export class CarService {
   }
 
   getPopularCars(limit: number = 4): Observable<CarDetails[]> {
-    return this.http.get<MongoDBCarListResponse>(`${this.apiBaseUrl}/cars/popular?limit=${limit}`).pipe(
-      map(response => response.content.map(car => mongoDBCarToCarDetails(car))),
+    return this.http.get<any>(`${this.apiBaseUrl}/cars/popular`).pipe(
+      tap(response => console.log('Raw popular cars response:', response)),
+      map(response => {
+        // The response structure might be { content: [...] }
+        const cars = response && response.content ? response.content : 
+                    (Array.isArray(response) ? response : []);
+        
+        // Map each car to the expected format
+        return cars.map((car: any) => mongoDBCarToCarDetails(car));
+      }),
       catchError(error => {
         console.error('Error fetching popular cars:', error);
         // Fallback to local JSON if API fails
@@ -531,7 +546,7 @@ export class CarService {
                 userId: bookingRequest.userId,
                 status: 'pending'
               };
-              
+
               // Get existing bookings and add new one
               const storageKey = this.getStorageKeyForUser();
               const existingBookingsStr = localStorage.getItem(storageKey);
@@ -546,10 +561,10 @@ export class CarService {
 
   analyzeEngineTypes(cars: any[]): void {
     console.log('Analyzing engine types in car data...');
-    
+
     const engineTypes = new Set();
     const missingEngineData = [];
-    
+
     cars.forEach(car => {
       if (car.specifications?.engine) {
         engineTypes.add(car.specifications.engine);
@@ -560,17 +575,17 @@ export class CarService {
         missingEngineData.push(car.id || car._id || car.carId);
       }
     });
-    
+
     console.log('Engine types found in data:', Array.from(engineTypes));
-    
+
     if (missingEngineData.length > 0) {
       console.warn(`${missingEngineData.length} cars are missing engine data`);
     }
   }
 
   // ==================== LOCATION METHODS ====================
-   // Handle search input for pickup location
-   onPickupSearchInput(
+  // Handle search input for pickup location
+  onPickupSearchInput(
     pickupSearchSubject: Subject<string>,
     query: string,
     showPickupSuggestions: { value: boolean }
@@ -578,7 +593,7 @@ export class CarService {
     showPickupSuggestions.value = true;
     pickupSearchSubject.next(query);
   }
-  
+
   // Handle search input for dropoff location
   onDropoffSearchInput(
     dropoffSearchSubject: Subject<string>,
@@ -588,7 +603,7 @@ export class CarService {
     showDropoffSuggestions.value = true;
     dropoffSearchSubject.next(query);
   }
-  
+
   // Handle selection of pickup location
   selectPickupLocation(
     suggestion: LocationSuggestion,
@@ -610,7 +625,7 @@ export class CarService {
       }
     });
   }
-  
+
   // Handle selection of dropoff location
   selectDropoffLocation(
     suggestion: LocationSuggestion,
@@ -632,7 +647,7 @@ export class CarService {
       }
     });
   }
-  
+
   // Handle using current location
   useCurrentLocation(
     forPickup: boolean,
@@ -655,7 +670,7 @@ export class CarService {
           component.selectedPickupCoordinates = coords;
           component.pickupSearchQuery = address;
           component.showPickupModal = false;
-          
+
           // Update form with new location
           component.bookingForm.get('location')?.patchValue({
             pickupLocation: address
@@ -665,7 +680,7 @@ export class CarService {
           component.selectedDropoffCoordinates = coords;
           component.dropoffSearchQuery = address;
           component.showDropoffModal = false;
-          
+
           // Update form with new location
           component.bookingForm.get('location')?.patchValue({
             dropoffLocation: address
@@ -678,7 +693,7 @@ export class CarService {
       }
     );
   }
-  
+
   // Handle opening location modal
   openLocationModal(
     forPickup: boolean,
@@ -701,7 +716,7 @@ export class CarService {
       component.dropoffSearchQuery = component.selectedDropoffLocation || '';
     }
   }
-  
+
   // Handle closing location modal
   closeLocationModal(
     component: {
@@ -724,7 +739,7 @@ export class CarService {
 
   // Handle date range selection
   onDateRangeSelected(
-    event: {startDate: moment.Moment, endDate: moment.Moment},
+    event: { startDate: moment.Moment, endDate: moment.Moment },
     component: {
       dateFrom: Date,
       dateTo: Date,
@@ -747,15 +762,15 @@ export class CarService {
     // Recalculate total price
     component.calculateTotalPrice();
   }
-  
+
   searchLocations(query: string): Observable<LocationSuggestion[]> {
     if (query.trim().length < 2) {
       return of([]);
     }
-    
+
     // Using OpenStreetMap's Nominatim API for geocoding
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
-    
+
     return this.http.get<any[]>(url).pipe(
       map(results => results.map(item => ({
         displayName: item.display_name.split(',').slice(0, 2).join(','), // Simplify display name
@@ -779,7 +794,7 @@ export class CarService {
           onLoadingCallback(false);
           return of([]);
         }
-        
+
         onLoadingCallback(true);
         return this.searchLocations(query).pipe(
           catchError(() => {
@@ -796,7 +811,7 @@ export class CarService {
 
   reverseGeocode(lat: number, lon: number): Observable<string> {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-    
+
     return this.http.get<any>(url).pipe(
       map(result => {
         if (result && result.display_name) {
@@ -819,7 +834,7 @@ export class CarService {
             lat: position.coords.latitude,
             lon: position.coords.longitude
           };
-          
+
           // Reverse geocode to get address
           this.reverseGeocode(coords.lat, coords.lon).subscribe(
             (address) => {
@@ -846,7 +861,7 @@ export class CarService {
   isLocationInvalid(location: string | null): boolean {
     return !location || location === 'Choose location';
   }
-  
+
   isDuplicateLocations(pickupLocation: string | null, dropoffLocation: string | null): boolean {
     if (!pickupLocation || !dropoffLocation) {
       return false;
@@ -855,13 +870,13 @@ export class CarService {
   }
 
   isFormValid(
-    formValid: boolean, 
-    pickupLocation: string | null, 
+    formValid: boolean,
+    pickupLocation: string | null,
     dropoffLocation: string | null
   ): boolean {
     return (
-      formValid && 
-      !this.isLocationInvalid(pickupLocation) && 
+      formValid &&
+      !this.isLocationInvalid(pickupLocation) &&
       !this.isLocationInvalid(dropoffLocation)
     );
   }
@@ -869,8 +884,8 @@ export class CarService {
   // ==================== DATE & PRICE METHODS ====================
 
   calculateTotalPrice(
-    dateFrom: Date, 
-    dateTo: Date, 
+    dateFrom: Date,
+    dateTo: Date,
     pricePerDay: number
   ): { numberOfDays: number, totalPrice: number } {
     if (dateFrom && dateTo) {
@@ -878,7 +893,7 @@ export class CarService {
       const diffTime = Math.abs(dateTo.getTime() - dateFrom.getTime());
       const numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const totalPrice = numberOfDays * pricePerDay;
-      
+
       return { numberOfDays, totalPrice };
     }
     return { numberOfDays: 0, totalPrice: 0 };
@@ -886,18 +901,18 @@ export class CarService {
 
   formatDate(date: Date | null): string {
     if (!date) return '';
-    return date.toLocaleDateString('en-IN', { 
-      month: 'long', 
+    return date.toLocaleDateString('en-IN', {
+      month: 'long',
       day: 'numeric',
       timeZone: 'Asia/Kolkata'
     });
   }
-  
+
   formatTime(date: Date | null): string {
     if (!date) return '';
-    return date.toLocaleTimeString('en-IN', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
+    return date.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
       timeZone: 'Asia/Kolkata'
     });
@@ -905,7 +920,7 @@ export class CarService {
 
   formatBookedDates(bookedDates?: BookedDate[]): { startDate: string; endDate: string; }[] {
     if (!bookedDates) return [];
-    
+
     return bookedDates.map(date => ({
       startDate: date.startDate,
       endDate: date.endDate
@@ -938,7 +953,7 @@ export class CarService {
 
   getUserFromLocalStorage(): any {
     const storedUser = sessionStorage.getItem('currentUser');
-    
+
     if (storedUser) {
       try {
         return JSON.parse(storedUser);
@@ -952,11 +967,11 @@ export class CarService {
 
   getUserInfo(): UserInfo {
     const user = this.getUserFromLocalStorage();
-    
+
     if (user) {
       return {
-        fullName: user.firstName && user.lastName ? 
-          `${user.firstName} ${user.lastName}` : 
+        fullName: user.firstName && user.lastName ?
+          `${user.firstName} ${user.lastName}` :
           (user.fullName || user.name || 'User'),
         email: user.email || '',
         phone: user.phone || this.getMockUserInfo().phone,
@@ -973,7 +988,7 @@ export class CarService {
       try {
         // Find the booking in our internal array
         const index = this.bookings.findIndex(b => b.id === booking.id);
-        
+
         if (index !== -1) {
           // Update the booking in our array
           this.bookings[index] = {
@@ -982,10 +997,10 @@ export class CarService {
             pickupDate: new Date(booking.pickupDate),
             dropoffDate: new Date(booking.dropoffDate)
           };
-          
+
           // Emit updated bookings
           this.bookingsSubject.next([...this.bookings]);
-          
+
           // Return success
           observer.next(this.bookings[index]);
           observer.complete();
@@ -1014,7 +1029,7 @@ export class CarService {
 
   showBookingSuccessDialog(car: CarDetails, dateFrom: Date, dateTo: Date, totalPrice: number, numberOfDays: number): void {
     const orderNumber = Math.floor(1000 + Math.random() * 9000).toString();
-    
+
     this.dialog.open(BookingSuccessDialogComponent, {
       width: '500px',
       maxWidth: '95vw',
