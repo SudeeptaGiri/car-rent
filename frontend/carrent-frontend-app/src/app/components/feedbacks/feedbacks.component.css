@@ -260,6 +260,45 @@
     right: 10px;
   }
   
+/* Add this to feedback-dialog.component.css */
+.error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.error-alert {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.rating-container {
+  margin-bottom: 20px;
+}
+
+/* Add this to feedbacks.component.css */
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+  color: #666;
+}
+
+.no-feedback-message {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 8px;
+  width: 100%;
+}
+
+
   /* Responsive styles */
   @media (max-width: 992px) {
     .review-card {

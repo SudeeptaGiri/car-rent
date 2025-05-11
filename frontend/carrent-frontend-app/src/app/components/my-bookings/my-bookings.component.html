@@ -92,7 +92,7 @@
           </ng-container>
           
           <!-- Show Leave Feedback button for Service Provided status -->
-          <ng-container *ngIf="booking.status === BookingStatus.SERVICE_PROVIDED">
+          <ng-container *ngIf="booking.status === BookingStatus.SERVICE_PROVIDED || booking.status === BookingStatus.COMPLETED">
             <button class="btn-feedback" (click)="openFeedbackDialog(booking)">Leave feedback</button>
           </ng-container>
           
