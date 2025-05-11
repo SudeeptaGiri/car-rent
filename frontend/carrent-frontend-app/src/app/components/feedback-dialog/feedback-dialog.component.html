@@ -1,36 +1,86 @@
-<h2 mat-dialog-title>How was your experience?</h2>
-<div mat-dialog-content>
-  <form [formGroup]="feedbackForm">
-    <div class="rating-container">
-      <p class="rate-exp">Rate your experience</p>
-      <div class="star-rating">
-        <span 
-          *ngFor="let star of [1, 2, 3, 4, 5]" 
-          class="star"
-          [class.filled]="feedbackForm.get('rating')?.value >= star"
-          (click)="setRating(star)">
-          ★
-        </span>
-      </div>
-      <div *ngIf="feedbackForm.get('rating')?.touched && feedbackForm.get('rating')?.invalid" class="error-message">
-        Please select a rating
-      </div>
+<!-- feedback-dialog.component.html -->
+<div class="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-auto animate-fade-in">
+    <h2 class="text-xl font-medium text-center py-4 border-b border-gray-100">How was your experience?</h2>
+    
+    <div class="p-6">
+      <form [formGroup]="feedbackForm">
+        <!-- Car Rating -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-600 mb-2">Rate the car</p>
+          <div class="flex gap-2">
+            <span 
+              *ngFor="let star of [1, 2, 3, 4, 5]" 
+              class="text-2xl cursor-pointer"
+              [class.text-yellow-400]="feedbackForm.get('carRating')?.value >= star"
+              [class.text-gray-200]="feedbackForm.get('carRating')?.value < star"
+              (click)="setCarRating(star)">
+              ★
+            </span>
+          </div>
+          <div *ngIf="feedbackForm.get('carRating')?.touched && feedbackForm.get('carRating')?.invalid" 
+               class="text-red-500 text-xs mt-1">
+            Please rate the car
+          </div>
+        </div>
+        
+        <!-- Service Rating -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-600 mb-2">Rate our service</p>
+          <div class="flex gap-2">
+            <span 
+              *ngFor="let star of [1, 2, 3, 4, 5]" 
+              class="text-2xl cursor-pointer"
+              [class.text-yellow-400]="feedbackForm.get('serviceRating')?.value >= star"
+              [class.text-gray-200]="feedbackForm.get('serviceRating')?.value < star"
+              (click)="setServiceRating(star)">
+              ★
+            </span>
+          </div>
+          <div *ngIf="feedbackForm.get('serviceRating')?.touched && feedbackForm.get('serviceRating')?.invalid" 
+               class="text-red-500 text-xs mt-1">
+            Please rate our service
+          </div>
+        </div>
+        
+        <!-- Comment -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-600 mb-2">Review</p>
+          <textarea 
+            formControlName="comment" 
+            rows="4" 
+            class="w-full p-3 border border-gray-200 rounded resize-none focus:outline-none focus:ring-1 focus:ring-gray-300"
+            placeholder="Add your comment">
+          </textarea>
+          <div *ngIf="feedbackForm.get('comment')?.touched && feedbackForm.get('comment')?.invalid" 
+               class="text-red-500 text-xs mt-1">
+            Please add a comment
+          </div>
+        </div>
+        
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" 
+             class="bg-red-50 text-red-700 text-sm p-3 rounded mb-4">
+          {{ errorMessage }}
+        </div>
+      </form>
     </div>
     
-    <div class="comment-container">
-      <p class="review">Review</p>
-      <textarea formControlName="comment" rows="4" class="add-review" placeholder="Add your Comment"></textarea>
+    <!-- Action Buttons -->
+    <div class="flex border-t border-gray-100">
+      <button 
+        (click)="onCancelClick()" 
+        class="flex-1 py-3 text-gray-700 font-normal hover:bg-gray-50 transition-colors rounded-bl-lg"
+        [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        [disabled]="feedbackForm.invalid || isSubmitting" 
+        (click)="onSubmitClick()"
+        class="flex-1 py-3 bg-red-600 text-white font-normal hover:bg-red-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed rounded-br-lg">
+        <span *ngIf="isSubmitting">Submitting...</span>
+        <span *ngIf="!isSubmitting">Submit</span>
+      </button>
     </div>
-  </form>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancelClick()" class="cancel-feedback">Cancel</button>
-  <button 
-    mat-button 
-    color="primary" 
-    [disabled]="feedbackForm.invalid" 
-    (click)="onSubmitClick()"
-    class="submit-feedback">
-    Submit
-  </button>
+  </div>
 </div>

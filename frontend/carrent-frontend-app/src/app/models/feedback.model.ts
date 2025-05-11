@@ -1,6 +1,7 @@
 // models/feedback.model.ts
 export interface Feedback {
   id?: string;
+  feedbackId?: string; 
   carId: string;
   clientId: string;
   bookingId: string;

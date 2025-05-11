@@ -7,7 +7,7 @@ import { ClientUser } from '../models/users';
     providedIn: 'root'
 })
 export class UserService {
-    private apiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api'
+    private apiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api'
     constructor(private http: HttpClient) { }
 
     getClients(): Observable<ClientUser[]> {

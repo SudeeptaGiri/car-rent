@@ -181,7 +181,7 @@ exports.getAllBookings = async (event) => {
         carDetails: car ? `${car.brand} ${car.model} ${car.year}` : 'N/A',
         carImage: car && car.images && car.images.length > 0 ? car.images[0] : null,
         carNumber: car ? car.carNumber : 'N/A',
-        carId: car ? car.carId : 'N/A',
+        carId: car ? car._id : 'N/A',
         pickupDateTime: booking.pickupDateTime,
         dropOffDateTime: booking.dropOffDateTime,
         pickupLocation: booking.pickupLocation,
@@ -229,7 +229,7 @@ exports.getUserBookings = async (event) => {
         bookingStatus: booking.bookingStatus,
         carImageUrl: car && car.images && car.images.length > 0 ? car.images[0] : '',
         carModel: car ? `${car.brand} ${car.model} ${car.year}` : 'N/A',
-        carId: car ? car.carId : 'N/A',
+        carId: car ? car._id : 'N/A',
         orderDetails: `#${booking.orderNumber} (${new Date(booking.createdAt).toLocaleDateString('en-GB', {
           day: '2-digit',
           month: '2-digit',
