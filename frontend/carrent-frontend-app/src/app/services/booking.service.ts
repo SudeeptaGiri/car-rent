@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, interval, of, throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Booking, BookingStatus, Feedback } from '../models/booking.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -10,139 +10,145 @@ import { HttpClient } from '@angular/common/http';
 export class BookingService {
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  private readonly BASE_STORAGE_KEY = 'bookings';
+  private apiUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api/bookings";
 
   constructor(private http: HttpClient) {
     this.loadBookingsForCurrentUser();
-    this.loadSampleBookings(); // Load sample bookings for testing
-    // Check booking statuses every second
-    interval(1000).subscribe(() => this.updateBookingStatuses());
+    // Check booking statuses periodically
+    interval(60000).subscribe(() => this.updateBookingStatuses());
   }
 
-  private getStorageKeyForUser(): string {
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-    const userEmail = currentUser.email;
-    return userEmail ? `${this.BASE_STORAGE_KEY}_${userEmail}` : this.BASE_STORAGE_KEY;
+  private getCurrentUserId(): string | null {
+    try {
+      const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+      return currentUser._id || null;
+    } catch (error) {
+      console.error('Error getting current user ID:', error);
+      return null;
+    }
   }
 
   // Load bookings for current user
   private loadBookingsForCurrentUser(): void {
-    const storageKey = this.getStorageKeyForUser();
-    const storedBookings = localStorage.getItem(storageKey);
-    console.log('Loading bookings with key:', storageKey);
-    console.log('Stored bookings raw:', storedBookings);
-    
-    if (storedBookings) {
-      try{
-      this.bookings = JSON.parse(storedBookings).map((booking: Booking) => ({
-        ...booking,
-        pickupDate: new Date(booking.pickupDate),
-        dropoffDate: new Date(booking.dropoffDate),
-        feedback: booking.feedback ? {
-          ...booking.feedback,
-          submittedAt: new Date(booking.feedback.submittedAt)
-        } : undefined
-      }));
-       // Update booking statuses and emit
-       this.updateBookingStatuses();
-       this.bookingsSubject.next([...this.bookings]);
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.log('No user ID found, not loading bookings');
+      this.bookingsSubject.next([]);
+      return;
+    }
 
-      //  console.log('Loaded bookings:', this.bookings);
-    } catch (error) {
-      console.error('Error parsing stored bookings:', error);
-      this.bookings = []; // Reset bookings if parsing fails
-    }
-    } else {
-      this.bookings = [];
-    }
-    
-    this.bookingsSubject.next([...this.bookings]);
+    this.http.get<{bookings: any[]}>(this.apiUrl)
+      .pipe(
+        tap(response => console.log('API response:', response)),
+        map(response => {
+          // Filter bookings for current user
+          return response.bookings
+            .filter(booking => booking.clientId === userId)
+            .map(booking => this.transformApiBooking(booking));
+        }),
+        catchError(error => {
+          console.error('Error fetching bookings:', error);
+          return of([]);
+        })
+      )
+      .subscribe(bookings => {
+        this.bookings = bookings;
+        this.updateBookingStatuses();
+        this.bookingsSubject.next([...this.bookings]);
+        console.log('Loaded user bookings:', this.bookings);
+      });
   }
 
-  // Save bookings for current user
-  private saveBookingsToStorage(): void {
-    const storageKey = this.getStorageKeyForUser();
-    localStorage.setItem(storageKey, JSON.stringify(this.bookings));
-  }
+  // Transform API booking to our Booking model
+  private transformApiBooking(apiBooking: any): Booking {
+    // Convert dates from strings to Date objects
+    const pickupDate = new Date(apiBooking.pickupDateTime);
+    const dropoffDate = new Date(apiBooking.dropOffDateTime);
+    
+    // Calculate number of days
+    const diffTime = Math.abs(dropoffDate.getTime() - pickupDate.getTime());
+    const numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
 
+    // Map API status to our BookingStatus enum
+    let status: BookingStatus;
+    switch(apiBooking.status) {
+      case 'RESERVED':
+        status = BookingStatus.RESERVED;
+        break;
+      case 'CANCELLED':
+        status = BookingStatus.CANCELLED;
+        break;
+      case 'SERVICE_STARTED':
+        status = BookingStatus.SERVICE_STARTED;
+        break;
+      case 'SERVICE_PROVIDED':
+        status = BookingStatus.SERVICE_PROVIDED;
+        break;
+      case 'BOOKING_FINISHED':
+        status = BookingStatus.BOOKING_FINISHED;
+        break;
+      default:
+        status = BookingStatus.RESERVED;
+    }
+
+    return {
+    id: apiBooking.bookingId,
+    carId: apiBooking.carId,
+    orderNumber: apiBooking.orderNumber,
+    // Adapt these fields to match your Booking model structure
+    carName: apiBooking.carDetails,
+    carImage: apiBooking.carImage,
+    // licensePlate: apiBooking.carNumber,
+    pickupDate: pickupDate,
+    dropoffDate: dropoffDate,
+    pickupLocation: apiBooking.pickupLocation || 'Default Location',
+    dropoffLocation: apiBooking.dropOffLocation || 'Default Location',
+    numberOfDays: numberOfDays,
+    totalPrice: apiBooking.totalPrice,
+    status: status,
+    feedback: apiBooking.feedback ? {
+      rating: apiBooking.feedback.rating,
+      comment: apiBooking.feedback.comment,
+      submittedAt: new Date(apiBooking.feedback.submittedAt)
+    } : undefined,
+    // createdAt: new Date(apiBooking.createdAt)
+  };
+}
+  
   // Get bookings for current user
   getBookings(): Observable<Booking[]> {
     return this.bookingsSubject.asObservable();
   }
 
-  // Add new booking
-  addBooking(booking: Booking): Observable<Booking> {
-    return new Observable<Booking>(observer => {
-      try {
-        const bookingsStr = localStorage.getItem('bookings');
-        const bookings: Booking[] = bookingsStr ? JSON.parse(bookingsStr) : [];
-        bookings.push(booking);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
-        observer.next(booking);
-        observer.complete();
-      } catch (error) {
-        observer.error(error);
-      }
-    });
+  // Refresh bookings from API
+  refreshBookings(): void {
+    this.loadBookingsForCurrentUser();
   }
 
-  // // Cancel booking
-  // cancelBooking(bookingId: string): void {
-  //   const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
-  //   if (bookingIndex !== -1) {
-  //     this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
-  //     this.saveBookingsToStorage();
-  //     this.bookingsSubject.next([...this.bookings]);
-  //   }
-  // }
+  // Add new booking
+  addBooking(booking: Booking): Observable<Booking> {
+    // Implementation would depend on your API
+    return of(booking); // Placeholder
+  }
 
-  // Clear all bookings for current user when logging out
+  // Cancel booking
+  cancelBooking(bookingId: string): Observable<any> {
+    // Implementation would depend on your API
+    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    if (bookingIndex !== -1) {
+      this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
+      this.bookingsSubject.next([...this.bookings]);
+      return of({ success: true });
+    }
+    return throwError(() => new Error('Booking not found'));
+  }
+
+  // Clear all bookings when logging out
   clearUserBookings(): void {
-    const storageKey = this.getStorageKeyForUser();
-    localStorage.removeItem(storageKey);
     this.bookings = [];
     this.bookingsSubject.next([]);
   }
-  
 
-  private loadSampleBookings(): void {
-    // Set specific fixed dates for the bookings
-    // Assuming today is April 22, 2023 for example
-    
-    // Booking 1: Reserved for future date
-    const pickup1 = new Date('2025-04-24T10:00:00');
-    const dropoff1 = new Date('2025-04-28T16:00:00');
-    
-    // Booking 2: Reserved for further future date
-    const pickup2 = new Date('2025-04-26T10:00:00');
-    const dropoff2 = new Date('2025-05-01T16:00:00');
-    
-    // Booking 3: Service started (pickup date in past, dropoff in future)
-    const pickup3 = new Date('2025-04-21T10:00:00');
-    const dropoff3 = new Date('2025-04-25T16:00:00');
-    
-    // Booking 4: Cancelled booking
-    const pickup4 = new Date('2025-04-15T10:00:00');
-    const dropoff4 = new Date('2025-04-20T16:00:00');
-    
-    // Booking 5: Service provided (both dates in past)
-    const pickup5 = new Date('2025-04-12T10:00:00');
-    const dropoff5 = new Date('2025-04-17T16:00:00');
-    
-    // Booking 6: Booking finished with feedback
-    const pickup6 = new Date('2025-04-07T10:00:00');
-    const dropoff6 = new Date('2025-04-12T16:00:00');
-    const feedbackDate = new Date('2025-04-13T12:00:00');
-
-    // Sample data
-    
-    // Initialize the status based on current date
-    this.updateBookingStatuses();
-    
-    // Emit the initial bookings
-    this.bookingsSubject.next([...this.bookings]);
-  }
-  
   private updateBookingStatuses(): void {
     const now = new Date();
     let updated = false;
@@ -189,15 +195,13 @@ export class BookingService {
     }
   }
   
-  
   getBookingsByStatus(status: BookingStatus | 'ALL'): Observable<Booking[]> {
     return this.getBookings().pipe(
       map(bookings => status === 'ALL' ? bookings : bookings.filter(b => b.status === status))
     );
   }
   
-  
-  submitFeedback(bookingId: string, rating: number, comment: string): void {
+  submitFeedback(bookingId: string, rating: number, comment: string): Observable<any> {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
       this.bookings[bookingIndex].feedback = {
@@ -207,7 +211,9 @@ export class BookingService {
       };
       this.bookings[bookingIndex].status = BookingStatus.BOOKING_FINISHED;
       this.bookingsSubject.next([...this.bookings]);
+      return of({ success: true });
     }
+    return throwError(() => new Error('Booking not found'));
   }
   
   isWithin12Hours(booking: Booking): boolean {
@@ -215,7 +221,7 @@ export class BookingService {
     const hoursRemaining = (booking.pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     return hoursRemaining <= 12 && hoursRemaining > 0;
   }
-  // Add this method to the BookingService class
+
   updateBookingDates(bookingId: string, pickupDate: Date, dropoffDate: Date): Observable<any> {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
     if (bookingIndex !== -1) {
@@ -233,17 +239,12 @@ export class BookingService {
         totalPrice: numberOfDays * pricePerDay
       };
       
-      // Save to localStorage
-      this.saveBookingsToStorage();
-      
       // Emit updated bookings
       this.bookingsSubject.next([...this.bookings]);
       
-      // Return an observable that completes immediately
       return of({ success: true });
     }
     
-    // Return an error observable if booking not found
     return throwError(() => new Error('Booking not found'));
   }
 }

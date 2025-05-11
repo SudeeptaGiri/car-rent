@@ -9,7 +9,6 @@ import { FeedbackDialogComponent } from '../feedback-dialog/feedback-dialog.comp
 import { ViewFeedbackDialogComponent } from '../view-feedback-dialog/view-feedback-dialog.component';
 import { BookingCancelledDialogComponent } from '../booking-cancelled-dialog/booking-cancelled-dialog.component';
 import { Router } from '@angular/router';
-import { CarDetails } from '../../models/car.interface';
 import { CarService } from '../../services/car.service';
 
 @Component({
@@ -23,47 +22,44 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   filteredBookings: Booking[] = [];
   currentTab: BookingStatus | 'ALL' = 'ALL';
   dropdownOpen = false;
+  isLoading = true;
   
   BookingStatus = BookingStatus; // Make enum available to template
   
   private subscription: Subscription = new Subscription();
   
   constructor(
-    private carService: CarService,
+    private bookingService: BookingService,
     private dialog: MatDialog,
-    private bookingService: BookingService, 
-    private router: Router // Add this
-  ) {
-  }
+    private router: Router
+  ) {}
+  
   navigateToEditBooking(booking: Booking): void {
     this.router.navigate(['/edit-booking', booking.id]);
   }
   
-  // In MyBookingsComponent
-ngOnInit(): void {
-  this.subscription.add(
-      this.carService.bookings$.subscribe({
+  ngOnInit(): void {
+    this.isLoading = true;
+    // Refresh bookings to ensure we get the latest data
+    this.bookingService.refreshBookings();
+    
+    this.subscription.add(
+      this.bookingService.getBookings().subscribe({
         next: (bookings) => {
-          console.log('Raw bookings received:', bookings);
-          if (bookings && bookings.length > 0) {
-              this.bookings = [...bookings];
-              console.log('Bookings array after assignment:', this.bookings);
-              this.filteredBookings = [...bookings];
-              console.log('FilteredBookings after assignment:', this.filteredBookings);
-              this.filterBookings();
-          } else {
-              this.bookings = [];
-              this.filteredBookings = [];
-          }
-      },
-      error: (error) => {
+          console.log('Bookings received:', bookings);
+          this.isLoading = false;
+          this.bookings = [...bookings];
+          this.filterBookings();
+        },
+        error: (error) => {
           console.error('Error loading bookings:', error);
+          this.isLoading = false;
           this.bookings = [];
           this.filteredBookings = [];
-      }
+        }
       })
-  );
-}
+    );
+  }
 
   private filterBookings(): void {
     if (this.currentTab === 'ALL') {
@@ -71,7 +67,7 @@ ngOnInit(): void {
     } else {
       this.filteredBookings = this.bookings.filter(b => b.status === this.currentTab);
     }
-    console.log('Filtered bookings after filter:', this.filteredBookings);
+    console.log('Filtered bookings:', this.filteredBookings);
   }
   
   ngOnDestroy(): void {
@@ -84,9 +80,7 @@ ngOnInit(): void {
   }
   
   isWithin12Hours(booking: Booking): boolean {
-    const now = new Date();
-        const hoursRemaining = (booking.pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-        return hoursRemaining <= 12 && hoursRemaining > 0;
+    return this.bookingService.isWithin12Hours(booking);
   }
   
   toggleDropdown(): void {
@@ -104,27 +98,30 @@ ngOnInit(): void {
   
   getTabDisplayName(tab: BookingStatus | 'ALL'): string {
     if (tab === 'ALL') return 'All bookings';
-    return tab;
+    return tab.replace('_', ' ');
   }
   
   openCancelDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(CancelBookingDialogComponent, {
-        width: '400px',
-        position: { top: '40vh', right: '0px' },
-        data: { booking }
+      width: '400px',
+      position: { top: '40vh', right: '0px' },
+      data: { booking }
     });
     
     dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-            // Changed from bookingService to carService
-            this.carService.cancelBooking(booking.id);
+      if (result) {
+        this.bookingService.cancelBooking(booking.id).subscribe({
+          next: () => {
             this.dialog.open(BookingCancelledDialogComponent, {
-                width: '400px',
-                position: { top: '40vh', right: '0px' },
+              width: '400px',
+              position: { top: '40vh', right: '0px' },
             });
-        }
+          },
+          error: (error) => console.error('Error cancelling booking:', error)
+        });
+      }
     });
-}
+  }
   
   openFeedbackDialog(booking: Booking): void {
     const dialogRef = this.dialog.open(FeedbackDialogComponent, {
@@ -135,7 +132,10 @@ ngOnInit(): void {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.carService.submitFeedback(booking.id, result.rating, result.comment);
+        this.bookingService.submitFeedback(booking.id, result.rating, result.comment).subscribe({
+          next: () => console.log('Feedback submitted successfully'),
+          error: (error) => console.error('Error submitting feedback:', error)
+        });
       }
     });
   }
