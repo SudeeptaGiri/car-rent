@@ -34,10 +34,10 @@ export interface LocationSuggestion {
 })
 export class CarService {
   // MongoDB API endpoint
-  private apiBaseUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api";
+  private apiBaseUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api";
 
   // Bookings API endpoint
-  private bookingsApiUrl = 'https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api';
+  private bookingsApiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
   
   // Keep JSON URL for fallback during development/transition
   private jsonUrl = 'assets/cars.json';

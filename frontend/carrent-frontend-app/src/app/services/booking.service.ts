@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 export class BookingService {
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  private apiUrl = "https://nhhdawlrb2.execute-api.eu-west-3.amazonaws.com/api/bookings";
+  private apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/bookings";
 
   constructor(private http: HttpClient) {
     this.loadBookingsForCurrentUser();
@@ -87,10 +87,13 @@ export class BookingService {
       case 'BOOKING_FINISHED':
         status = BookingStatus.BOOKING_FINISHED;
         break;
+      case 'COMPLETED':
+        status = BookingStatus.COMPLETED;
+        break;
       default:
         status = BookingStatus.RESERVED;
     }
-
+    console.log('API BOOKINGS:', apiBooking);
     return {
     id: apiBooking.bookingId,
     carId: apiBooking.carId,
@@ -142,6 +145,7 @@ export class BookingService {
     }
     return throwError(() => new Error('Booking not found'));
   }
+  
 
   // Clear all bookings when logging out
   clearUserBookings(): void {

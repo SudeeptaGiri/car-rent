@@ -1,5 +1,9 @@
-import { Component, OnInit, Input, HostListener } from '@angular/core';
+// feedbacks.component.ts
+import { Component, OnInit, Input, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FeedbackService } from '../../services/feedback.service';
+import { Feedback } from '../../models/feedback.model';
+import { Subscription } from 'rxjs';
 
 interface CarImage {
   id?: string;
@@ -35,37 +39,32 @@ interface Car {
 
 @Component({
   selector: 'app-feedback',
-  standalone: true, // Keep it standalone
+  standalone: true,
   imports: [CommonModule],
-  templateUrl: './feedbacks.component.html', // Changed from feedback.component.html
-  styleUrls: ['./feedbacks.component.css'] // Changed from feedback.component.css
+  templateUrl: './feedbacks.component.html',
+  styleUrls: ['./feedbacks.component.css']
 })
-export class FeedbackComponent implements OnInit {
+export class FeedbackComponent implements OnInit, OnDestroy {
   @Input() cars: Car[] = [];
   
-  // Hardcoded order history and date
-  orderHistory = '#2437 (06.11.24)';
-  reviewDate = '05.10.2024';
-  
-  // Display cars for feedback
+  // Display cars and feedback
   displayCars: Car[] = [];
+  recentFeedback: Feedback[] = [];
   currentIndex = 0;
   isMobile = false;
+  isLoading = true;
   
-  constructor() {}
+  private subscription = new Subscription();
+  
+  constructor(private feedbackService: FeedbackService) {}
   
   ngOnInit(): void {
-    console.log('FeedbackComponent initialized, cars input:', this.cars);
+    console.log('FeedbackComponent initialized');
     this.checkScreenSize();
+    this.loadRecentFeedback();
     
+    // Add scroll event listener
     setTimeout(() => {
-      console.log('Cars data after timeout:', this.cars?.length || 0, 'cars');
-      if (this.cars && this.cars.length > 0) {
-        console.log('First car sample:', this.cars[0].brand, this.cars[0].model);
-      }
-      this.updateDisplayCars();
-      
-      // Add scroll event listener
       const container = document.querySelector('.scrollable-container');
       if (container) {
         container.addEventListener('scroll', () => {
@@ -78,6 +77,28 @@ export class FeedbackComponent implements OnInit {
     }, 500);
   }
   
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+  
+  loadRecentFeedback(): void {
+    this.isLoading = true;
+    this.subscription.add(
+      this.feedbackService.getRecentFeedback(10).subscribe({
+        next: (feedback) => {
+          console.log('Recent feedback loaded:', feedback);
+          this.recentFeedback = feedback;
+          this.isLoading = false;
+          this.updateDisplayCars();
+        },
+        error: (error) => {
+          console.error('Error loading recent feedback:', error);
+          this.isLoading = false;
+        }
+      })
+    );
+  }
+  
   @HostListener('window:resize')
   checkScreenSize() {
     this.isMobile = window.innerWidth < 768;
@@ -85,25 +106,25 @@ export class FeedbackComponent implements OnInit {
   }
   
   updateDisplayCars(): void {
-    if (!this.cars || this.cars.length === 0) {
-      console.warn('No cars data available for feedback component');
+    if (this.recentFeedback && this.recentFeedback.length > 0) {
+      // Use the feedback data directly
+      console.log(`Displaying ${this.recentFeedback.length} recent feedback items`);
+    } else if (this.cars && this.cars.length > 0) {
+      // Fallback to cars input if no feedback is available
+      this.displayCars = this.cars;
+      console.log(`Displaying all ${this.cars.length} cars for scrolling`);
+    } else {
+      console.warn('No feedback or cars data available');
       this.displayCars = [];
-      return;
     }
-    
-    this.displayCars = this.cars;
-  console.log(`Displaying all ${this.cars.length} cars for scrolling`);
   }
 
-  // Add this new method to check scroll position for enabling/disabling nav buttons
   checkScrollPosition(): void {
     const container = document.querySelector('.scrollable-container');
     if (container) {
-      // Get the leftmost visible card index
       const scrollLeft = container.scrollLeft;
       const cardWidth = 440; // card width + gap
       
-      // Enable/disable navigation buttons based on scroll position
       const prevButton = document.querySelector('.nav-button.prev') as HTMLButtonElement;
       const nextButton = document.querySelector('.nav-button.next') as HTMLButtonElement;
       
@@ -119,7 +140,6 @@ export class FeedbackComponent implements OnInit {
   }
   
   nextCars(): void {
-    // Calculate scroll amount based on card width + gap (400px + 40px)
     const scrollAmount = 440; 
     const container = document.querySelector('.scrollable-container');
     if (container) {
@@ -128,7 +148,6 @@ export class FeedbackComponent implements OnInit {
   }
   
   previousCars(): void {
-    // Calculate scroll amount based on card width + gap (400px + 40px)
     const scrollAmount = 440;
     const container = document.querySelector('.scrollable-container');
     if (container) {
@@ -136,36 +155,90 @@ export class FeedbackComponent implements OnInit {
     }
   }
   
-  // Helper method to get primary image URL
-  getPrimaryImageUrl(car: Car): string {
-    if (!car.images || car.images.length === 0) {
-      return 'https://via.placeholder.com/300x200?text=Car+Image';
+  // Helper method to get image URL from feedback or car
+  getImageUrl(item: Feedback | Car): string {
+    if ('carImage' in item && item.carImage) {
+      return item.carImage;
+    } else if ('images' in item && item.images && item.images.length > 0) {
+      const imageWithUrl = item.images.find(img => img && img.url);
+      if (imageWithUrl && imageWithUrl.url) {
+        return imageWithUrl.url;
+      }
     }
     
-    // Check if any image has a URL
-    const imageWithUrl = car.images.find(img => img && img.url);
-    if (imageWithUrl && imageWithUrl.url) {
-      return imageWithUrl.url;
+    // Fallback URL
+    const name : any = 'carDetails' in item ? item.carDetails : 
+                 'brand' in item ? `${item.brand} ${item.model}` : 'Car';
+    return `https://via.placeholder.com/300x200?text=${encodeURIComponent(name)}`;
+  }
+  
+  // Helper method to get car details
+  getCarDetails(item: Feedback | Car): string {
+    if ('carDetails' in item) {
+      return item.carDetails || 'Unknown Car';
+    } else if ('brand' in item) {
+      return `${item.brand} ${item.model} ${item.year}`;
     }
-    
-    // Use fallback URL based on car brand
-    return `https://via.placeholder.com/300x200?text=${car.brand}+${car.model}`;
+    return 'Unknown Car';
   }
   
-  // Helper method to get first review user
-  getFirstReviewUser(car: Car): string {
-    return car.reviews?.content?.[0]?.userName || 'Anonymous User';
+  // Helper method to get order number
+  getOrderNumber(item: Feedback | Car): string {
+    if ('orderNumber' in item) {
+      return `#${item.orderNumber}`;
+    }
+    return '#0000';
   }
   
-  // Helper method to get first review comment
-  getFirstReviewComment(car: Car): string {
-    return car.reviews?.content?.[0]?.comment || 'No comment provided';
+  // Helper method to get feedback date
+  getFeedbackDate(item: Feedback | Car): string {
+    if ('date' in item && item.date) {
+      const date = new Date(item.date);
+      return date.toLocaleDateString('en-US', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: '2-digit' 
+      });
+    }
+    return '00.00.00';
+  }
+  
+  // Helper method to get author name
+  getAuthorName(item: Feedback | Car): string {
+    if ('author' in item) {
+      return item.author;
+    } else if ('reviews' in item && item.reviews?.content?.length > 0) {
+      return item.reviews.content[0].userName || 'Anonymous';
+    }
+    return 'Anonymous';
+  }
+  
+  // Helper method to get feedback text
+  getFeedbackText(item: Feedback | Car): string {
+    if ('feedbackText' in item) {
+      return item.feedbackText;
+    } else if ('reviews' in item && item.reviews?.content?.length > 0) {
+      return item.reviews.content[0].comment || 'No comment provided';
+    }
+    return 'No feedback provided';
+  }
+  
+  // Helper method to get rating
+  getRating(item: Feedback | Car): number {
+    if ('carRating' in item) {
+      return item.carRating;
+    } else if ('rating' in item) {
+      return item.rating;
+    }
+    return 0;
   }
   
   // Helper to get city from location
-  getCity(car: Car): string {
-    if (!car.location) return 'Unknown';
-    return car.location.split(',')[0].trim();
+  getCity(item: Feedback | Car): string {
+    if ('location' in item && item.location) {
+      return item.location.split(',')[0].trim();
+    }
+    return 'Unknown';
   }
   
   // Helper to get star rating display

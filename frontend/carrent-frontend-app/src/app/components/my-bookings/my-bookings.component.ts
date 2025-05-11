@@ -10,6 +10,7 @@ import { ViewFeedbackDialogComponent } from '../view-feedback-dialog/view-feedba
 import { BookingCancelledDialogComponent } from '../booking-cancelled-dialog/booking-cancelled-dialog.component';
 import { Router } from '@angular/router';
 import { CarService } from '../../services/car.service';
+import { FeedbackService } from '../../services/feedback.service';
 
 @Component({
   selector: 'app-my-bookings',
@@ -31,7 +32,8 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   constructor(
     private bookingService: BookingService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private feedbackService: FeedbackService,
   ) {}
   
   navigateToEditBooking(booking: Booking): void {
@@ -49,6 +51,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
           console.log('Bookings received:', bookings);
           this.isLoading = false;
           this.bookings = [...bookings];
+          console.log('All bookings:', this.bookings);
           this.filterBookings();
         },
         error: (error) => {
@@ -123,7 +126,16 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     });
   }
   
-  openFeedbackDialog(booking: Booking): void {
+openFeedbackDialog(booking: Booking): void {
+    // Check if the booking is eligible for feedback
+    if (booking.status !== BookingStatus.SERVICE_PROVIDED && 
+        booking.status !== BookingStatus.COMPLETED) {
+      // Show an error message
+      
+      return;
+    }
+    console.log('Opening feedback dialog for booking:', booking);
+    // Show feedback dialog for eligible bookings
     const dialogRef = this.dialog.open(FeedbackDialogComponent, {
       width: '400px',
       position: { top: '40vh', right: '0px' },
@@ -131,11 +143,17 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     });
     
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.bookingService.submitFeedback(booking.id, result.rating, result.comment).subscribe({
-          next: () => console.log('Feedback submitted successfully'),
-          error: (error) => console.error('Error submitting feedback:', error)
-        });
+      if (result && result.success) {
+        // Update the booking status to reflect feedback submission
+        booking.status = BookingStatus.BOOKING_FINISHED;
+        booking.feedback = {
+          rating: result.rating,
+          comment: result.comment,
+          submittedAt: new Date()
+        };
+        
+        // Refresh bookings to get the updated list
+        this.bookingService.refreshBookings();
       }
     });
   }
