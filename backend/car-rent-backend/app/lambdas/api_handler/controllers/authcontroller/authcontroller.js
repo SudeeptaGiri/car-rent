@@ -40,15 +40,30 @@ exports.signUp = async (event) => {
     if (!firstName || !lastName || !email || !password) {
       return response(400, { message: 'All fields are required' });
     }
+    
 
     // Convert email to lowercase for consistent comparison
     const normalizedEmail = email.toLowerCase();
 
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
-      return response(400, { message: 'User already exists with this email' });
+      return response(409, { message: 'User already exists with this email' });
+    }
+    if (password.length < 6 || /[A-Z]/.test(password) === false || /[0-9]/.test(password) === false) {
+      return response(400, { message: 'Password must be at least 6 characters long and contain at least one uppercase letter and one number' });
     }
 
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) === false) {
+      return response(400, { message: 'Invalid email format' });
+    }
+
+    if(firstName.length > 50  || lastName.length > 50) {
+      return response(400, { message: 'First name and last name must be less than 50 characters' });
+    }
+    if (/[^a-zA-Z]/.test(firstName) || /[^a-zA-Z]/.test(lastName)) {
+      return response(400, { message: 'First name and last name must only contain letters' });
+    }
+    
     // Check if the email is in the support agent database
     const isSupportAgent = await SupportAgentEmail.findOne({ email: normalizedEmail });
     

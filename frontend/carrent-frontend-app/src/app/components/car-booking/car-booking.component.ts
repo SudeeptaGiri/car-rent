@@ -148,6 +148,9 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     // Get user info
     this.userInfo = this.carService.getUserInfo();
     this.locationInfo = this.carService.getMockLocationInfo();
+    this.isUserSupportAgent = this.userInfo.role === 'SupportAgent';
+    console.log('User is Support Agent:', this.isUserSupportAgent);
+    
     // Initialize form
     this.initForm();
     this.loadClients();

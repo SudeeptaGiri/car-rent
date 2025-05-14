@@ -21,6 +21,7 @@ import { BookingSuccessDialogComponent } from '../components/booking-success-dia
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import * as moment from 'moment';
+import { AuthService } from '../services/auth.service';
 
 export interface LocationSuggestion {
   displayName: string;
@@ -38,25 +39,26 @@ export class CarService {
    // Bookings API endpoint
    private bookingsApiUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
   
-   // Keep JSON URL for fallback during development/transition
-   private jsonUrl = 'assets/cars.json';
-   
-   private readonly STORAGE_KEY = 'bookings';
-   private bookings: Booking[] = [];
-   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-   bookings$ = this.bookingsSubject.asObservable();
-   
-   constructor(
-     private http: HttpClient,
-     private dialog: MatDialog,
-     private router: Router
-   ) {
-     this.loadBookingsForCurrentUser();
-     if (this.bookings.length === 0) {
-       this.loadSampleBookings(); 
-     }
-     interval(1000).subscribe(() => this.updateBookingStatuses());
-   }
+  // Keep JSON URL for fallback during development/transition
+  private jsonUrl = 'assets/cars.json';
+  
+  private readonly STORAGE_KEY = 'bookings';
+  private bookings: Booking[] = [];
+  private bookingsSubject = new BehaviorSubject<Booking[]>([]);
+  bookings$ = this.bookingsSubject.asObservable();
+  
+  constructor(
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.loadBookingsForCurrentUser();
+    if (this.bookings.length === 0) {
+      this.loadSampleBookings(); 
+    }
+    interval(1000).subscribe(() => this.updateBookingStatuses());
+  }
 
   submitFeedback(bookingId: string, rating: number, comment: string): void {
     const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
@@ -70,39 +72,41 @@ export class CarService {
       this.bookingsSubject.next([...this.bookings]);
     }
   }
+
   private loadBookingsForCurrentUser(): void {
     const storageKey = this.getStorageKeyForUser();
     const storedBookings = localStorage.getItem(storageKey);
     console.log('Loading bookings with key:', storageKey);
     
     if (storedBookings) {
-        try {
-            const parsedBookings = JSON.parse(storedBookings);
-            this.bookings = parsedBookings.map((booking: any) => ({
-                ...booking,
-                pickupDate: new Date(booking.pickupDate),
-                dropoffDate: new Date(booking.dropoffDate),
-                feedback: booking.feedback ? {
-                    ...booking.feedback,
-                    submittedAt: new Date(booking.feedback.submittedAt)
-                } : undefined
-            }));
-            
-            // Update booking statuses and emit
-            this.updateBookingStatuses();
-            this.bookingsSubject.next(this.bookings);
-            
-            console.log('Loaded bookings:', this.bookings);
-        } catch (error) {
-            console.error('Error parsing bookings:', error);
-            this.bookings = [];
-            this.bookingsSubject.next([]); 
-        }
-    } else {
+      try {
+        const parsedBookings = JSON.parse(storedBookings);
+        this.bookings = parsedBookings.map((booking: any) => ({
+          ...booking,
+          pickupDate: new Date(booking.pickupDate),
+          dropoffDate: new Date(booking.dropoffDate),
+          feedback: booking.feedback ? {
+            ...booking.feedback,
+            submittedAt: new Date(booking.feedback.submittedAt)
+          } : undefined
+        }));
+        
+        // Update booking statuses and emit
+        this.updateBookingStatuses();
+        this.bookingsSubject.next(this.bookings);
+        
+        console.log('Loaded bookings:', this.bookings);
+      } catch (error) {
+        console.error('Error parsing bookings:', error);
         this.bookings = [];
         this.bookingsSubject.next([]); 
+      }
+    } else {
+      this.bookings = [];
+      this.bookingsSubject.next([]); 
     }
-}
+  }
+
   private loadSampleBookings(): void {
     // Booking 4: Cancelled booking
     const pickup4 = new Date('2025-04-15T10:00:00');
@@ -127,8 +131,8 @@ export class CarService {
         pickupDate: pickup4,
         dropoffDate: dropoff4,
         status: BookingStatus.CANCELLED,
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       },
@@ -141,8 +145,8 @@ export class CarService {
         pickupDate: pickup5,
         dropoffDate: dropoff5,
         status: BookingStatus.SERVICE_PROVIDED,
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       },
@@ -160,8 +164,8 @@ export class CarService {
           comment: 'Great car, excellent service!',
           submittedAt: feedbackDate
         },
-        totalPrice:900,
-        numberOfDays:5,
+        totalPrice: 900,
+        numberOfDays: 5,
         pickupLocation: 'Hyderabad',
         dropoffLocation: 'Chennai'
       }
@@ -172,7 +176,7 @@ export class CarService {
     
     // Emit the initial bookings
     this.bookingsSubject.next([...this.bookings]);
-}
+  }
 
   getBookings(): Observable<Booking[]> {
     // Simply return the observable without checking localStorage
@@ -242,7 +246,6 @@ export class CarService {
     });
     
     if (updated) {
-      // this.saveBookingsToStorage();
       this.bookingsSubject.next([...this.bookings]);
     }
   }
@@ -357,6 +360,8 @@ export class CarService {
         }
       });
   }
+
+  // ==================== CAR DATA METHODS ====================
 
   private getStorageKeyForUser(): string {
     const currentUser = this.getUserFromLocalStorage();
@@ -743,6 +748,7 @@ export class CarService {
     // Recalculate total price
     component.calculateTotalPrice();
   }
+  
   searchLocations(query: string): Observable<LocationSuggestion[]> {
     if (query.trim().length < 2) {
       return of([]);
@@ -858,7 +864,6 @@ export class CarService {
       formValid && 
       !this.isLocationInvalid(pickupLocation) && 
       !this.isLocationInvalid(dropoffLocation)
-      // !this.isDuplicateLocations(pickupLocation, dropoffLocation)
     );
   }
 
@@ -920,7 +925,8 @@ export class CarService {
     return {
       fullName: 'John Doe',
       email: 'john.doe@example.com',
-      phone: '+38 067 123 45 67'
+      phone: '+38 067 123 45 67',
+      role: "Visitor"
     };
   }
 
@@ -954,7 +960,8 @@ export class CarService {
           `${user.firstName} ${user.lastName}` : 
           (user.fullName || user.name || 'User'),
         email: user.email || '',
-        phone: user.phone || this.getMockUserInfo().phone
+        phone: user.phone || this.getMockUserInfo().phone,
+        role: user.role || 'Visitor'
       };
     } else {
       // If no user in localStorage, use mock data
@@ -962,47 +969,41 @@ export class CarService {
     }
   }
 
-
-  // Updated updateBooking method in car.service.ts
-updateBooking(booking: Booking): Observable<Booking> {
-  return new Observable<Booking>(observer => {
-    try {
-      // Find the booking in our internal array
-      const index = this.bookings.findIndex(b => b.id === booking.id);
-      
-      if (index !== -1) {
-        // Update the booking in our array
-        this.bookings[index] = {
-          ...booking,
-          // Ensure dates are Date objects
-          pickupDate: new Date(booking.pickupDate),
-          dropoffDate: new Date(booking.dropoffDate)
-        };
+  updateBooking(booking: Booking): Observable<Booking> {
+    return new Observable<Booking>(observer => {
+      try {
+        // Find the booking in our internal array
+        const index = this.bookings.findIndex(b => b.id === booking.id);
         
-        // Save to localStorage using the correct key
-        // this.saveBookingsToStorage();
-        
-        // Emit updated bookings
-        this.bookingsSubject.next([...this.bookings]);
-        
-        // Return success
-        observer.next(this.bookings[index]);
-        observer.complete();
-      } else {
-        // Booking not found
-        observer.error(new Error('Booking not found'));
+        if (index !== -1) {
+          // Update the booking in our array
+          this.bookings[index] = {
+            ...booking,
+            // Ensure dates are Date objects
+            pickupDate: new Date(booking.pickupDate),
+            dropoffDate: new Date(booking.dropoffDate)
+          };
+          
+          // Emit updated bookings
+          this.bookingsSubject.next([...this.bookings]);
+          
+          // Return success
+          observer.next(this.bookings[index]);
+          observer.complete();
+        } else {
+          // Booking not found
+          observer.error(new Error('Booking not found'));
+        }
+      } catch (error) {
+        console.error('Error updating booking:', error);
+        observer.error(error);
       }
-    } catch (error) {
-      console.error('Error updating booking:', error);
-      observer.error(error);
-    }
-  });
-}
+    });
+  }
 
-// Add this helper method to car.service.ts
-private getBookingIndex(bookingId: string): number {
-  return this.bookings.findIndex(b => b.id === bookingId);
-}
+  private getBookingIndex(bookingId: string): number {
+    return this.bookings.findIndex(b => b.id === bookingId);
+  }
 
   getBookingById(id: string): Observable<Booking | undefined> {
     return this.getBookings().pipe(

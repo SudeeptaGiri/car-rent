@@ -1,0 +1,290 @@
+<app-header></app-header>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <div class="download-container" *ngIf="getFilteredData().length > 0">
+      <button class="download-btn" (click)="toggleDownloadMenu()">
+        Download <i class="fa fa-download"></i>
+      </button>
+      <div class="download-menu" *ngIf="downloadMenuOpen">
+        <button class="export-btn export-pdf" (click)="downloadReport('pdf')">Export PDF</button>
+        <button class="export-btn" (click)="downloadReport('xls')">Export XLS</button>
+        <button class="export-btn" (click)="downloadReport('csv')">Export CSV</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="filters-container">
+    <div class="filter-group">
+      <label for="report-type">Report type</label>
+      <div class="select-wrapper">
+        <select id="report-type" [(ngModel)]="selectedReportType">
+          <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+        </select>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label for="period-start">Period</label>
+      <div class="date-range">
+        <input type="date" id="period-start" [(ngModel)]="selectedPeriodStart">
+        <span>-</span>
+        <input type="date" id="period-end" [(ngModel)]="selectedPeriodEnd">
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <label for="location">Location</label>
+      <div class="select-wrapper">
+        <select id="location" [(ngModel)]="selectedLocation">
+          <option value="">All Locations</option>
+          <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+        </select>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+    </div>
+    
+    <div class="filter-actions">
+      <button class="filter-btn" (click)="applyFilters()">Apply Filters</button>
+    </div>
+    
+    <div class="create-report-container">
+      <button class="create-report-btn" (click)="openModal()">Create report</button>
+    </div>
+  </div>
+  
+  <!-- Success/Error Messages -->
+  <div class="message-container">
+    <div class="success-message" *ngIf="successMessage">
+      <i class="fa fa-check-circle"></i> {{ successMessage }}
+      <button class="close-message" (click)="successMessage = ''">×</button>
+    </div>
+    <div class="error-message" *ngIf="errorMessage">
+      <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+      <button class="close-message" (click)="errorMessage = ''">×</button>
+    </div>
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading data...</div>
+  </div>
+  
+  <div class="table-container" *ngIf="!isLoading">
+    <!-- Sales Report Table -->
+    <div *ngIf="selectedReportType === 'Sales report' && getFilteredData().length > 0" class="table-responsive">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Period start</th>
+            <th>Period end</th>
+            <th>Location</th>
+            <th>Car model</th>
+            <th>Car ID</th>
+            <th>Days of rent per car</th>
+            <th>Reservations during period</th>
+            <th>Mileage at the beginning (km)</th>
+            <th>Mileage at the end (km)</th>
+            <th>Total mileage (km)</th>
+            <th>Average mileage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of getFilteredData()">
+            <td>{{ displayDate(item.periodStart) }}</td>
+            <td>{{ displayDate(item.periodEnd) }}</td>
+            <td>{{ item.location }}</td>
+            <td>{{ item.carModel }}</td>
+            <td>{{ item.carId }}</td>
+            <td>{{ item.daysOfRent }}</td>
+            <td>{{ item.reservations }}</td>
+            <td>{{ item.mileageStart }}</td>
+            <td>{{ item.mileageEnd }}</td>
+            <td>{{ item.totalMileage }}</td>
+            <td>{{ item.averageMileage }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Performance Report Table -->
+    <div *ngIf="selectedReportType === 'Staff performance' && getFilteredData().length > 0" class="table-responsive">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Staff Member</th>
+            <th>Position</th>
+            <th>Location</th>
+            <th>Total Bookings</th>
+            <th>Total Revenue (€)</th>
+            <th>Customer Rating</th>
+            <th>Response Time (min)</th>
+            <th>Completion Rate (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of getFilteredData()">
+            <td>{{ item.staffMember }}</td>
+            <td>{{ item.position }}</td>
+            <td>{{ item.location }}</td>
+            <td>{{ item.totalBookings }}</td>
+            <td>{{ item.totalRevenue }}</td>
+            <td>{{ item.customerRating }}</td>
+            <td>{{ item.responseTime }}</td>
+            <td>{{ item.completionRate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div *ngIf="getFilteredData().length === 0 && !isLoading" class="no-data">
+      No data available for the selected filters.
+    </div>
+  </div>
+  
+  <!-- Modal for creating a report -->
+  <div class="modal" *ngIf="showModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create {{ selectedReportType }}</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Sales Report Form -->
+        <form *ngIf="selectedReportType === 'Sales report'">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-period-start">Period Start</label>
+              <input type="date" id="new-period-start" [(ngModel)]="newReport.periodStart" name="periodStart">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-period-end">Period End</label>
+              <input type="date" id="new-period-end" [(ngModel)]="newReport.periodEnd" name="periodEnd">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-location">Location</label>
+              <select id="new-location" [(ngModel)]="newReport.location" name="location">
+                <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="new-car-model">Car Model</label>
+              <input type="text" id="new-car-model" [(ngModel)]="newReport.carModel" name="carModel">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-car-id">Car ID</label>
+              <input type="text" id="new-car-id" [(ngModel)]="newReport.carId" name="carId">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-days-rent">Days of Rent</label>
+              <input type="number" id="new-days-rent" [(ngModel)]="newReport.daysOfRent" name="daysOfRent" min="0">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-reservations">Reservations</label>
+              <input type="number" id="new-reservations" [(ngModel)]="newReport.reservations" name="reservations" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-mileage-start">Mileage Start (km)</label>
+              <input type="number" id="new-mileage-start" [(ngModel)]="newReport.mileageStart" name="mileageStart" (input)="calculateTotalMileage()" min="0">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-mileage-end">Mileage End (km)</label>
+              <input type="number" id="new-mileage-end" [(ngModel)]="newReport.mileageEnd" name="mileageEnd" (input)="calculateTotalMileage()" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-total-mileage">Total Mileage (km)</label>
+              <input type="number" id="new-total-mileage" [(ngModel)]="newReport.totalMileage" name="totalMileage" readonly>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-avg-mileage">Average Mileage</label>
+              <input type="number" id="new-avg-mileage" [(ngModel)]="newReport.averageMileage" name="averageMileage" readonly>
+            </div>
+          </div>
+        </form>
+        
+        <!-- Performance Report Form -->
+        <form *ngIf="selectedReportType === 'Staff performance'">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-staff-member">Staff Member</label>
+              <input type="text" id="new-staff-member" [(ngModel)]="newReport.staffMember" name="staffMember">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-position">Position</label>
+              <input type="text" id="new-position" [(ngModel)]="newReport.position" name="position">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-staff-location">Location</label>
+              <select id="new-staff-location" [(ngModel)]="newReport.location" name="location">
+                <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="new-bookings">Total Bookings</label>
+              <input type="number" id="new-bookings" [(ngModel)]="newReport.totalBookings" name="totalBookings" min="0">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-revenue">Total Revenue (€)</label>
+              <input type="number" id="new-revenue" [(ngModel)]="newReport.totalRevenue" name="totalRevenue" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-rating">Customer Rating (0-5)</label>
+              <input type="number" id="new-rating" [(ngModel)]="newReport.customerRating" name="customerRating" min="0" max="5" step="0.1">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-response-time">Response Time (min)</label>
+              <input type="number" id="new-response-time" [(ngModel)]="newReport.responseTime" name="responseTime" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label for="new-completion-rate">Completion Rate (%)</label>
+              <input type="number" id="new-completion-rate" [(ngModel)]="newReport.completionRate" name="completionRate" min="0" max="100">
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeModal()">Cancel</button>
+        <button class="submit-btn" (click)="submitReport()">Submit Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

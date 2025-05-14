@@ -16,6 +16,7 @@ export interface BookingParams {
     fullName: string;
     email: string;
     phone: string;
+    role?: string;
   }
   
   export interface LocationInfo {
@@ -23,13 +24,15 @@ export interface BookingParams {
     dropoffLocation: string;
   }
 
-  export enum BookingStatus {
-    RESERVED = 'Reserved',
-    SERVICE_STARTED = 'Service started',
-    SERVICE_PROVIDED = 'Service provided',
-    BOOKING_FINISHED = 'Booking finished',
-    CANCELLED = 'Cancelled'
-  }
+// models/booking.model.ts
+export enum BookingStatus {
+  RESERVED = 'RESERVED',
+  SERVICE_STARTED = 'SERVICE_STARTED',
+  SERVICE_PROVIDED = 'SERVICE_PROVIDED',
+  COMPLETED = 'COMPLETED',  // Add this status
+  BOOKING_FINISHED = 'BOOKING_FINISHED',
+  CANCELLED = 'CANCELLED'
+}
   
   export interface Feedback {
     rating: number;
