@@ -18,12 +18,12 @@ interface LocationResponse {
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = 'https://nckijnfmi0.execute-api.eu-west-3.amazonaws.com/api/home/locations';
+  private apiUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
 
   constructor(private http: HttpClient) {}
 
   getLocations(): Observable<LocationData[]> {
-    return this.http.get<LocationResponse>(this.apiUrl)
+    return this.http.get<LocationResponse>(`${this.apiUrl}/home/locations`)
       .pipe(
         map(response => {
           console.log(response)
