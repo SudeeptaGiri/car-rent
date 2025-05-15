@@ -32,8 +32,8 @@
   <div class="cars-grid" *ngIf="!loading && cars.length">
     <div class="car-card" *ngFor="let car of displayedCars">
       <div class="car-image-container">
-        <img [src]="car.images[0].url" alt="{{car.brand}}" class="car-image"
-          onerror="this.src='https:via.placeholder.com/300x200?text=Car+Image'" />
+        <img [src]="car.images && car.images.length > 0 ? car.images[0].url : 'image'" 
+             alt="{{car.brand}} {{car.model}}" class="car-image" />
         <div class="car-status" [ngClass]="car.status.toLowerCase()">
           {{car.status}}
         </div>
@@ -41,22 +41,21 @@
 
       <div class="car-details">
         <div class="car-header">
-          <h3 class="car-name">{{car.brand}} {{car.year}}</h3>
+          <h3 class="car-name">{{car.brand}} {{car.model}} {{car.year}}</h3>
           <div class="car-rating">
-            {{car.rating}}
+            {{car.rating | number:'1.1-1'}}
             <span class="star">★</span>
           </div>
         </div>
-
+      
         <p class="car-location">{{car.location}}</p>
-
-        <!-- (click)="bookCar(car)  -->
+      
         <button class="book-button" (click)="openCarDetailsPopup(car.id.toString())"
           [disabled]="car.status.toLowerCase() !== 'available'"
           [ngClass]="{'disabled': car.status.toLowerCase() !== 'available'}">
           Book the car - {{formatPrice(car.price)}}/day
         </button>
-
+      
         <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>
       </div>
     </div>

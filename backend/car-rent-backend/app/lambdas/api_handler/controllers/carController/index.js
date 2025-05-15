@@ -138,7 +138,7 @@ const CarController = {
       const carsList = cars.map((car) => ({
         carId: car._id.toString(),
         model: `${car.brand} ${car.model} ${car.year}`,
-        imageUrl: car.images.length > 0 ? car.images[0] : null,
+        imageUrl: car.images.length > 0 ? car.images : null,
         location: car.location,
         pricePerDay: car.pricePerDay.toString(),
         carRating: car.carRating.toString(),

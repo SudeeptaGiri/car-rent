@@ -104,144 +104,43 @@ export class CardsComponent implements OnInit, OnDestroy {
     console.log('Fetching cars data from service...');
     this.loading = true;
     
-    this.carService.getAllCars().subscribe({
+    this.carService.getAllCars(this.currentPage, this.itemsPerPage).subscribe({
       next: (response) => {
         console.log('Cars data loaded successfully:', response);
-        if (response && response.content && response.content.length > 0) {
-          // Process MongoDB car data - ensure all fields map correctly
-          this.allCars = response.content.map((carData: any) => {
-            // Use any type for initial data to avoid TypeScript errors on unknown properties
-            // Create a properly typed object with all required fields
-            const processedCar: ExtendedCarDetails = {
-              ...carData,
-              id: carData.id || carData._id || carData.carId || '',
-              // Initialize specifications with proper structure
-              specifications: carData.specifications || {
-                transmission: '',
-                engine: '',
-                fuelType: '',
-                seats: 0,
-                fuelConsumption: '',
-                features: []
-              },
-              // Explicitly copy extended properties
-              fuelType: carData.fuelType,
-              gearBoxType: carData.gearBoxType,
-              _id: carData._id,
-              carId: carData.carId
+        if (response && response.content) {
+          // Process the cars data
+          this.allCars = response.content.map(car => {
+            // Ensure each car has the required properties
+            return {
+              ...car,
+              // Make sure these properties exist
+              id: car.id || '',
+              brand: car.brand || '',
+              model: car.model || '',
+              year: car.year || new Date().getFullYear(),
+              images: car.images || [],
+              rating: car.rating || 0,
+              price: car.price || 0,
+              status: car.status || 'Not Available'
             };
-
-            // Process images if they're strings (MongoDB format)
-            if (Array.isArray(carData.images)) {
-              processedCar.images = carData.images.map((img: any, index: number) => {
-                if (typeof img === 'string') {
-                  return {
-                    id: index.toString(),
-                    url: img,
-                    isPrimary: index === 0
-                  };
-                }
-                return img;
-              });
-            } else if (!carData.images) {
-              // Provide a fallback image if none exists
-              processedCar.images = [{
-                id: '0',
-                url: 'assets/placeholder-car.svg',
-                isPrimary: true
-              }];
-            }
-
-            // Ensure rating is a number
-            if (typeof carData.rating === 'string') {
-              processedCar.rating = parseFloat(carData.rating);
-            }
-
-            // Ensure price is a number
-            if (typeof carData.price === 'string') {
-              processedCar.price = parseFloat(carData.price);
-            }
-
-            // Map gearBoxType to transmission in specifications if needed
-            if (carData.gearBoxType && processedCar.specifications && 
-                !processedCar.specifications.transmission) {
-              processedCar.specifications.transmission = 
-                carData.gearBoxType.toUpperCase() === 'AUTOMATIC' ? 'Automatic' : 'Manual';
-            }
-
-            // Map fuelType to engine/fuelType in specifications if needed
-            if (carData.fuelType && processedCar.specifications && 
-                !processedCar.specifications.fuelType) {
-              processedCar.specifications.fuelType = carData.fuelType.charAt(0) + 
-                carData.fuelType.slice(1).toLowerCase();
-            }
-
-            return processedCar;
           });
           
-          this.filteredCars = [...this.allCars]; 
+          this.filteredCars = [...this.allCars];
           this.cars = this.filteredCars;
-
+          
+          // Update pagination info from the response
+          this.totalPages = response.totalPages || 1;
+          this.currentPage = response.currentPage || 1;
+          
+          console.log(`Loaded ${this.allCars.length} cars. Total: ${response.totalElements}, Pages: ${this.totalPages}`);
+  
           // Set default display
           if (!this.viewAllMode) {
             // Get popular cars
             this.carService.getPopularCars(4).subscribe({
-              next: (popularCarsData: any[]) => {
+              next: (popularCarsData) => {
                 console.log('Popular cars loaded:', popularCarsData);
-                this.popularCars = popularCarsData.map((carData: any) => {
-                  // Create a properly formatted car object
-                  const processedCar: ExtendedCarDetails = {
-                    ...carData,
-                    id: carData.id || carData._id || carData.carId || '',
-                    // Explicitly copy extended properties
-                    fuelType: carData.fuelType,
-                    gearBoxType: carData.gearBoxType,
-                    _id: carData._id,
-                    carId: carData.carId,
-                    // Initialize specifications properly
-                    specifications: carData.specifications || {
-                      transmission: '',
-                      engine: '',
-                      fuelType: '',
-                      seats: 0,
-                      fuelConsumption: '',
-                      features: []
-                    }
-                  };
-
-                  // Process images for popular cars
-                  if (Array.isArray(carData.images)) {
-                    processedCar.images = carData.images.map((img: any, index: number) => {
-                      if (typeof img === 'string') {
-                        return {
-                          id: index.toString(),
-                          url: img,
-                          isPrimary: index === 0
-                        };
-                      }
-                      return img;
-                    });
-                  } else if (!carData.images) {
-                    processedCar.images = [{
-                      id: '0',
-                      url: 'assets/placeholder-car.svg',
-                      isPrimary: true
-                    }];
-                  }
-
-                  // Ensure rating is a number
-                  if (typeof carData.rating === 'string') {
-                    processedCar.rating = parseFloat(carData.rating);
-                  }
-
-                  // Ensure price is a number
-                  if (typeof carData.price === 'string') {
-                    processedCar.price = parseFloat(carData.price);
-                  }
-
-                  return processedCar;
-                });
-                
+                this.popularCars = popularCarsData;
                 this.displayedCars = this.popularCars;
                 this.loading = false;
               },
@@ -250,8 +149,8 @@ export class CardsComponent implements OnInit, OnDestroy {
                 // Fallback to sorting by rating
                 this.popularCars = [...this.allCars]
                   .sort((a, b) => {
-                    const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
-                    const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
+                    const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : (a.rating || 0);
+                    const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : (b.rating || 0);
                     return ratingB - ratingA;
                   })
                   .slice(0, 4);
@@ -261,7 +160,6 @@ export class CardsComponent implements OnInit, OnDestroy {
             });
           } else {
             // Or show paginated results
-            this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
             this.updateDisplayedCars();
             this.loading = false;
           }
@@ -277,6 +175,40 @@ export class CardsComponent implements OnInit, OnDestroy {
         this.provideFallbackData();
       }
     });
+  }
+  
+  // Update this method to handle API pagination
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      
+      // Fetch new data from API for the selected page
+      if (this.viewAllMode) {
+        this.loading = true;
+        this.carService.getAllCars(this.currentPage, this.itemsPerPage).subscribe({
+          next: (response) => {
+            if (response && response.content) {
+              this.allCars = response.content;
+              this.filteredCars = [...this.allCars];
+              this.cars = this.filteredCars;
+              this.totalPages = response.totalPages || 1;
+              this.updateDisplayedCars();
+            }
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Error loading page data:', err);
+            this.loading = false;
+          }
+        });
+      } else {
+        // Just update display for popular cars (no pagination needed)
+        this.updateDisplayedCars();
+      }
+      
+      // Scroll to top of the component
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   // Modified to use client-side filtering with fixed type issues
@@ -541,15 +473,6 @@ export class CardsComponent implements OnInit, OnDestroy {
 
     // Important: Use filteredCars instead of cars for pagination
     this.displayedCars = this.filteredCars.slice(startIndex, endIndex);
-  }
-
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.updateDisplayedCars();
-      // Scroll to top of the component
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   }
 
   getPaginationNumbers(): number[] {
