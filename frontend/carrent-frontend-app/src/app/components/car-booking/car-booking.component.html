@@ -8,30 +8,30 @@
   <section class="booking-section">
     <form [formGroup]="bookingForm">
       <!-- Personal Info Section -->
-      <!-- Personal Info Section -->
       <div class="section">
         
-        <!-- Support Agent View -->
-        <div *ngIf="isUserSupportAgent" class="support-agent-client-selector">
-          <h2>Clients info</h2>
-          <div class="form-field form-personal-info">
-            <label for="clientSelect">Client:</label>
-            <select id="clientSelect" class="client-select">
-              <option *ngFor="let client of clientsList" [value]="client.userId">
-                {{ client.userName }}
-              </option>
-            </select>
-            <button type="button" class="change-btn">Save</button>
-          </div>
+       <!-- Replace the client select with this -->
+      <div *ngIf="isUserSupportAgent" class="support-agent-client-selector">
+        <h2>Clients info</h2>
+        <div class="form-field form-personal-info">
+          <label for="clientSelect">Client:</label>
+          <select id="clientSelect" class="client-select" (change)="onClientChange($event)">
+            <option value="">Select a client</option>
+            <option *ngFor="let client of clientsList" [value]="client._id">
+              {{ client.firstName }} {{ client.lastName }}
+            </option>
+          </select>
+          <button type="button" class="change-btn">Save</button>
         </div>
-        
+      </div>
+              
         <!-- Regular User View -->
-        <div *ngIf="!isUserSupportAgent" class="personal-info-card" formGroupName="personalInfo">
+        <div *ngIf="!isUserSupportAgent" class="" formGroupName="personalInfo">
           <h2>Personal info</h2>
-          <div class="form-field">
+          <div class="form-field personal-info-card">
             <div class="full-name">{{ bookingForm.get('personalInfo.fullName')?.value }}</div>
             <div class="email">{{ bookingForm.get('personalInfo.email')?.value }}</div>
-            <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value }}</div>
+            <div class="phone">{{ bookingForm.get('personalInfo.phone')?.value || "+123-456-7890" }}</div>
           </div>
         </div>
       </div>
@@ -50,8 +50,8 @@
           </button>
           <div class="form-field">
             <label for="pickupLocation">Pick-up Location:</label>
-            <select class="location-select pickup-select client-select">
-              <option *ngFor="let location of locations" [value]="location.locationId">
+            <select id="pickupLocation" class="location-select pickup-select client-select" formControlName="pickupLocation">
+              <option *ngFor="let location of locations; let i = index" [value]="location.locationId" [selected]="i === 0">
                 {{ location.locationName }}
               </option>
             </select>
@@ -59,8 +59,8 @@
           
           <div class="form-field">
             <label for="pickupLocation">Drop-off Location:</label>
-            <select class="location-select client-select">
-              <option *ngFor="let location of locations" [value]="location.locationId">
+            <select id="dropoffLocation" class="location-select client-select" formControlName="dropoffLocation">
+              <option *ngFor="let location of locations; let i = index" [value]="location.locationId" [selected]="i === 0">
                 {{ location.locationName }}
               </option>
             </select>
@@ -125,7 +125,7 @@
               <div class="total-price">${{ totalPrice }}</div>
             </div>
             <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
-            <button type="button" class="confirm-btn" (click)="confirmReservation()" [disabled]="!isFormValid()" [ngClass]="{'disabled-btn': !isFormValid()}">
+            <button type="button" class="confirm-btn" (click)="confirmReservation()">
               Confirm reservation
             </button>
           </div>
