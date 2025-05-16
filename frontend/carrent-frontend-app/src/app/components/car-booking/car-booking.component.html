@@ -125,7 +125,7 @@
               <div class="total-price">${{ totalPrice }}</div>
             </div>
             <div class="deposit-info">Deposit: ${{ depositAmount }}</div>
-            <button type="button" class="confirm-btn" (click)="confirmReservation()">
+            <button type="button" class="confirm-btn" (click)="confirmReservation()" [disabled]="isConfirmButtonDisabled" >
               Confirm reservation
             </button>
           </div>

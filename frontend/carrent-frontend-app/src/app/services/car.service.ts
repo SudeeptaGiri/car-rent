@@ -278,11 +278,6 @@ export class CarService {
       // For regular users, use their own ID
       const user = this.getUserFromLocalStorage();
       clientId = user?._id || localStorage.getItem('userId') || '';
-      
-      if (!clientId) {
-        alert('You must be logged in to make a reservation');
-        return;
-      }
     }
     
     console.log('Client ID for booking:', clientId);

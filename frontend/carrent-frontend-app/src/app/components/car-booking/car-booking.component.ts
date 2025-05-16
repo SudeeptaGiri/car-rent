@@ -35,6 +35,8 @@ export class CarBookingComponent implements OnInit, OnDestroy {
     private router: Router
   ) { }
 
+  isConfirmButtonDisabled = false;
+
   locations: LocationData[] = []
   clientsList: User[] = [];
   isLoadingClients = false;
@@ -444,9 +446,17 @@ isFormValid(): boolean {
   }
 
  // Confirm reservation
- confirmReservation(): void {
+confirmReservation(): void {
+  // If button is already disabled, don't proceed
+  if (this.isConfirmButtonDisabled) {
+    return;
+  }
+  
   console.log('Confirm Reservation clicked');
-
+  
+  // Disable the button immediately
+  this.isConfirmButtonDisabled = true;
+  
   // Get location values from the form
   const pickupLocationId = this.bookingForm.get('location.pickupLocation')?.value;
   const dropOffLocationId = this.bookingForm.get('location.dropoffLocation')?.value;
@@ -462,6 +472,11 @@ isFormValid(): boolean {
     pickupLocationId,
     dropOffLocationId
   );
+  
+  // Re-enable the button after a delay (e.g., 3 seconds)
+  setTimeout(() => {
+    this.isConfirmButtonDisabled = false;
+  }, 3000);
 }
 
   openLocationChange(): void {
