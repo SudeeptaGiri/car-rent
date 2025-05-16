@@ -5,13 +5,14 @@
             <div class="label">
                 <label class="text-sm text-gray-500 label">Pick-Up Date</label>
             </div>
-            <button (click)="togglePicker()"
-                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
-                <span class="text-gray-700">
-                    {{ formatStartDate() }}
-                </span>
-                <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </button>
+            <div class="relative">
+                <input type="text" [(ngModel)]="startDateInput" (blur)="onManualStartDateBlur()"
+                    placeholder="DD/MM/YYYY"
+                    class="w-full p-2.5 border border-[#dedede] rounded-sm pr-10 mb-1 text-gray-700" />
+                <button (click)="togglePicker()" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <mat-icon>calendar_today</mat-icon>
+                </button>
+            </div>
         </div>
 
         <!-- End Date Input -->
@@ -19,14 +20,20 @@
             <div class="label">
                 <label class="text-sm text-gray-500 label">Drop-off Date</label>
             </div>
-            <button (click)="togglePicker()"
-                class="w-full p-2.5 border border-[#dedede] rounded-sm flex justify-between items-center hover:cursor-pointer">
-                <span class="text-gray-700">
-                    {{ formatEndDate() }}
-                </span>
-                <mat-icon class="text-gray-500">{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </button>
+            <div class="relative">
+                <input type="text" [(ngModel)]="endDateInput" (blur)="onManualEndDateBlur()" 
+                    placeholder="DD/MM/YYYY"
+                    class="w-full p-2.5 border border-[#dedede] rounded-sm pr-10 mb-1 text-gray-700" />
+                <button (click)="togglePicker()" class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <mat-icon class="text-gray-500">calendar_today</mat-icon>
+                </button>
+            </div>
         </div>
+    </div>
+
+    <!-- Date input validation error message -->
+    <div *ngIf="dateInputError" class="validation text-red-500 text-sm mt-2 mb-4">
+        {{ dateInputError }}
     </div>
 
     <!-- Calendar Popup -->
@@ -107,3 +114,4 @@
         </div>
     </div>
 </div>
+ 

@@ -47,16 +47,15 @@
             <span class="star">★</span>
           </div>
         </div>
-
+      
         <p class="car-location">{{car.location}}</p>
-
-        <!-- (click)="bookCar(car)  -->
+      
         <button class="book-button" (click)="openCarDetailsPopup(car.id.toString())"
           [disabled]="car.status.toLowerCase() !== 'available'"
           [ngClass]="{'disabled': car.status.toLowerCase() !== 'available'}">
           Book the car - {{formatPrice(car.pricePerDay)}}/day
         </button>
-
+      
         <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>
       </div>
     </div>

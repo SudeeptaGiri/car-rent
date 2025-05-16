@@ -78,7 +78,6 @@ export class CardsComponent implements OnInit, OnDestroy {
     console.log('CardsComponent initialized');
     // Set viewAllMode to false initially to show popular cars
     this.viewAllMode = false;
-    this.fetchCars();
     this.applyFilters();
     // Subscribe to filter changes
     this.filterSubscription = this.filterService.filters$.subscribe(filters => {
@@ -91,50 +90,11 @@ export class CardsComponent implements OnInit, OnDestroy {
     });
 
     // Fetch cars data using CarService
+    this.fetchCars();
+    this.updateDisplayedCars();
     this.updatePaginationAndDisplay();
 
   }
-
-
-  //done by sourabh
-
-//   ngOnInit(): void {
-//   if (this.viewAllMode) {
-//     this.fetchCars(); // Fetches all cars and then applies filters internally
-//   } else {
-//     this.fetchCars(); // Fetches cars and assigns them directly
-//     this.myCarService.getPopularCars().subscribe({
-//       next: (popularCarsData) => {
-//         this.popularCars = popularCarsData.cars.map((carData: any) => this.transformCarData(carData));
-        
-//         console.log("🚗 Popular Cars:", this.popularCars);
-//       },
-//       error: (error) => {
-//         console.error('Failed to fetch popular cars:', error);
-//         // Fallback only if allCars are already loaded
-//         if (this.allCars && this.allCars.length > 0) {
-//           this.popularCars = [...this.allCars]
-//             .sort((a, b) => b.reviews.length - a.reviews.length)
-//             .slice(0, 4);
-//         }
-//       }
-//     });
-//   }
-
-//   // Filter subscription
-//   this.filterService.filters$.subscribe((filters) => {
-//     // this.selectedFuelType = filters.fuelType;
-//     // this.selectedGearBoxType = filters.gearBoxType;
-//     // this.selectedCarType = filters.carType;
-//     // this.applyFilters(); // Only works after cars are loaded
-//     this.activeFilters = filters;
-//         // Only apply filters if data is loaded
-//         if (this.allCars && this.allCars.length) {
-//             this.applyFilters();
-//         }
-//   });
-// }
-
 
   ngOnDestroy(): void {
     console.log('CardsComponent destroyed');
@@ -390,55 +350,14 @@ export class CardsComponent implements OnInit, OnDestroy {
     });
 
 
-    //done by sourabh
-//     this.myCarService.getAllCars().subscribe({
-//   next: (response) => {
-//     console.log('Cars data loaded successfully:', response);
-
-//     if (response?.content?.length > 0) {
-//       this.allCars = response.content.map(this.transformCarData.bind(this));
-//       this.filteredCars = [...this.allCars];
-//       this.cars = this.filteredCars;
-
-//       if (!this.viewAllMode) {
-//         this.carService.getPopularCars().subscribe({
-//           next: (popularCarsData: any[]) => {
-//             console.log('Popular cars loaded:', popularCarsData);
-//             this.popularCars = popularCarsData.map(this.transformCarData.bind(this));
-//             this.displayedCars = this.popularCars;
-//             this.loading = false;
-//           },
-//           error: (error) => {
-//             console.error('Error loading popular cars:', error);
-//             this.popularCars = [...this.allCars]
-//               .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-//               .slice(0, 4);
-//             this.displayedCars = this.popularCars;
-//             this.loading = false;
-//           }
-//         });
-//       } else {
-//         this.totalPages = Math.ceil(this.cars.length / this.itemsPerPage);
-//         this.updateDisplayedCars();
-//         this.loading = false;
-//       }
-//     } else {
-//       console.error('No cars data found in response:', response);
-//       this.provideFallbackData();
-//     }
-//   },
-//   error: (err) => {
-//     console.error('Error loading cars:', err);
-//     this.error = 'Failed to load cars. Please try again later.';
-//     this.loading = false;
-//     this.provideFallbackData();
-//   }
-// });
-   console.log("cars", this.cars.length);
+       console.log("cars", this.cars.length);
    console.log("popularCars", this.popularCars.length);
    console.log("allCars", this.allCars.length);
    console.log("filteredCars", this.filteredCars.length);
 
+   //DONE BY SOURABH
+
+   this.updateDisplayedCars();
    
   }
 
@@ -658,34 +577,6 @@ export class CardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // toggleViewMode(): void {
-  //   this.viewAllMode = !this.viewAllMode;
-  //   console.log(`View mode toggled: ${this.viewAllMode ? 'View All' : 'Popular Cars'}`);
-
-  //   if (this.viewAllMode) {
-  //     // Switching to "View All" mode
-  //     this.currentPage = 1;
-  //     // Calculate total pages based on filtered cars count
-  //     this.totalPages = Math.ceil(this.filteredCars.length / this.itemsPerPage);
-  //     console.log(`View All mode: ${this.filteredCars.length} cars, ${this.totalPages} pages`);
-  //     this.updateDisplayedCars();
-  //   } else {
-  //     // Switching back to "Popular Cars" mode
-  //     if (this.filteredCars.length >= 4) {
-  //       this.displayedCars = this.filteredCars
-  //         .sort((a, b) => {
-  //           const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
-  //           const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
-  //           return ratingB - ratingA;
-  //         })
-  //         .slice(0, 4);
-  //     } else {
-  //       this.displayedCars = this.filteredCars;
-  //     }
-  //   }
-  // }
-
-
   //DONE BY SOURABH
 
   toggleViewMode(): void {
@@ -705,22 +596,6 @@ export class CardsComponent implements OnInit, OnDestroy {
 
 
 
-  // updateDisplayedCars(): void {
-  //   if (!this.viewAllMode) {
-  //     // In popular mode, show top rated cars
-  //     if (this.filteredCars.length >= 4) {
-  //       this.displayedCars = this.filteredCars
-  //         .sort((a, b) => {
-  //           const ratingA = typeof a.rating === 'string' ? parseFloat(a.rating) : a.rating || 0;
-  //           const ratingB = typeof b.rating === 'string' ? parseFloat(b.rating) : b.rating || 0;
-  //           return ratingB - ratingA;
-  //         })
-  //         .slice(0, 4);
-  //     } else {
-  //       this.displayedCars = this.filteredCars;
-  //     }
-  //     return;
-  //   }
 
   //done by sourabh
 

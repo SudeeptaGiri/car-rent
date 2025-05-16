@@ -12,6 +12,9 @@ import { BookedDate } from '../../models/car.interface';
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent {
+  startDateInput: string = '';
+  endDateInput: string = '';
+  dateInputError: string | null = null;
   @Input() bookedDates: { startDate: string; endDate: string; }[] = [];
   @Input() externalToggle = false;
   @Input() initialStartDate: Date | null = null;
@@ -108,6 +111,24 @@ export class CalendarComponent {
       return month;
     });
     this.updateCalendarMonths();
+    this.updateDateInputs();
+  }
+
+  updateDateInputs(): void {
+    if (this.selectedPickup) {
+      this.startDateInput = this.formatDateForInput(this.selectedPickup);
+    }
+    
+    if (this.selectedDropoff) {
+      this.endDateInput = this.formatDateForInput(this.selectedDropoff);
+    }
+  }
+
+  formatDateForInput(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
   resetCalendar(): void {
@@ -211,6 +232,94 @@ export class CalendarComponent {
     return this.selectedPickup?.toDateString() === date.toDateString() ||
       this.selectedDropoff?.toDateString() === date.toDateString();
   }
+  // Handle manual input for start date
+  onManualStartDateBlur(): void {
+    const parsedDate = this.parseManualDateInput(this.startDateInput);
+  
+    if (parsedDate) {
+      if (this.isPast(parsedDate) || this.isBlocked(parsedDate)) {
+        this.dateInputError = 'This date is unavailable';
+        this.startDateInput = this.selectedPickup ? this.formatDateForInput(this.selectedPickup) : '';
+        return;
+      }
+  
+      this.selectedPickup = parsedDate;
+      this.dateInputError = null;
+  
+      // If we have both dates and start is after end, reset end date
+      if (this.selectedDropoff && parsedDate > this.selectedDropoff) {
+        this.selectedDropoff = null;
+        this.endDateInput = '';
+      }
+    } else if (this.startDateInput.trim() !== '') {
+      // Invalid date entered
+      this.dateInputError = 'Please enter a valid date (DD/MM/YYYY)';
+    }
+  
+    // Update the input field with properly formatted date
+    if (this.selectedPickup) {
+      this.startDateInput = this.formatDateForInput(this.selectedPickup);
+    }
+  }
+
+  // Handle manual input for end date
+  onManualEndDateBlur(): void {
+    const parsedDate = this.parseManualDateInput(this.endDateInput);
+
+    if (parsedDate) {
+      if (this.isPast(parsedDate) || this.isBlocked(parsedDate)) {
+        this.dateInputError = 'This date is unavailable';
+        this.endDateInput = this.selectedDropoff ? this.formatDateForInput(this.selectedDropoff) : '';
+        return;
+      }
+
+      if (this.selectedPickup && parsedDate >= this.selectedPickup) {
+        // Check if range conflicts with booked dates
+        if (this.isRangeConflict(this.selectedPickup, parsedDate)) {
+          this.dateInputError = 'Selected range includes unavailable dates';
+          this.endDateInput = this.selectedDropoff ? this.formatDateForInput(this.selectedDropoff) : '';
+          return;
+        }
+
+        this.selectedDropoff = parsedDate;
+        this.dateInputError = null;
+      } else if (!this.selectedPickup) {
+        // If no start date, set both
+        this.selectedPickup = new Date(parsedDate);
+        this.selectedPickup.setDate(this.selectedPickup.getDate() - 1);
+        this.selectedDropoff = parsedDate;
+
+        // Update startDateInput
+        this.startDateInput = this.formatDateForInput(this.selectedPickup);
+        this.dateInputError = null;
+      } else {
+        this.dateInputError = 'Drop-off date must be on or after pick-up date';
+      }
+    } else if (this.endDateInput.trim() !== '') {
+      // Invalid date entered
+      this.dateInputError = 'Please enter a valid date (DD/MM/YYYY)';
+    }
+
+    // Update the input field with properly formatted date
+    if (this.selectedDropoff) {
+      this.endDateInput = this.formatDateForInput(this.selectedDropoff);
+    }
+  }
+
+  // Parse manual date input in various formats
+  parseManualDateInput(dateStr: string): Date | null {
+    if (!dateStr) return null;
+  
+    // Try different date formats with DD/MM/YYYY as the priority
+    const date = moment(dateStr, [
+      'DD/MM/YYYY', 'D/M/YYYY',
+      'DD-MM-YYYY', 'D-M-YYYY',
+      'MM/DD/YYYY', 'M/D/YYYY',
+      'YYYY/MM/DD', 'YYYY-MM-DD'
+    ]);
+  
+    return date.isValid() ? date.toDate() : null;
+  }
 
   onSelectDate(date: Date): void {
     if (this.isPast(date) || this.isBlocked(date)) {
@@ -234,6 +343,14 @@ export class CalendarComponent {
         }
         this.selectedDropoff = date;
       }
+    }
+
+    if (this.selectedPickup) {
+      this.startDateInput = this.formatDateForInput(this.selectedPickup);
+    }
+    
+    if (this.selectedDropoff) {
+      this.endDateInput = this.formatDateForInput(this.selectedDropoff);
     }
   }
 
