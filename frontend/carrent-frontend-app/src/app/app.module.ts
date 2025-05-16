@@ -24,7 +24,7 @@ import { CardsComponent } from './components/cards/cards.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { UserRoleComponent } from './components/user-role/user-role.component';
-import { FeedbackComponent } from './components/feedbacks/feedbacks.component';
+import {  FeedbacksComponent } from './components/feedbacks/feedbacks.component';
 
 // Services
 import { LocationService } from './services/locations.service';
@@ -79,6 +79,7 @@ import { BookingsComponent } from './pages/bookings/bookings.component';
     AppComponent,
     RegisterComponent,
     LoginComponent,
+    FeedbacksComponent,
     MainComponent,
     HeaderComponent,
     FooterComponent,
@@ -136,7 +137,6 @@ import { BookingsComponent } from './pages/bookings/bookings.component';
     MatNativeDateModule,
     MatCardModule,
     MatSelectModule,
-    FeedbackComponent,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

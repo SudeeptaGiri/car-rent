@@ -386,6 +386,9 @@ export class CarService {
     );
   }
 
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
   getCarDetails(carId: string): Observable<CarDetails | undefined> {
     return this.http.get<MongoDBCar>(`${this.apiBaseUrl}/cars/${carId}`).pipe(
       map(car => mongoDBCarToCarDetails(car)),
@@ -398,6 +401,8 @@ export class CarService {
       })
     );
   }
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
  
   getCarDetailsWithNavigation(carId: string): Observable<{
     car: CarDetails | undefined,
@@ -439,6 +444,11 @@ export class CarService {
     );
   }
 
+
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+
   getNextCar(currentId: string): Observable<CarDetails | undefined> {
     return this.getAllCars().pipe(
       map(response => {
@@ -452,6 +462,10 @@ export class CarService {
     );
   }
 
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+
   getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
     return this.getAllCars().pipe(
       map(response => {
@@ -464,6 +478,10 @@ export class CarService {
       })
     );
   }
+
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
 
   getCarBookedDates(carId: string): Observable<BookedDate[]> {
     return this.http.get<BookedDate[]>(`${this.apiBaseUrl}/cars/${carId}/booked-dates`).pipe(
@@ -480,6 +498,10 @@ export class CarService {
     );
   }
 
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+  
   getCarReviews(carId: string): Observable<ReviewsData> {
     return this.http.get<ReviewsData>(`${this.apiBaseUrl}/cars/${carId}/client-review`).pipe(
       catchError(error => {
@@ -488,6 +510,7 @@ export class CarService {
         return this.http.get<CarsResponse>(this.jsonUrl).pipe(
           map(response => {
             const car = response.cars.find(c => c.id === carId);
+            console.log("new new new new",car);
             return car ? car.reviews : { content: [], totalPages: 0, currentPage: 0, totalElements: 0 };
           })
         );
@@ -1040,3 +1063,9 @@ export class CarService {
     });
   }
 }
+
+
+
+
+
+// getPreviousCar getNextCar getCarDetailsWithNavigation
