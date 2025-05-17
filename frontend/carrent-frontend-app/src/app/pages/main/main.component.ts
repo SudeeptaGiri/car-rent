@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FeedbackComponent } from '../../components/feedbacks/feedbacks.component';
+import { FeedbacksComponent } from '../../components/feedbacks/feedbacks.component';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 

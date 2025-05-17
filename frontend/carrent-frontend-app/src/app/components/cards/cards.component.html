@@ -24,7 +24,7 @@
       {{filteredCars.length}} cars
     </span>
     <span *ngIf="!viewAllMode">
-      Showing {{displayedCars.length}} popular cars out of {{filteredCars.length}} total cars
+      Showing {{displayedCars.length}} popular cars out of {{cars.length}} total cars
     </span>
   </div>
 
@@ -32,8 +32,8 @@
   <div class="cars-grid" *ngIf="!loading && cars.length">
     <div class="car-card" *ngFor="let car of displayedCars">
       <div class="car-image-container">
-        <img [src]="car.images && car.images.length > 0 ? car.images[0].url : 'image'" 
-             alt="{{car.brand}} {{car.model}}" class="car-image" />
+        <img [src]="car.imageUrl" alt="{{car.brand}}" class="car-image"
+          onerror="this.src='https://www.anelto.com/wp-content/uploads/2021/08/placeholder-image.png'" />
         <div class="car-status" [ngClass]="car.status.toLowerCase()">
           {{car.status}}
         </div>
@@ -41,9 +41,9 @@
 
       <div class="car-details">
         <div class="car-header">
-          <h3 class="car-name">{{car.brand}} {{car.model}} {{car.year}}</h3>
+          <h3 class="car-name">{{car.model}} {{car.year}}</h3>
           <div class="car-rating">
-            {{car.rating | number:'1.1-1'}}
+            {{car.carRating}}
             <span class="star">★</span>
           </div>
         </div>
@@ -53,7 +53,7 @@
         <button class="book-button" (click)="openCarDetailsPopup(car.id.toString())"
           [disabled]="car.status.toLowerCase() !== 'available'"
           [ngClass]="{'disabled': car.status.toLowerCase() !== 'available'}">
-          Book the car - {{formatPrice(car.price)}}/day
+          Book the car - {{formatPrice(car.pricePerDay)}}/day
         </button>
       
         <a class="see-more" (click)="openCarDetailsPopup(car.id.toString())">See more details</a>

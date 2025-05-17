@@ -34,10 +34,10 @@ export interface LocationSuggestion {
 })
 export class CarService {
    // MongoDB API endpoint - update this with your actual AWS API Gateway URL
-   private apiBaseUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
+   private apiBaseUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
 
    // Bookings API endpoint
-   private bookingsApiUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
+   private bookingsApiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
   
   // Keep JSON URL for fallback during development/transition
   private jsonUrl = 'assets/cars.json';
@@ -358,6 +358,9 @@ export class CarService {
 
   // ==================== CAR DATA METHODS ====================
 
+
+
+
   private getStorageKeyForUser(): string {
     const currentUser = this.getUserFromLocalStorage();
     const userEmail = currentUser?.email;
@@ -390,7 +393,9 @@ export class CarService {
     );
   }
 
-  // In car.service.ts
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
   getCarDetails(carId: string): Observable<CarDetails | undefined> {
     console.log(`Fetching car details for ID: ${carId}`);
     return this.http.get<MongoDBCar>(`${this.apiBaseUrl}/cars/${carId}`).pipe(
@@ -406,6 +411,8 @@ export class CarService {
     );
   }
 
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+ 
   getCarDetailsWithNavigation(carId: string): Observable<{
     car: CarDetails | undefined,
     totalCars: number,
@@ -446,31 +453,95 @@ export class CarService {
     );
   }
 
-  getNextCar(currentId: string): Observable<CarDetails | undefined> {
-    return this.getAllCars().pipe(
-      map(response => {
-        const allCars = response.content;
-        const currentIndex = allCars.findIndex(car => car.id === currentId);
-        if (currentIndex >= 0 && currentIndex < allCars.length - 1) {
-          return allCars[currentIndex + 1];
-        }
-        return undefined;
-      })
-    );
-  }
 
-  getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
-    return this.getAllCars().pipe(
-      map(response => {
-        const allCars = response.content;
-        const currentIndex = allCars.findIndex(car => car.id === currentId);
-        if (currentIndex > 0) {
-          return allCars[currentIndex - 1];
-        }
-        return undefined;
-      })
-    );
-  }
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+
+  // getNextCar(currentId: string): Observable<CarDetails | undefined> {
+  //   return this.getAllCars().pipe(
+  //     map(response => {
+  //       const allCars = response.content;
+  //       const currentIndex = allCars.findIndex(car => car.id === currentId);
+  //       console.log("response for the car popup next car data in carservice.ts", allCars[currentIndex]);
+  //       console.log("response for the car popup next car data in carservice.ts", allCars[currentIndex+1]);
+  //       if (currentIndex >= 0 && currentIndex < allCars.length - 1) {
+  //         return allCars[currentIndex + 1];
+  //       }
+  //       return undefined;
+  //     })
+  //   );
+  // }
+
+
+  //DONE BY SOURABH
+getNextCar(currentId: string): Observable<CarDetails | undefined> {
+  return this.getAllCars().pipe(
+    switchMap(response => {
+      const allCars = response.content;
+      const currentIndex = allCars.findIndex(car => car.id === currentId);
+      const nextIndex = currentIndex + 1;
+
+      if (currentIndex >= 0 && nextIndex < allCars.length) {
+        const nextCarId = allCars[nextIndex].id;
+        return this.getCarDetails(nextCarId).pipe(
+          tap(nextCar => {
+            console.log("response for the car popup next car data in carservice.ts", allCars[currentIndex]);
+            console.log("response for the car popup next car data in carservice.ts", nextCar);
+          })
+        );
+      }
+      return of(undefined);
+    })
+  );
+}
+
+
+
+
+
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+
+  // getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
+  //   return this.getAllCars().pipe(
+  //     map(response => {
+  //       const allCars = response.content;
+  //       const currentIndex = allCars.findIndex(car => car.id === currentId);
+  //       if (currentIndex > 0) {
+  //         return allCars[currentIndex - 1];
+  //       }
+  //       return undefined;
+  //     })
+  //   );
+  // }
+
+
+  //DONE BY SOURABH
+
+getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
+  return this.getAllCars().pipe(
+    switchMap(response => {
+      const allCars = response.content;
+      const currentIndex = allCars.findIndex(car => car.id === currentId);
+      const prevIndex = currentIndex - 1;
+
+      if (currentIndex > 0) {
+        const prevCarId = allCars[prevIndex].id;
+        return this.getCarDetails(prevCarId);
+      }
+      return of(undefined);
+    })
+  );
+}
+
+
+
+
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
 
   getCarBookedDates(carId: string): Observable<BookedDate[]> {
     return this.http.get<BookedDate[]>(`${this.apiBaseUrl}/cars/${carId}/booked-dates`).pipe(
@@ -487,6 +558,10 @@ export class CarService {
     );
   }
 
+
+  //FUNCTION FOR THE CAR-DETAIL-POPUP
+
+  
   getCarReviews(carId: string): Observable<ReviewsData> {
     return this.http.get<ReviewsData>(`${this.apiBaseUrl}/cars/${carId}/client-review`).pipe(
       catchError(error => {
@@ -495,6 +570,7 @@ export class CarService {
         return this.http.get<CarsResponse>(this.jsonUrl).pipe(
           map(response => {
             const car = response.cars.find(c => c.id === carId);
+            console.log("new new new new",car);
             return car ? car.reviews : { content: [], totalPages: 0, currentPage: 0, totalElements: 0 };
           })
         );
@@ -1051,3 +1127,9 @@ export class CarService {
     });
   }
 }
+
+
+
+
+
+// getPreviousCar getNextCar getCarDetailsWithNavigation

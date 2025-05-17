@@ -96,8 +96,10 @@ export class CarDetailsPopupComponent {
 
     this.isLoading = true;
     if (pageIndex > this.currentCarIndex) {
+      console.log("hello", this.carDetails!.id)
       this.carService.getNextCar(this.carDetails!.id).subscribe({
         next: (car) => {
+          console.log("response for the car popup next car data", car);
           if (car) {
             this.carDetails = car;
             this.currentCarIndex = pageIndex;
