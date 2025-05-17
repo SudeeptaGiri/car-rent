@@ -31,3 +31,6 @@ export class myCarService {
     return this.http.get<MongoDBCarListResponse>(`${this.apiUrl}/cars/popular`);
   }
 }
+
+
+// getPreviousCar getNextCar getCarDetailsWithNavigation

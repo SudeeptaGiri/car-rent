@@ -400,22 +400,45 @@ export class FeedbacksComponent implements OnInit {
   return feedback.carDetails || 'Dummy car detailsg';
   }
 
+  // previousCars(): void {
+  //   const scrollAmount = 440;
+  //   const container = document.querySelector('.scrollable-container');
+  //     if (container) {
+  //       container.scrollLeft -= scrollAmount;
+  //     }
+  // }
+
+
+  //   nextCars(): void {
+  //   const scrollAmount = 440; 
+  //   const container = document.querySelector('.scrollable-container');
+  //   if (container) {
+  //     container.scrollLeft += scrollAmount;
+  //   }
+  // }
+
+
+
+  //DONE BY SOURABH
+
+
   previousCars(): void {
-    const scrollAmount = 440;
-    const container = document.querySelector('.scrollable-container');
-      if (container) {
-        container.scrollLeft -= scrollAmount;
-      }
+  const scrollAmount = 440;
+  const container = document.querySelector('.scrollable-container');
+  if (container) {
+    this.currentIndex = this.currentIndex - 1;
+    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
   }
+}
 
-
-    nextCars(): void {
-    const scrollAmount = 440; 
-    const container = document.querySelector('.scrollable-container');
-    if (container) {
-      container.scrollLeft += scrollAmount;
-    }
+nextCars(): void {
+  const scrollAmount = 440;
+  const container = document.querySelector('.scrollable-container');
+  if (container) {
+    this.currentIndex = this.currentIndex + 1;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
+}
 
 
 }

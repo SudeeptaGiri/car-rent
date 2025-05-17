@@ -311,8 +311,9 @@ export class CardsComponent implements OnInit, OnDestroy {
 
                   return processedCar;
                 });
-                
-                this.displayedCars = this.popularCars;
+                //latest edit
+                this.displayedCars = [...this.filteredCars]
+                  .slice(0,4);
                 this.loading = false;
               },
               error: (error) => {
