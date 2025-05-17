@@ -218,6 +218,7 @@ exports.getAllFeedback = async (event) => {
         id: item._id,
         author: item.author,
         authorImageUrl: item.authorImageUrl || '',
+        carId: car ? car._id : null,   //DONE BY SOURABH
         carDetails: car ? `${car.brand} ${car.model} ${car.year}` : 'N/A',
         carImage: car && car.images && car.images.length > 0 ? car.images[0] : null,
         carRating: item.carRating,
@@ -267,7 +268,7 @@ exports.getRecentFeedback = async (event) => {
     const recentFeedback = await Feedback.find()
       .sort({ date: -1 })
       .limit(parseInt(limit))
-      .populate('carId', 'brand model year images')
+      .populate('carId', '_id brand model year images')
       .populate('bookingId', 'orderNumber');
       
     // Format the response
@@ -277,6 +278,7 @@ exports.getRecentFeedback = async (event) => {
         id: item._id,
         author: item.author,
         authorImageUrl: item.authorImageUrl || '',
+        carId: car ? car._id : null,   //DONE BY SOURABH
         carDetails: car ? `${car.brand} ${car.model} ${car.year}` : 'N/A',
         carImage: car && car.images && car.images.length > 0 ? car.images[0] : null,
         carRating: item.carRating,
