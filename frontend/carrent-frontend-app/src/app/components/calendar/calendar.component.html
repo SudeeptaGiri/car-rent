@@ -7,7 +7,7 @@
             </div>
             <div class="relative">
                 <input type="text" [(ngModel)]="startDateInput" (blur)="onManualStartDateBlur()"
-                    placeholder="DD/MM/YYYY"
+                    (keyup.enter)="onManualStartDateBlur()" placeholder="DD/MM/YYYY"
                     class="w-full p-2.5 border border-[#dedede] rounded-sm pr-10 mb-1 text-gray-700" />
                 <button (click)="togglePicker()" class="absolute right-2 top-1/2 transform -translate-y-1/2">
                     <mat-icon>calendar_today</mat-icon>
@@ -21,8 +21,8 @@
                 <label class="text-sm text-gray-500 label">Drop-off Date</label>
             </div>
             <div class="relative">
-                <input type="text" [(ngModel)]="endDateInput" (blur)="onManualEndDateBlur()" 
-                    placeholder="DD/MM/YYYY"
+                <input type="text" [(ngModel)]="endDateInput" (blur)="onManualEndDateBlur()"
+                    (keyup.enter)="onManualEndDateBlur()" placeholder="DD/MM/YYYY"
                     class="w-full p-2.5 border border-[#dedede] rounded-sm pr-10 mb-1 text-gray-700" />
                 <button (click)="togglePicker()" class="absolute right-2 top-1/2 transform -translate-y-1/2">
                     <mat-icon class="text-gray-500">calendar_today</mat-icon>
@@ -114,4 +114,3 @@
         </div>
     </div>
 </div>
- 
