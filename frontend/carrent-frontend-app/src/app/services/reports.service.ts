@@ -35,7 +35,9 @@ async function loadExcelLibrary() {
 })
 export class ReportsService {
   // Update with the current API endpoint
-  private apiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  // private apiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  private apiUrl = 'http://localhost:3000/api'; // Local development URL
+
   private lastReportType: string | null = null;
 
   constructor(

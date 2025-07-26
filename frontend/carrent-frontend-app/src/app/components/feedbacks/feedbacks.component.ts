@@ -303,6 +303,7 @@ export class FeedbacksComponent implements OnInit {
   fetchAllFeedback(): void {
     this.feedbackService.getAllFeedback().subscribe({
       next: (response) => {
+        console.log("Feedback response", response);
         this.allFeedback = response.feedback || [];
         console.log("all feedbacks", this.allFeedback);
         this.isLoading = false;

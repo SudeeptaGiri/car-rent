@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class PersonalInfoComponent implements OnInit {
-  apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api"; 
+  apiUrl = "http://localhost:3000/api"; // Update with your actual API URL
   userProfile: User = {
     firstName: '',
     lastName: '',

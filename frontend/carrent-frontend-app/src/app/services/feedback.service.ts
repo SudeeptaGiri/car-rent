@@ -126,8 +126,10 @@ import {
   providedIn: 'root',
 })
 export class FeedbackService {
-  private feedbackUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/feedbacks';
-  private recentFeedbackUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/feedbacks/recent';
+  // private feedbackUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/feedbacks';
+  // private recentFeedbackUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/feedbacks/recent';
+  private feedbackUrl = 'http://localhost:3000/api/feedback'; // Local development URL
+  private recentFeedbackUrl = 'http://localhost:3000/api/feedback/recent'; // Local development URL
 
   constructor(private http: HttpClient) {}
 

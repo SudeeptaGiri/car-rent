@@ -18,7 +18,8 @@ interface LocationResponse {
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
+  // private apiUrl = 'https://orhwpuluvf.execute-api.eu-west-3.amazonaws.com/api';
+  private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) {}
 

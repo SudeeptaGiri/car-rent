@@ -96,7 +96,7 @@ export class BookingsComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     
-    this.http.get<any>('https://qixj9pgekd.execute-api.eu-west-3.amazonaws.com/api/bookings')
+    this.http.get<any>('http://localhost:3000/api/bookings')
       .subscribe({
         next: (response) => {
           // Handle different response formats
@@ -127,6 +127,7 @@ export class BookingsComponent implements OnInit {
           this.isLoading = false;
         }
       });
+
   }
 
   loadClientsInfo(bookings: any[]): void {

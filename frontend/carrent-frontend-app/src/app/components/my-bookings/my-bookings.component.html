@@ -75,13 +75,13 @@
         <div class="car-image-container">
           <img [src]="booking.carImage" [alt]="booking.carName" class="car-image">
           <div class="status-badge" [ngClass]="booking.status.toLowerCase().replace(' ', '-')">
-            {{ booking.status }}
+            {{ booking.status }} 
           </div>
         </div>
         
         <div class="car-details">
           <h3>{{ booking.carName | truncate: 28 }}</h3>
-          <p>Order: {{ booking.orderNumber }}</p>
+          <p>Order: {{ booking.orderNumber }} </p>
         </div>
         
         <div class="booking-actions">
@@ -92,7 +92,7 @@
           </ng-container>
           
           <!-- Show Leave Feedback button for Service Provided status -->
-          <ng-container *ngIf="booking.status === BookingStatus.SERVICE_PROVIDED || booking.status === BookingStatus.COMPLETED">
+          <ng-container *ngIf="booking.status === BookingStatus.SERVICE_PROVIDED || booking.status === BookingStatus.BOOKING_FINISHED">
             <button class="btn-feedback" (click)="openFeedbackDialog(booking)">Leave feedback</button>
           </ng-container>
           

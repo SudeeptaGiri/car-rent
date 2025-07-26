@@ -44,24 +44,20 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     // Refresh bookings to ensure we get the latest data
     this.bookingService.refreshBookings();
+    this.bookingService.loadBookingsForCurrentUser().subscribe({
+      next: (bookings: Booking[]) => {
+        this.bookings = bookings;
+        this.filteredBookings = bookings; 
+        console.log('Loaded bookings:', this.bookings);
+        this.filterBookings();
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error fetching bookings:', error);
+        this.isLoading = false;
+      }
+    });
     
-    this.subscription.add(
-      this.bookingService.getBookings().subscribe({
-        next: (bookings) => {
-          console.log('Bookings received:', bookings);
-          this.isLoading = false;
-          this.bookings = [...bookings];
-          console.log('All bookings:', this.bookings);
-          this.filterBookings();
-        },
-        error: (error) => {
-          console.error('Error loading bookings:', error);
-          this.isLoading = false;
-          this.bookings = [];
-          this.filteredBookings = [];
-        }
-      })
-    );
   }
 
   private filterBookings(): void {
@@ -128,8 +124,7 @@ export class MyBookingsComponent implements OnInit, OnDestroy {
   
 openFeedbackDialog(booking: Booking): void {
     // Check if the booking is eligible for feedback
-    if (booking.status !== BookingStatus.SERVICE_PROVIDED && 
-        booking.status !== BookingStatus.COMPLETED) {
+    if (booking.status !== BookingStatus.SERVICE_PROVIDED) {
       // Show an error message
       
       return;

@@ -1,8 +1,10 @@
+import { Booking } from './../models/booking.model';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, interval, of, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { Booking, BookingStatus, Feedback } from '../models/booking.model';
-import { HttpClient } from '@angular/common/http';
+import { BookingStatus, Feedback } from '../models/booking.model';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +12,10 @@ import { HttpClient } from '@angular/common/http';
 export class BookingService {
   private bookings: Booking[] = [];
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
-  private apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/bookings";
+  // private apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api/bookings";
+  private apiUrl = 'http://localhost:3000/api/bookings'; // Local development URL
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService:AuthService) {
     this.loadBookingsForCurrentUser();
     // Check booking statuses periodically
     interval(60000).subscribe(() => this.updateBookingStatuses());
@@ -21,7 +24,7 @@ export class BookingService {
   private getCurrentUserId(): string | null {
     try {
       const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-      return currentUser._id || null;
+      return currentUser.id || null;
     } catch (error) {
       console.error('Error getting current user ID:', error);
       return null;
@@ -29,34 +32,34 @@ export class BookingService {
   }
 
   // Load bookings for current user
-  private loadBookingsForCurrentUser(): void {
+  loadBookingsForCurrentUser(): any {
     const userId = this.getCurrentUserId();
     if (!userId) {
       console.log('No user ID found, not loading bookings');
       this.bookingsSubject.next([]);
-      return;
+      return of([]);
     }
-
-    this.http.get<{bookings: any[]}>(this.apiUrl)
+     const authToken = this.authService.getToken();
+        
+        
+          const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+          })
+    return this.http.get<{content:any[]}>(this.apiUrl+"/"+userId,{headers})
       .pipe(
-        tap(response => console.log('API response:', response)),
-        map(response => {
-          // Filter bookings for current user
-          return response.bookings
-            .filter(booking => booking.clientId === userId)
-            .map(booking => this.transformApiBooking(booking));
-        }),
-        catchError(error => {
-          console.error('Error fetching bookings:', error);
-          return of([]);
-        })
+        tap(response => console.log('API response:', response.content )),
+        map(response => response.content.map(apiBooking => this.transformApiBooking(apiBooking))),
+        tap(response => console.log('API response:', response )),
+
       )
-      .subscribe(bookings => {
-        this.bookings = bookings;
-        this.updateBookingStatuses();
-        this.bookingsSubject.next([...this.bookings]);
-        console.log('Loaded user bookings:', this.bookings);
-      });
+      // .subscribe(bookings => {
+      //   this.bookings = bookings;
+      //   this.updateBookingStatuses();
+      //   this.bookingsSubject.next([...this.bookings]);
+      //   console.log('Loaded user bookings:', this.bookings);
+      // });
   }
 
   // Transform API booking to our Booking model
@@ -88,7 +91,7 @@ export class BookingService {
         status = BookingStatus.BOOKING_FINISHED;
         break;
       case 'COMPLETED':
-        status = BookingStatus.COMPLETED;
+        status = BookingStatus.BOOKING_FINISHED;
         break;
       default:
         status = BookingStatus.RESERVED;
@@ -97,13 +100,13 @@ export class BookingService {
     return {
     id: apiBooking.bookingId,
     carId: apiBooking.carId,
-    orderNumber: apiBooking.orderNumber,
+    orderNumber: apiBooking.orderDetails,
     // Adapt these fields to match your Booking model structure
-    carName: apiBooking.carDetails,
-    carImage: apiBooking.carImage,
+    carName: apiBooking.carModel,
+    carImage: apiBooking.carImageUrl,
     // licensePlate: apiBooking.carNumber,
-    pickupDate: pickupDate,
-    dropoffDate: dropoffDate,
+    pickupDate: apiBooking.pickupDateTime,
+    dropoffDate: apiBooking.dropOffDateTime,
     pickupLocation: apiBooking.pickupLocation || 'Default Location',
     dropoffLocation: apiBooking.dropOffLocation || 'Default Location',
     numberOfDays: numberOfDays,
@@ -137,7 +140,7 @@ export class BookingService {
   // Cancel booking
   cancelBooking(bookingId: string): Observable<any> {
     // Implementation would depend on your API
-    const bookingIndex = this.bookings.findIndex(b => b.id === bookingId);
+    const bookingIndex = this.bookings.findIndex(b => b.id=== bookingId);
     if (bookingIndex !== -1) {
       this.bookings[bookingIndex].status = BookingStatus.CANCELLED;
       this.bookingsSubject.next([...this.bookings]);

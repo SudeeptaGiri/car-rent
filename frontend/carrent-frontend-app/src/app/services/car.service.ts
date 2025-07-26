@@ -34,10 +34,12 @@ export interface LocationSuggestion {
 })
 export class CarService {
    // MongoDB API endpoint - update this with your actual AWS API Gateway URL
-   private apiBaseUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  //  private apiBaseUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  private apiBaseUrl = 'http://localhost:3000/api'; // Local development URL
 
    // Bookings API endpoint
-   private bookingsApiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  //  private bookingsApiUrl = 'https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api';
+  private bookingsApiUrl = 'http://localhost:3000/api'; // Local development URL
   
   // Keep JSON URL for fallback during development/transition
   private jsonUrl = 'assets/cars.json';
@@ -277,7 +279,7 @@ export class CarService {
     } else {
       // For regular users, use their own ID
       const user = this.getUserFromLocalStorage();
-      clientId = user?._id || localStorage.getItem('userId') || '';
+      clientId = user.id || localStorage.getItem('userId') || '';
     }
     
     console.log('Client ID for booking:', clientId);
@@ -610,7 +612,7 @@ getPreviousCar(currentId: string): Observable<CarDetails | undefined> {
     
     // Add authentication headers if available
     const user = this.getUserFromLocalStorage();
-    const authToken = user?.token || localStorage.getItem('auth_token');
+    const authToken = this.authService.getToken();
     
     const httpOptions = {
       headers: new HttpHeaders({

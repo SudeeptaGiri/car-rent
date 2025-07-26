@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class LocationService {
-  private apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api";// Set your API URL here
-
+  // private apiUrl = "https://v8xitm39lf.execute-api.eu-west-3.amazonaws.com/api";// Set your API URL here
+  private apiUrl = 'http://localhost:3000/api'; // Local development URL
   constructor(private http: HttpClient) { }
 
   getAllLocations(): Observable<any[]> {
