@@ -225,7 +225,8 @@ export class BookingService {
   
   isWithin12Hours(booking: Booking): boolean {
     const now = new Date();
-    const hoursRemaining = (booking.pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const pickupDate = new Date(booking.pickupDate);
+    const hoursRemaining = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
     return hoursRemaining <= 12 && hoursRemaining > 0;
   }
 

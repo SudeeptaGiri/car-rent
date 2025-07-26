@@ -32,7 +32,7 @@
   <div class="cars-grid" *ngIf="!loading && cars.length">
     <div class="car-card" *ngFor="let car of displayedCars">
       <div class="car-image-container">
-        <img [src]="car.imageUrl" alt="{{car.brand}}" class="car-image"
+        <img [src]="car.imageUrl[0]" [attr.alt]="car.brand" class="car-image"
           onerror="this.src=`https://upload.wikimedia.org/wikipedia/commons/5/51/Lotus_Esprit_V8_%28low_quality%29.jpg`" />
         <div class="car-status" [ngClass]="car.status.toLowerCase()">
           {{car.status}}

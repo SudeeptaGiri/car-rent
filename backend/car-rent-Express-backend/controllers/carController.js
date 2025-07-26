@@ -21,8 +21,6 @@ const CarController = {
         fuelType,
         minPrice,
         maxPrice,
-        page = 1,
-        size = 8,
       } = req.query;
 
       // Build filter object
@@ -114,19 +112,19 @@ const CarController = {
       }
 
       // Calculate pagination
-      const pageNum = parseInt(page);
-      const pageSize = parseInt(size);
-      const skip = (pageNum - 1) * pageSize;
+      // const pageNum = parseInt(page);
+      // const pageSize = parseInt(size);
+      // const skip = (pageNum - 1) * pageSize;
 
       // Execute query with pagination
       const cars = await Car.find(filter)
         .sort({ carRating: -1 })
-        .skip(skip)
-        .limit(pageSize);
+        // .skip(skip)
+        // .limit(pageSize);
 
       // Count total matching documents for pagination info
       const totalElements = await Car.countDocuments(filter);
-      const totalPages = Math.ceil(totalElements / pageSize);
+      // const totalPages = Math.ceil(totalElements / pageSize);
 
       console.log(`Found ${cars.length} cars matching filters (total: ${totalElements})`);
 
@@ -144,9 +142,7 @@ const CarController = {
 
       return res.status(200).json({
         content: carsList,
-        currentPage: pageNum,
         totalElements,
-        totalPages,
       });
     } catch (error) {
       console.error("Error getting cars:", error);
